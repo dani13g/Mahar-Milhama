@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>מחר מלחמה</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Noto+Sans+Hebrew:wght@100..900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d41111",
+                        "primary-dark": "#b00e0e",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#1a0b0b", 
+                        "background-dark-alt": "#221010", // From Screen 2/3
+                        "surface-dark": "#2a1515",
+                        "surface-dark-alt": "#331919", // From Screen 2/3
+                        "text-muted": "#d4a8a8",
+                        "surface-highlight": "#482323",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "Noto Sans Hebrew", "sans-serif"],
+                        "body": ["Noto Sans Hebrew", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    animation: {
+                        'shimmer': 'shimmer 2s linear infinite',
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%) skewX(-12deg)' },
+                            '100%': { transform: 'translateX(200%) skewX(-12deg)' },
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+
+    <!-- React Libraries -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/history@5/umd/history.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-router@6.3.0/umd/react-router.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Noto Sans Hebrew', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Lexend', 'Noto Sans Hebrew', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Scrollbar styles from Screen 2 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #221010;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #482323;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d41111;
+        }
+        .map-marker-pulse {
+            animation: mapPulse 2s infinite;
+        }
+        @keyframes mapPulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 17, 17, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(212, 17, 17, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 17, 17, 0); }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-300">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+        const { MemoryRouter, Routes, Route, Link, useNavigate, useLocation } = ReactRouterDOM;
+
+        const Navbar = () => {
+            const location = useLocation();
+            const isActive = (path) => location.pathname === path;
+
+            return (
+                <nav className="sticky top-0 z-50 w-full border-b border-[#482323] bg-[#221111]/95 backdrop-blur-sm">
+                    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex h-16 items-center justify-between">
+                            <Link to="/" className="flex items-center gap-3 group">
+                                <div className="flex items-center justify-center size-8 rounded-full bg-primary text-white group-hover:scale-110 transition-transform">
+                                    <span className="material-symbols-outlined text-xl">military_tech</span>
+                                </div>
+                                <span className="text-white text-xl font-black tracking-tight">מחר מלחמה</span>
+                            </Link>
+                            <div className="hidden md:flex items-center gap-8">
+                                <Link className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-primary' : 'text-gray-300 hover:text-white'}`} to="/">דף הבית</Link>
+                                <Link className={`text-sm font-medium transition-colors ${isActive('/about') ? 'text-primary' : 'text-gray-300 hover:text-white'}`} to="/about">אודות</Link>
+                                <Link className={`text-sm font-medium transition-colors ${isActive('/training') ? 'text-primary' : 'text-gray-300 hover:text-white'}`} to="/training">לוח אימונים</Link>
+                                <a className="text-gray-300 hover:text-white transition-colors text-sm font-medium" href="#">בוגרים</a>
+                            </div>
+                            <div className="hidden md:flex">
+                                <Link to="/training" className="bg-primary hover:bg-primary-dark transition-colors text-white text-sm font-bold py-2 px-6 rounded-lg shadow-[0_0_15px_rgba(212,17,17,0.3)]">
+                                    הצטרף עכשיו
+                                </Link>
+                            </div>
+                            <div className="flex md:hidden">
+                                <button className="text-white hover:text-primary">
+                                    <span className="material-symbols-outlined">menu</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        };
+
+        const Footer = () => {
+            return (
+                <footer className="bg-background-dark border-t border-[#482323] pt-16 pb-8 text-white mt-auto">
+                    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                            <div className="col-span-1">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <span className="material-symbols-outlined text-primary text-3xl">military_tech</span>
+                                    <span className="text-white text-xl font-bold">מחר מלחמה</span>
+                                </div>
+                                <p className="text-text-muted text-sm leading-relaxed mb-6">
+                                    הבית של הלוחמים לעתיד. הכנה מקצועית, ערכית ופיזית לשירות משמעותי ביחידות המובחרות של צה"ל.
+                                </p>
+                            </div>
+                            
+                            <div>
+                                <h3 className="text-white font-bold mb-4">ניווט מהיר</h3>
+                                <ul className="flex flex-col gap-2">
+                                    <li><Link className="text-gray-400 hover:text-primary text-sm transition-colors" to="/">דף הבית</Link></li>
+                                    <li><Link className="text-gray-400 hover:text-primary text-sm transition-colors" to="/about">אודות</Link></li>
+                                    <li><Link className="text-gray-400 hover:text-primary text-sm transition-colors" to="/training">לוח אימונים</Link></li>
+                                    <li><a className="text-gray-400 hover:text-primary text-sm transition-colors" href="#">בוגרים</a></li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3 className="text-white font-bold mb-4">פרטי קשר</h3>
+                                <ul className="flex flex-col gap-3">
+                                    <li className="flex items-center gap-3 text-gray-400 text-sm">
+                                        <span className="material-symbols-outlined text-primary text-lg">location_on</span>
+                                        <span>תל אביב, ירושלים, חיפה והצפון</span>
+                                    </li>
+                                    <li className="flex items-center gap-3 text-gray-400 text-sm">
+                                        <span className="material-symbols-outlined text-primary text-lg">phone</span>
+                                        <span>050-1234567</span>
+                                    </li>
+                                    <li className="flex items-center gap-3 text-gray-400 text-sm">
+                                        <span className="material-symbols-outlined text-primary text-lg">mail</span>
+                                        <span>info@elite-training.co.il</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3 className="text-white font-bold mb-4">הירשם לניוזלטר</h3>
+                                <p className="text-gray-400 text-sm mb-4">קבל טיפים לאימון ועדכונים על ימי מיונים.</p>
+                                <form className="flex flex-col gap-2" onSubmit={e => e.preventDefault()}>
+                                    <input type="email" placeholder="אימייל" className="bg-white/5 border border-white/10 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-primary" />
+                                    <button className="bg-primary hover:bg-primary-dark text-white text-sm font-bold py-2 rounded transition-colors">שלח</button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <p className="text-gray-500 text-sm text-center md:text-right">
+                                © 2025 מחר מלחמה. כל הזכויות שמורות.
+                            </p>
+                            <div className="flex gap-4 text-sm text-gray-500">
+                                <a href="#" className="hover:text-white transition-colors">תנאי שימוש</a>
+                                <a href="#" className="hover:text-white transition-colors">מדיניות פרטיות</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            );
+        };
+
+        // --- Screen 1: HomePage ---
+        const HomePage = () => {
+            return (
+                <div className="bg-background-light dark:bg-background-dark min-h-screen">
+                    <Navbar />
+
+                    {/* Hero */}
+                    <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
+                        <div className="absolute inset-0 z-0">
+                            <div className="absolute inset-0 bg-gradient-to-r from-background-dark/95 via-background-dark/70 to-transparent z-10"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent z-10"></div>
+                            <div className="w-full h-full bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBwcPvHeudQXiGCo7561F10c8KOBMLDC3D77H_KBY3C-LZy9zd-OWbHm4YDkT5riWGFn9JxH9QA9Lw5RfR3XlEqiMPwtsHSua-Mxvv1cwH62v1JLElZv3X7QjOm4MqAPi8aGq4PUfBq4jamWgMFMEkMtiAgy2mDm2aIGa7CWno-BSv0aPjg0cVJUW_0POylvrPNd07YY37kqbg6IUFl5GQ-YlmrxqG_uecV_t615tk3KKiYJ_XZmN1pOzVQFycKDkbCHIywukH5uLo-')"}}>
+                            </div>
+                        </div>
+                        <div className="relative z-20 max-w-[1200px] w-full px-4 sm:px-6 lg:px-8 flex flex-col items-start gap-6 py-20">
+                            <div className="max-w-2xl flex flex-col gap-4">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 w-fit backdrop-blur-md">
+                                    <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                                    <span className="text-primary text-xs font-bold tracking-wide uppercase">ההרשמה לעונה החדשה נפתחה</span>
+                                </div>
+                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight">
+                                    הדרך שלך <span className="text-primary">לסיירת</span><br/>מתחילה כאן.
+                                </h1>
+                                <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed max-w-lg border-r-4 border-primary pr-4 bg-gradient-to-l from-black/40 to-transparent py-2">
+                                    הכנה צבאית פיזית ומנטלית ברמה הגבוהה ביותר. הצטרף לקבוצה שתוביל אותך לקצה היכולת ותכין אותך לרגע האמת.
+                                </p>
+                                <div className="flex flex-wrap gap-4 mt-4">
+                                    <Link to="/training" className="flex items-center justify-center gap-2 h-12 px-8 rounded-lg bg-primary hover:bg-primary-dark text-white font-bold transition-all hover:scale-105 shadow-[0_0_20px_rgba(212,17,17,0.4)]">
+                                        <span>הירשם לאימון ניסיון</span>
+                                        <span className="material-symbols-outlined text-sm">arrow_back</span>
+                                    </Link>
+                                    <Link to="/about" className="flex items-center justify-center gap-2 h-12 px-8 rounded-lg border border-white/20 hover:border-white/50 bg-white/5 hover:bg-white/10 text-white font-medium backdrop-blur-sm transition-all">
+                                        <span>למד עוד עלינו</span>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Stats */}
+                    <div className="w-full bg-surface-dark border-y border-[#482323]">
+                        <div className="max-w-[1200px] mx-auto px-4 py-8">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-x-reverse divide-white/10">
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-3xl font-black text-white">100%</span>
+                                    <span className="text-sm text-text-muted">מחויבות למטרה</span>
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-3xl font-black text-white">500+</span>
+                                    <span className="text-sm text-text-muted">בוגרים ביחידות עלית</span>
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-3xl font-black text-white">12</span>
+                                    <span className="text-sm text-text-muted">מוקדי אימון בארץ</span>
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-3xl font-black text-white">24/7</span>
+                                    <span className="text-sm text-text-muted">ליווי אישי ומקצועי</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Why Choose Us */}
+                    <section className="py-20 bg-background-light dark:bg-background-dark">
+                        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex flex-col md:flex-row gap-12 items-start">
+                                <div className="md:w-1/3 sticky top-24">
+                                    <h2 className="text-primary font-bold text-sm tracking-widest uppercase mb-2">שיטת האימון שלנו</h2>
+                                    <h3 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
+                                        למה לבחור <br/> במחר מלחמה?
+                                    </h3>
+                                    <p className="text-slate-600 dark:text-text-muted leading-relaxed mb-8">
+                                        שיטת האימון שלנו פותחה על ידי יוצאי יחידות מיוחדות כדי להכין אותך לכל אתגר בצבא ובחיים. אנחנו לא רק בונים שרירים, אנחנו בונים אופי.
+                                    </p>
+                                    <Link to="/about" className="hidden md:inline-flex items-center text-primary font-bold hover:text-white hover:underline transition-colors group">
+                                        קרא עוד על השיטה
+                                        <span className="material-symbols-outlined mr-1 transition-transform group-hover:-translate-x-1">arrow_back</span>
+                                    </Link>
+                                </div>
+                                <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    {/* Feature Cards */}
+                                    {[
+                                        {icon: "psychology", title: "חוסן מנטלי", desc: "בניית חוסן נפשי להתמודדות עם מצבי לחץ קיצוניים, אי-ודאות וקושי מתמשך - בדיוק כמו בגיבושים."},
+                                        {icon: "fitness_center", title: "כושר קרבי", desc: "אימונים פיזיים בעצימות גבוהה, סחיבת משקלים, זחילות ומסעות המותאמים לסטנדרטים של היחידות המובחרות."},
+                                        {icon: "groups", title: "עבודת צוות", desc: "הכוח האמיתי הוא בקבוצה. ללמוד לסמוך על החברים שלך, לתמוך בהם ולהוביל אותם ברגעי משבר."},
+                                        {icon: "map", title: "ניווט והתמצאות", desc: "רכישת מיומנויות שטח בסיסיות ומתקדמות, קריאת מפה והתמצאות במרחב ללא אמצעים טכנולוגיים."}
+                                    ].map((feature, i) => (
+                                        <div key={i} className="group bg-white dark:bg-surface-dark border border-gray-200 dark:border-[#482323] p-6 rounded-xl hover:border-primary transition-all duration-300 hover:-translate-y-1">
+                                            <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                                                <span className="material-symbols-outlined">{feature.icon}</span>
+                                            </div>
+                                            <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{feature.title}</h4>
+                                            <p className="text-slate-600 dark:text-text-muted text-sm leading-relaxed">{feature.desc}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Success Stories */}
+                    <section className="py-20 relative bg-surface-dark border-y border-[#482323]">
+                        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex flex-col items-center text-center mb-12">
+                                <h2 className="text-3xl md:text-4xl font-black text-white mb-4">סיפורי הצלחה</h2>
+                                <div className="h-1 w-20 bg-primary rounded-full mb-6"></div>
+                                <p className="text-text-muted max-w-2xl">
+                                    הבוגרים שלנו משרתים בחוד החנית של צה"ל. הנה מה שיש להם להגיד על הדרך שעברו איתנו.
+                                </p>
+                            </div>
+                            <div className="flex overflow-x-auto hide-scrollbar gap-6 pb-8 snap-x">
+                                {[
+                                    {name: 'דניאל, סיירת מטכ"ל', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBB6MWmPUCtE9M-RHd7M64cA07DFT4Hb6TvXZBZf2Mw3tVnXQEg-Fg3CiBvh-IiSperz2j4ioijl8R4Xqpv8lVknok0YAQdBCbDQlIaDDmA_1EXrEZAVb6E0QLKZjr8Lkf_iIxpNPYl-zWjUqxnh1-lh2SBW9vIyveH5uT4qDbBIZZsLxlkAU3Pr7dtswDV8ezws3AJxPfktsCjD2Kp-VPgy1ydhlYwx87IEw6gtCD5bHmtl7dsFJfP_l0dlVZsEiZQpb-fN0IJ2upI', quote: '"בזכות הקבוצה הגעתי מוכן לגיבוש, פיזית ומנטלית. האימונים הקשים דימו במדויק את מה שעברתי בגיבוש עצמו, ושום דבר לא הפתיע אותי."'},
+                                    {name: 'נועה, טייס', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCZQ5z79uYMfZsh_yHCsoMKNJ-6jUrvukI8PNfqBJewex3dd7wsoBh9eU0-KMt_nbyH1lPq2yVhE9FJSLX-ge1GG_CVVECRRWA0PP2nsuzgPXbEuPHye3rWQA6PzTVLjIzZMIeDhFRVghhc2Cx1Zb00F7M4GTkwXPQwPr2JXWnOADahTx9t0uu2548Ld8XmjrS6qeUl-JoCPce7XCF5on4bU31bUPpNw0RmFI-Eqw0Fagdfc20YC2iBCYckWILKnrIBH0pWkjgWAs7r', quote: '"האימונים נתנו לי את הביטחון שאני יכולה לעשות הכל. למדתי שלא לוותר לעצמי גם כשקשה, וזה הלקח הכי חשוב שלקחתי לקורס טיס."'},
+                                    {name: 'יואב, שייטת 13', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD65HhfXwSN0gNVYO5MNbTegO3KMheHq2aSDygDLqU9wXLL7PFvtD8K-yOZAqC0xdbazyoz6SsH99kCgkIBanAu9HZZoV2fFJqEH0E1p1qPZsZcGd2TbKhYzo2Vf_y65GQM49P-KXUb5aD4IZ07h_jbZQ0jKDNNlTZca3b4eyZTVHzF7ASztuIzjlxqj9g2FGeom5titKy2PQW8oZJ3W_s1txBm4SeTL1uMWMAQh2wpk1CEx-V61pFQLFXrSTxE9ZlW2K0cPBjmbKuj', quote: '"החברים מהקבוצה הם חברים לחיים, לא הייתי עובר את זה בלעדיהם. הגיבוש הקבוצתי והתמיכה ההדדית הם שגרמו לי לסיים את המסלול."'}
+                                ].map((story, i) => (
+                                    <div key={i} className="snap-center shrink-0 w-80 md:w-96 bg-background-dark border border-[#482323] p-6 rounded-2xl flex flex-col gap-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-16 h-16 rounded-full bg-cover bg-center border-2 border-primary" style={{backgroundImage: `url('${story.img}')`}}></div>
+                                            <div className="flex flex-col">
+                                                <h4 className="text-white font-bold text-lg">{story.name}</h4>
+                                                <div className="flex text-primary text-sm">
+                                                    {[1,2,3,4,5].map(s => <span key={s} className="material-symbols-outlined text-[16px]">star</span>)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p className="text-gray-300 italic text-sm leading-relaxed">{story.quote}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Social Media & CTA sections omitted for brevity in thought, but included in code based on Screen 1 structure */}
+                    <section className="py-24 bg-cover bg-center relative" style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuD4yFAKhp9C5mR4dnbktTTfsOCBOq1n0L5lBRwsMdMuyLJwecVEv1pIQB9UKur3oFr5RZFHVpM_OozBjGz7ANc1vCsmyrdBsBi8Q5lOupXmwcVwJOID4173ae-iFQ_KauPOVGpq6NcjQp-I0IjawytExen63dnFt6G04xxFyVpwVjzCxPboRypMCSMc11BdiSHqY48nxLytqUFKyEw-xKJmHvpM04hQcnNvPGxQ7N_ecT9LKEWW1FAWuOSHQQZfftoQYLKDePGr2c2c')"}}>
+                        <div className="absolute inset-0 bg-primary/90 mix-blend-multiply"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+                        <div className="relative z-10 max-w-[960px] mx-auto px-4 text-center">
+                            <span className="inline-block py-1 px-3 rounded bg-white/10 backdrop-blur text-white text-xs font-bold mb-4 border border-white/20">אל תחכה למחר</span>
+                            <h2 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
+                                מוכן לאתגר?<br/>
+                                המקום שלך איתנו.
+                            </h2>
+                            <p className="text-xl text-gray-200 mb-10 max-w-2xl mx-auto font-light">
+                                הצטרף לאימון ניסיון ללא עלות וללא התחייבות, ותתחיל להרגיש את השינוי כבר מהרגע הראשון.
+                            </p>
+                            <form className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto" onSubmit={(e) => e.preventDefault()}>
+                                <input className="w-full h-12 px-4 rounded-lg bg-white/90 border-0 text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-white font-medium text-right" placeholder="הכנס מספר טלפון" type="tel"/>
+                                <button className="w-full sm:w-auto h-12 px-8 rounded-lg bg-slate-900 text-white font-bold hover:bg-slate-800 transition-colors whitespace-nowrap" type="submit">
+                                    חזור אלי
+                                </button>
+                            </form>
+                        </div>
+                    </section>
+
+                    <Footer />
+                </div>
+            );
+        };
+
+        // --- Screen 2: AboutPage ---
+        const AboutPage = () => {
+            return (
+                <div className="bg-background-light dark:bg-background-dark-alt text-slate-900 dark:text-white overflow-x-hidden">
+                    <Navbar />
+                    
+                    <section className="relative w-full min-h-[500px] flex items-center justify-center bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'linear-gradient(to bottom, rgba(34, 16, 16, 0.7), rgba(34, 16, 16, 1)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDqrZVW6bIIQ-KVt0X6k2bTmYRvjtBV7uEFOHcs64395xQdA68imHow4z2dIcFI5Htj-4lWLPx_Sn71-zrshFrZsfy8SlayqT1Aq2EtX-tYxXe5bgsF_YBjXNFHNZ32kTcGQwvPoSAccpalmajeKJa7ubJmTjjekfqNZUsivomUgLKGOLFg-IPIJf9pU34fa5S4i2xhwZV63i2ylRjLNF9vRN-_S9H024HUZg0rBXD2u0-OhWI4gq_uFUJ0THSqKVSSkQbsTfVhG_Ua")'}}>
+                        <div className="container mx-auto px-4 text-center z-10 flex flex-col items-center gap-6 max-w-4xl pt-20">
+                            <span className="px-3 py-1 bg-primary/20 border border-primary/30 text-primary text-xs font-bold rounded-full uppercase tracking-wider">הסיפור שלנו</span>
+                            <h1 className="text-white text-5xl md:text-7xl font-black leading-tight tracking-tight">
+                                יותר מרק <span className="text-primary">כושר קרבי</span>
+                            </h1>
+                            <p className="text-gray-300 text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto">
+                                אנחנו בונים את המנהיגים של המחר. דרך זיעה, נחישות וערכים, אנחנו מכינים את הנוער הישראלי לאתגרים הגדולים ביותר - בצבא ובחיים.
+                            </p>
+                        </div>
+                        <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-background-dark-alt to-transparent"></div>
+                    </section>
+
+                    <section className="py-20 bg-background-dark-alt relative overflow-hidden">
+                         <div className="container mx-auto px-4 relative z-10">
+                            <div className="flex flex-col lg:flex-row gap-16">
+                                <div className="flex-1 flex flex-col justify-center">
+                                    <h2 className="text-primary text-sm font-bold tracking-widest uppercase mb-3">החזון שלנו</h2>
+                                    <h3 className="text-white text-4xl md:text-5xl font-bold mb-6 leading-tight">בניית חוסן מנטלי <br/>ויכולת פיזית עילאית</h3>
+                                    <p className="text-gray-300 text-lg mb-8 leading-relaxed">
+                                        אנחנו מאמינים שהכנה לצבא היא לא רק פיזית, אלא בעיקר מנטלית. שיטת האימון שלנו משלבת עקרונות מיחידות העילית, פסיכולוגיה של הספורט, וערכי צה"ל כדי ליצור מסגרת שבונה את הלוחמים של המחר. אצלנו לא מוותרים - לא לעצמנו, ולא לחברים.
+                                    </p>
+                                </div>
+                                <div className="flex-1 relative">
+                                    <div className="relative h-full min-h-[500px] w-full rounded-2xl overflow-hidden border border-surface-highlight">
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10"></div>
+                                        <div className="absolute bottom-6 right-6 z-20 text-white">
+                                            <p className="font-bold text-xl">"קשה באימונים, קל בקרב"</p>
+                                            <p className="text-sm opacity-80">אימון מסכם, מחזור 2023</p>
+                                        </div>
+                                        <div className="w-full h-full bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-700 transform hover:scale-105" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBoPvthA3yol-XMxUxvKiYU_ccOBHJUYpSJMIvllxdWHM4f2FOq78g7ytR5cJUKXUuk9-aO80SjNkEKKon1AHPcKpx20R89tMS-USUVOnCt98PGPeP8f6Jq8GwH6p1dCF82125nojfHhWCzdch8LeASxF97OYFXH7d20ow9Q2d7vadSKucH5D3p5gHD2ptmMG9tknAkjzUvy6DlHyWwyJAfKUXchRUSv4hLXRMORCiF8hkJ7pvv4xYjFhvv0lhCzUVppGUaS8-sEw-o")'}}></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                     <section className="py-20 bg-[#1f0e0e]">
+                        <div className="container mx-auto px-4 max-w-4xl">
+                            <div className="text-center mb-16">
+                                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">הדרך שלנו</h2>
+                                <div className="h-1 w-20 bg-primary mx-auto rounded-full"></div>
+                            </div>
+                            <div className="relative border-r-2 border-[#482323] mr-4 md:mr-0 space-y-12">
+                                {[
+                                    {year: "2012", title: "הקמת הקבוצה", desc: "הקבוצה הוקמה על ידי יוצאי יחידות מובחרות במטרה לתת מענה מקצועי לנוער המעוניין להתגייס לשירות משמעותי.", color: "bg-primary"},
+                                    {year: "2015", title: "הרחבת הפעילות הארצית", desc: "בעקבות הביקוש הרב, נפתחו סניפים נוספים ברחבי הארץ - מחיפה ועד באר שבע.", color: "bg-[#482323]"},
+                                    {year: "2024", title: "דור העתיד", desc: "כיום אנחנו הקבוצה הגדולה והמובילה בישראל.", color: "bg-primary animate-pulse"}
+                                ].map((item, i) => (
+                                    <div key={i} className="relative mr-8 md:mr-12">
+                                        <div className={`absolute -right-[43px] md:-right-[59px] top-1 h-6 w-6 rounded-full border-4 border-[#1f0e0e] ${item.color} ${item.year === "2012" ? 'shadow-[0_0_10px_rgba(212,17,17,0.5)]' : ''}`}></div>
+                                        <div className="flex flex-col gap-2">
+                                            <span className="text-primary font-bold text-lg">{item.year}</span>
+                                            <h3 className="text-white text-xl font-bold">{item.title}</h3>
+                                            <p className="text-gray-400 max-w-xl">{item.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="py-20 bg-[#160808] relative overflow-hidden">
+                        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{backgroundImage: 'linear-gradient(#482323 1px, transparent 1px), linear-gradient(90deg, #482323 1px, transparent 1px)', backgroundSize: '40px 40px'}}></div>
+                        <div className="container mx-auto px-4 relative z-10">
+                            <div className="text-center mb-16">
+                                <span className="text-primary font-bold tracking-widest text-sm uppercase mb-2 block">בפריסה ארצית</span>
+                                <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">אנחנו בכל מקום</h2>
+                                <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+                                    הצוותים שלנו פועלים מצפון ועד דרום. בכל עיר ובכל שטח, אנחנו שם כדי להכשיר אתכם לרגע האמת. הניחו את העכבר על המפה כדי לגלות את המיקומים שלנו.
+                                </p>
+                            </div>
+                            <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center justify-center">
+                                <div className="w-full lg:w-1/2 space-y-4">
+                                     <div className="group relative bg-[#221010] border border-[#482323] hover:border-primary/50 rounded-xl p-6 transition-all duration-300 hover:shadow-[0_0_20px_rgba(212,17,17,0.1)] hover:-translate-x-1">
+                                        <div className="absolute right-0 top-0 bottom-0 w-1 bg-[#482323] group-hover:bg-primary transition-colors rounded-r-xl"></div>
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                                                    <span className="material-symbols-outlined text-primary">landscape</span>
+                                                    מחוז צפון
+                                                </h3>
+                                                <p className="text-gray-400 text-sm mb-3">אימוני שטח מאתגרים ביערות הכרמל, חופי הים ותוואי הררי. מכינים אתכם לסיירות ולחטיבות החי"ר.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="group relative bg-[#221010] border border-[#482323] hover:border-primary/50 rounded-xl p-6 transition-all duration-300 hover:shadow-[0_0_20px_rgba(212,17,17,0.1)] hover:-translate-x-1">
+                                        <div className="absolute right-0 top-0 bottom-0 w-1 bg-[#482323] group-hover:bg-primary transition-colors rounded-r-xl"></div>
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                                                    <span className="material-symbols-outlined text-primary">location_city</span>
+                                                    מחוז מרכז וירושלים
+                                                </h3>
+                                                <p className="text-gray-400 text-sm mb-3">הלב הפועם של הקבוצה. אימוני דיונות, פארקים ומתאר אורבני. שילוב של כושר, כוח ומנטליות.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="w-full lg:w-1/2 flex justify-center items-center relative h-[500px] bg-[#1a0c0c] rounded-2xl border border-[#331919] shadow-inner p-8">
+                                    <div className="relative h-full w-full max-w-[300px] flex justify-center">
+                                        <svg className="h-full w-auto drop-shadow-[0_0_15px_rgba(212,17,17,0.2)]" preserveAspectRatio="xMidYMid meet" viewBox="0 0 100 220">
+                                            <path d="M 55 5 L 65 5 L 75 15 L 70 80 L 60 215 L 50 215 L 20 120 L 35 90 L 30 45 L 40 40 L 40 10 Z" fill="#2a1515" stroke="#d41111" strokeLinejoin="round" strokeWidth="1.5"></path>
+                                            <g className="cursor-pointer group">
+                                                <circle className="map-marker-pulse" cx="45" cy="40" fill="#d41111" r="3"></circle>
+                                                <foreignObject height="80" width="120" x="55" y="10">
+                                                    <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-surface-dark-alt border border-primary/40 p-2 rounded shadow-xl text-right">
+                                                        <h4 className="text-white text-[10px] font-bold">מחוז צפון</h4>
+                                                        <p className="text-[8px] text-gray-400">חיפה והקריות</p>
+                                                    </div>
+                                                </foreignObject>
+                                            </g>
+                                            <g className="cursor-pointer group">
+                                                <circle className="map-marker-pulse" cx="40" cy="85" fill="#d41111" r="3"></circle>
+                                                <foreignObject height="80" width="120" x="50" y="55">
+                                                    <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-surface-dark-alt border border-primary/40 p-2 rounded shadow-xl text-right">
+                                                        <h4 className="text-white text-[10px] font-bold">מחוז מרכז</h4>
+                                                        <p className="text-[8px] text-gray-400">ת"א והסביבה</p>
+                                                    </div>
+                                                </foreignObject>
+                                            </g>
+                                        </svg>
+                                    </div>
+                                    <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-2 rounded border border-white/10">
+                                        <p className="text-white text-xs font-bold">פריסה ארצית מלאה</p>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                                            <span className="text-[10px] text-gray-300">נקודות פעילות</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <Footer />
+                </div>
+            );
+        };
+
+        // --- Screen 3: TrainingPage ---
+        const TrainingPage = () => {
+            return (
+                <div className="bg-background-light dark:bg-background-dark-alt text-slate-900 dark:text-white overflow-x-hidden">
+                    <Navbar />
+
+                    <section className="relative flex min-h-[500px] flex-col items-center justify-center overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-20" style={{backgroundImage: 'linear-gradient(rgba(34, 16, 16, 0.7) 0%, rgba(34, 16, 16, 0.9) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAjpT57EPk97qFLk0xUntPlHa6Bz-6wSWdbRYjyLLewrWUS5sHCvC7ws_xGsq7p4JPAiYv_velyDgs0dbwLaTVnukl-vmbFZkg36Ax0QTNyWUg0foU9XjdU9yX8317dDsXIOKkCKPQvDSQig3PndLu7bROpfxUHkdjLF9_dGRXh1GFrZgTx8pQDMPQQ15qFGgRTnU23b_bDaevj84gTsJCfq24kiBg7_hgFnjAOKkUyXBC6yu7melQ52srjpJp2--Ax4woD9kS0SeW3")'}}>
+                        <div className="max-w-3xl text-center flex flex-col items-center gap-6">
+                            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 backdrop-blur-sm">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
+                                </span>
+                                <span className="text-sm font-medium text-red-200">ההרשמה לעונת 2024 פתוחה</span>
+                            </div>
+                            <h1 className="text-white text-4xl md:text-6xl font-black leading-tight tracking-[-0.033em]">
+                                תוכניות אימון ללוחמים
+                            </h1>
+                            <h2 className="text-gray-200 text-lg md:text-xl font-normal max-w-2xl leading-relaxed">
+                                הכנה פיזית ומנטלית לשירות משמעותי ביחידות המובחרות של צה"ל. בחר את המסלול שיוביל אותך לקצה היכולת.
+                            </h2>
+                            <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full justify-center">
+                                <button className="flex items-center justify-center rounded-lg h-12 px-8 bg-primary hover:bg-red-700 text-white text-base font-bold transition-all shadow-lg shadow-primary/25">
+                                    תיאום אימון ניסיון חינם
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <main className="mx-auto max-w-[1280px] px-4 py-12 md:px-10 flex flex-col gap-12">
+                        <div className="flex flex-col items-center gap-2 text-center">
+                            <h2 className="text-white text-3xl md:text-4xl font-bold">המסלולים שלנו</h2>
+                            <div className="h-1 w-20 bg-primary rounded-full"></div>
+                            <p className="text-gray-400 max-w-2xl mt-2">כל תוכנית נבנתה בקפידה על ידי יוצאי יחידות מובחרות כדי להבטיח שתגיעו ליום הגיוס במוכנות שיא.</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {/* Program Cards */}
+                            {[
+                                {title: "צוות הכנה לסיירות", label: "אינטנסיביות גבוהה", labelColor: "bg-red-900/40 text-red-200 border-red-800", sessions: "3 אימונים בשבוע", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCVnVoRSEHPr4VdlVREl-tJn5XAhentB_TtNDgGbfLdX3G6BCzvMpfvIv9Db9OvTsXyVKzx8SXiVw026byIQJbcUARqVre9PlJD-yODw75zl9MGCPbsJr0v7ruAp-k-wN_SMWHgiGRk8KV_6EnZy4mLUlYMYjJnoq9fO0_st3zspEsCAsmYutUp_xnyrJLtKFjKJOpw-xlIB_s0QbyqCfzBOsC2OqX7JljpiSif_kUILPs03khjfeV5R9dCmBu1XENvBR0x1tcXbFkO", desc: 'מסלול הדגל שלנו. מיועד למלש"בים בכיתות י"א-י"ב השואפים להגיע לסיירת מטכ"ל, שייטת 13 ושלדג.'},
+                                {title: "כושר קרבי - מתחילים", label: "כניסה הדרגתית", labelColor: "bg-green-900/40 text-green-200 border-green-800", sessions: "2 אימונים בשבוע", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuC-pm4A4gdI1B-4BjQANrxkmi8b91pJ0hLBg7VL79WZfPTmVbUzVNAp7nLHo0zSa4rHEwsyAuZtxP_ux7Ra3ndu_Hzm4VQLF-4rnc8R0d8ASaMFFV87bkERwC1rIRDIXAW2zqZdaaP9BOxzLZGcD25fqF3pEjFVsbgYXA0MB388slZNRGdvxv9HfTSIBHqLpOEzaH3vB1XWOw1XBcucGgrkk8Zkp7g0Ay1TIDOtZL-ZVYdfvDE0eUo5zQhU4L1Z19UpOSal0cCfMKHn", desc: "בניית בסיס פיזיולוגי חזק, לימוד טכניקת ריצה ושיפור כוח מתפרץ. מתאים לכיתות י'-י\"א."},
+                                {title: "סימולציות גיבושים", label: "ממוקד מטרה", labelColor: "bg-orange-900/40 text-orange-200 border-orange-800", sessions: "סדנאות מרוכזות", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuB2ai4O4CX2viHDaadpTB3gM-tNrfUmikzIuwqIVGIFIgWcx0KLf7CXI6FAccoQCKCWTh2EOrACBktc-WluUtWse6yysTLPSof4CR1gWLUxgScB8c4JRtLEQZupXqtqFGR6D2okwTo3geAWxqJo95s7qjJOndTwcuB1OY8kgZ_fJJJCx1e7fTu2kPWWTvlu27owXNVz8oa9Cc0G682D1WasUTMFAhDhXNO0VyAv2LAmAtXH22kTvM_qt6tYZBicEmHIHYL7soInSEyT", desc: "סדנאות עצימות המדמות את תנאי הגיבוש האמיתיים. שחזור מדויק של אקטים פיזיים ודינמיקה קבוצתית."}
+                            ].map((prog, i) => (
+                                <article key={i} className="group relative flex flex-col overflow-hidden rounded-xl bg-surface-dark-alt shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/10 border border-transparent hover:border-primary/50">
+                                    <div className="h-48 w-full overflow-hidden">
+                                        <div className="h-full w-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style={{backgroundImage: `url('${prog.img}')`}}></div>
+                                    </div>
+                                    <div className="flex flex-1 flex-col p-6">
+                                        <div className="mb-4 flex items-center justify-between">
+                                            <span className={`rounded-md px-2 py-1 text-xs font-bold border ${prog.labelColor}`}>{prog.label}</span>
+                                            <div className="flex items-center gap-1 text-gray-400 text-sm">
+                                                <span className="material-symbols-outlined text-lg">schedule</span>
+                                                <span>{prog.sessions}</span>
+                                            </div>
+                                        </div>
+                                        <h3 className="mb-2 text-xl font-bold text-white">{prog.title}</h3>
+                                        <p className="mb-6 text-gray-300 text-sm leading-relaxed">{prog.desc}</p>
+                                        <div className="mt-auto pt-4 border-t border-white/5">
+                                            <button className="w-full flex items-center justify-center gap-2 rounded-lg bg-surface-dark-alt border border-gray-600 hover:border-primary hover:text-primary py-2.5 text-sm font-bold text-white transition-all">
+                                                לפרטים והרשמה
+                                                <span className="material-symbols-outlined text-lg rtl:rotate-180">arrow_forward</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+
+                         <section className="mt-12 flex flex-col gap-8">
+                            <div className="flex flex-col items-center gap-2 text-center">
+                                <h2 className="text-white text-3xl md:text-4xl font-bold">גלריית תמונות</h2>
+                                <div className="h-1 w-20 bg-primary rounded-full"></div>
+                                <p className="text-gray-400 max-w-2xl mt-2">הצצה לאווירה, לאתגרים ולרגעים הבלתי נשכחים מהאימונים שלנו.</p>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[250px]">
+                                <div className="group relative md:col-span-2 md:row-span-2 overflow-hidden rounded-xl bg-surface-dark-alt border border-transparent hover:border-primary/30 transition-colors">
+                                    <img alt="Training" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9NjUCSvuKeZIruR_2ApOse-nRniPJ8PXqQTjfRfp0UxbvW21Zio48iFVg6GIM8IiXX3buVRuK2jYuvjYI4YHbR7PetWtxCwlKM5yZYMZ6PvyRhxKuKkxB0OK6lNrWss7Gu6DynhnIOls7ufDAUkS6g0nwLKVB_T94mYfH4rbNolv82lYcqF-UIPYQIrMVnPOi4Kc1lrAhSnJCQ-k3IToU3zuk2tJxbAUVZLUwRLhfLJdtaGlXnMx3ZAXFRWHkb9_mL7X-ULlZ6Z0q"/>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+                                    <div className="absolute bottom-0 right-0 p-6 z-10 w-full">
+                                        <div className="flex justify-between items-end">
+                                            <div>
+                                                <span className="mb-2 inline-block rounded bg-primary/20 px-2 py-1 text-xs font-bold text-primary backdrop-blur-sm border border-primary/20">אימון שטח</span>
+                                                <h3 className="text-xl font-bold text-white translate-y-2 group-hover:translate-y-0 transition-transform duration-300">אימוני סיבולת ומשמעת</h3>
+                                            </div>
+                                            <span className="material-symbols-outlined text-white/50 group-hover:text-primary transition-colors text-3xl opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 duration-300">photo_camera</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div className="group relative md:col-span-1 md:row-span-1 overflow-hidden rounded-xl bg-surface-dark-alt border border-transparent hover:border-primary/30 transition-colors">
+                                    <img alt="Teamwork" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-80 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbatjqDmVwQnHJkknEV-iZi1L5Rxp7aArIm2PAdIha3l2i-1l6kIQI62SeHC4mOze4tP_xRjN45wQRWkORF-mmNa29A2CDyYlVNSmbSAp-mCsG9tfzGLO-O8oD85x4C0OCdBvRlzs23xeehXod_5lPe2EP-CMZZFPRXRiWwPTNSg9XRYYdS1MFNaV1qkDFC7Mp4SoFsfC20p6p3iOVvPgoGOhf9KHJ72yq2Ydto_pZ4WWaJDLj51Nn_YKOQMvLStyeg9qwxv4R1SwT"/>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                                    <div className="absolute bottom-0 right-0 p-4">
+                                        <h3 className="text-sm font-bold text-white">עבודת צוות</h3>
+                                    </div>
+                                </div>
+                                <div className="group relative md:col-span-1 md:row-span-1 overflow-hidden rounded-xl bg-surface-dark-alt border border-transparent hover:border-primary/30 transition-colors">
+                                    <img alt="Strength" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-80 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgEj89at4i5oFMZFb7-qns4hr_rSMDggcOO3upVbon0MLP6ffQomVJV-_dtiYd1q_oqWbtAIs-6OBhldBtqT9sUNthxdkznfcGkqEycMYkGkTYMfrTo9q1wsUQMyMdkKYX-WUOvUrHcQN0RjCPKjvTjjhIzr9EKRC3MTUKV_Qv5vq7Z8QPvUXdQsXDHzYZ4Whg_AJnOOdY7TJgUQaUfYOmZ_tuxONSIEKfyC3pQqzj2mwg_Bsx7LS_7pKAwXdSqwub6TOYJTM4eGBL"/>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                                    <div className="absolute bottom-0 right-0 p-4">
+                                        <h3 className="text-sm font-bold text-white">כוח מתפרץ</h3>
+                                    </div>
+                                </div>
+                                <div className="group relative md:col-span-2 md:row-span-1 overflow-hidden rounded-xl bg-surface-dark-alt border border-transparent hover:border-primary/30 transition-colors">
+                                    <img alt="Group Run" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-80 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsqxdDT2Umj5RuFQjxN8MSS7auSx7x2NrQ2i-3HF8fkCiCv2Jge0k6VQ9J1gtuJT9lva_T7YfZf_fz46rztkHznMK8A-qK8RarsqK7DOFpvnNHjX0R2JjZxa-1YAgBavT7M6H13W8CfklXvqVbKsajh7F7g1OHJEoDEUg0pD2UgE044pnuNfNTkHMcls_zjsMVrz_a08SMvVlbUA5MARfqot6VceTurrxjf3TVTn2nfkW0Z2etwmBCqLfVw70ZpauGkvFT397HaHfr"/>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                                    <div className="absolute bottom-0 right-0 p-4 w-full">
+                                        <div className="flex justify-between items-center">
+                                            <h3 className="text-lg font-bold text-white">גיבוש קבוצתי</h3>
+                                            <span className="material-symbols-outlined text-white text-xl opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div className="my-8 rounded-xl bg-primary px-6 py-10 text-center md:px-12 relative overflow-hidden group">
+                            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 translate-x-[-100%] group-hover:animate-[shimmer_1s_infinite]"></div>
+                            <div className="relative z-10">
+                                <h2 className="text-2xl md:text-3xl font-black text-white mb-4">מוכן לקחת את הצעד הראשון?</h2>
+                                <p className="text-red-100 text-lg mb-8 max-w-2xl mx-auto">
+                                    אל תחכה לרגע האחרון. הצטרף אלינו לאימון ניסיון ללא עלות וללא התחייבות, ותתחיל את המסע שלך לעבר השירות המשמעותי.
+                                </p>
+                                <button className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-lg font-bold text-primary shadow-lg hover:bg-gray-100 hover:scale-105 transition-all">
+                                    הרשמה לאימון ניסיון
+                                </button>
+                            </div>
+                        </div>
+                    </main>
+
+                    <Footer />
+                </div>
+            );
+        };
+
+        const App = () => {
+            return (
+                <MemoryRouter>
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/about" element={<AboutPage />} />
+                        <Route path="/training" element={<TrainingPage />} />
+                    </Routes>
+                </MemoryRouter>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

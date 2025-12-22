@@ -1,0 +1,12 @@
+{
+    "name": "site-build-helper",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "serve": "npx serve -s . -l 8000",
+        "http-serve": "python3 -m http.server 8000",
+        "headless-check": "python3 tools/headless_check.py",
+        "asset-sizes": "bash -c 'for f in static/js/*.js static/css/*.css; do [ -f \"$f\" ] || continue; echo \"$f\"; ls -lh \"$f\"; gzip -c \"$f\" | wc -c; echo; done'"
+    },
+    "devDependencies": {}
+}
