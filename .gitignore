@@ -28,6 +28,9 @@ Thumbs.db
 
 # Ignore license txts for hashed bundles
 static/js/*.LICENSE.txt
+
+# Logs directory
+logs/
 # macOS
 .DS_Store
 
