@@ -4,9 +4,17 @@
     "private": true,
     "scripts": {
         "serve": "npx serve -s . -l 8000",
+        "serve:3001": "npx serve -s . -l 3001",
         "http-serve": "python3 -m http.server 8000",
+        "validate": "node scripts/validate.js",
+        "check:images": "node scripts/check-images.js",
+        "check:accessibility": "node scripts/check-accessibility.js",
+        "check:all": "npm run validate && npm run check:images && npm run check:accessibility",
+        "build:prep": "node scripts/build-prep.js",
+        "pre-deploy": "npm run check:all && npm run build:prep",
         "headless-check": "python3 tools/headless_check.py",
-        "asset-sizes": "bash -c 'for f in static/js/*.js static/css/*.css; do [ -f \"$f\" ] || continue; echo \"$f\"; ls -lh \"$f\"; gzip -c \"$f\" | wc -c; echo; done'"
+        "asset-sizes": "bash -c 'for f in static/js/*.js static/css/*.css; do [ -f \"$f\" ] || continue; echo \"$f\"; ls -lh \"$f\" | gzip -c \"$f\" | wc -c; echo; done'",
+        "preview": "npm run serve:3001"
     },
     "devDependencies": {}
 }

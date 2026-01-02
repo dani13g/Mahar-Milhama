@@ -1,0 +1,201 @@
+/**
+ * Mahar Milhama - Custom Styles
+ * 
+ * This file contains custom CSS utilities and components that extend Tailwind CSS.
+ * Following best practices: utility-first with Tailwind, custom utilities for complex patterns.
+ * 
+ * Structure:
+ * 1. CSS Custom Properties (Design Tokens)
+ * 2. Base Styles
+ * 3. Utility Classes (@layer utilities)
+ * 4. Component Styles
+ */
+
+/* ==========================================================================
+   1. CSS CUSTOM PROPERTIES (Design Tokens)
+   ========================================================================== */
+
+:root {
+    /* Colors - Synced with Tailwind config */
+    --color-primary: #E61A1A;
+    --color-primary-hover: #C20000;
+    --color-accent: #39FF14;
+    --color-background-dark: #030303;
+    --color-surface-dark: #0F0F0F;
+    --color-surface-light: #1E1E1E;
+    --color-surface-card: #141414;
+    --color-card-dark: #0f0f0f;
+    --color-border-dark: #262626;
+    --color-text-muted: #9CA3AF;
+    
+    /* Spacing */
+    --spacing-grid: 50px;
+    --spacing-grid-small: 40px;
+    
+    /* Effects */
+    --shadow-glow: 0 0 15px rgba(220, 38, 38, 0.2);
+    --shadow-glow-strong: 0 0 25px rgba(220, 38, 38, 0.4);
+    --shadow-glow-green: 0 0 10px rgba(204, 255, 0, 0.2);
+}
+
+/* ==========================================================================
+   2. BASE STYLES
+   ========================================================================== */
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-background-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+}
+
+/* Selection */
+::selection {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+/* ==========================================================================
+   3. UTILITY CLASSES (@layer utilities for Tailwind integration)
+   ========================================================================== */
+
+@layer utilities {
+    /* Background Patterns */
+    .bg-texture {
+        background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCzH4DqPl2rJIl12fWuyppirz35NwlkTU35N77bfSPmx-9VvvtE5ws5kzcvUVwL4qMNW8OEGi92w5wFJpCvOkTRihNV6dFBw0ly2XJABNc2QuItwpr7-pUl6HfEG-0MGgVHUXP7gdXohuU6bXp1rTp9JF-kdi6UxmlFJnzl8VPNC-Kfspk20Phf6MqJ0ifozAbxx7evym9-caQlXczInl9xyR9AnT4TNt5BEvAS5vMAKW0tAiFG_fZKJPOEZaM-EK4UlpxLYSlDMoSF");
+    }
+
+    .grid-bg {
+        background-size: var(--spacing-grid) var(--spacing-grid);
+        background-image:
+            linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+
+    /* Clip Path Utilities - Angular/Tactical Design Elements */
+    /* These create the signature angular cuts used throughout the design */
+    
+    /* Diagonal cut at bottom-right corner (used on buttons) */
+    .clip-diagonal {
+        clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
+    }
+
+    /* Corner cut at bottom-right (creates angled corner effect) */
+    .clip-corner {
+        clip-path: polygon(
+            0 0,
+            100% 0,
+            100% calc(100% - 15px),
+            calc(100% - 15px) 100%,
+            0 100%
+        );
+    }
+
+    /* Corner cut at top-left (inverse of clip-corner) */
+    .clip-corner-top {
+        clip-path: polygon(
+            10px 0,
+            100% 0,
+            100% 100%,
+            0 100%,
+            0 10px
+        );
+    }
+
+    /* Slanted bottom edge (subtle angle) */
+    .clip-path-slant {
+        clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
+    }
+
+    /* Badge-style cut (angled top-left corner) */
+    .clip-path-badge {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 80%);
+    }
+
+    /* Filter Effects - Image Hover Interactions */
+    /* Grayscale effect that removes on hover (used for team photos, etc.) */
+    .filter-grayscale {
+        filter: grayscale(100%) contrast(120%);
+    }
+
+    /* Remove grayscale when parent group is hovered */
+    .group:hover .filter-grayscale {
+        filter: grayscale(0%) contrast(100%);
+    }
+
+    /* Text Effects */
+    /* Text stroke for outline effect (webkit prefix required for browser support) */
+    .text-stroke-1 {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.1);
+        /* Note: Standard text-stroke not yet widely supported, using webkit prefix only */
+    }
+
+    /* Tactical Grid Patterns - Military/Tactical Aesthetic */
+    /* Grid overlay pattern that fades at edges (creates depth effect) */
+    .tactical-grid {
+        background-size: var(--spacing-grid) var(--spacing-grid);
+        background-image: 
+            linear-gradient(to right, rgba(38, 38, 38, 0.5) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(38, 38, 38, 0.5) 1px, transparent 1px);
+        /* Fade out grid at bottom 40% of element */
+        mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    }
+
+    /* Smaller grid with fade at top and bottom edges */
+    .tactical-grid-40 {
+        background-size: var(--spacing-grid-small) var(--spacing-grid-small);
+        /* Fade in/out at top and bottom 10% */
+        mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+    }
+
+    /* Tactical Border Effect - Angular Corner Accents */
+    /* Creates triangular corner decorations (top-left and bottom-right) */
+    .tactical-border {
+        position: relative;
+    }
+
+    /* Top-left triangular corner accent */
+    .tactical-border::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 12px;
+        height: 12px;
+        background: currentColor; /* Uses text color of parent */
+        clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+
+    /* Bottom-right triangular corner accent */
+    .tactical-border::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        background: currentColor; /* Uses text color of parent */
+        clip-path: polygon(100% 0, 0 100%, 100% 100%);
+    }
+}
+
+/* ==========================================================================
+   4. COMPONENT STYLES (if needed for complex components)
+   ========================================================================== */
+
+/* Add component-specific styles here if they can't be achieved with utilities */
+
+/* Example: Complex animations or state-based styles */
+/* .hero-section { ... } */
+

@@ -1,4 +1,85 @@
-# Local run & smoke-test instructions
+# מחר מלחמה - Mahar Milhama Website
+
+**Production build output** - Static React SPA for military fitness training preparation.
+
+## Quick Start
+
+```bash
+# Start local server
+npm run serve          # Port 8000
+npm run serve:3001     # Port 3001
+
+# Validation & Checks
+npm run validate       # Check project structure
+npm run check:images   # Check image URLs
+npm run check:accessibility  # Check accessibility
+npm run check:all      # Run all checks
+
+# Build Preparation
+npm run build:prep     # Prepare for deployment
+npm run pre-deploy     # Run all checks before deployment
+
+# Testing
+npm run headless-check # Run smoke tests
+```
+
+## 📁 Project Structure
+
+```
+Mahar-Milhama/
+├── index.html              # Main React application
+├── css/custom.css          # Custom styles
+├── data/                   # Content data (team, FAQs, articles, etc.)
+├── constants/              # Configuration constants
+├── config/                 # Environment configuration
+├── utils/                  # Utility functions
+├── hooks/                  # Custom React hooks
+├── components/ui/          # Reusable UI components
+├── scripts/                # Build & validation scripts
+├── images/                 # Local image assets
+└── docs/                   # Documentation
+```
+
+## 📚 Documentation
+
+All documentation is in the `docs/` folder:
+
+- **[CODE_AUDIT_REPORT.md](./docs/CODE_AUDIT_REPORT.md)** - Complete code audit
+- **[PROJECT_STRUCTURE.md](./docs/PROJECT_STRUCTURE.md)** - Detailed structure
+- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Architecture overview
+- **[PHASE_3_SUMMARY.md](./docs/PHASE_3_SUMMARY.md)** - Phase 3 improvements
+- **[IMAGE_MIGRATION_GUIDE.md](./docs/IMAGE_MIGRATION_GUIDE.md)** - Image migration guide
+- **[QUICK_START.md](./docs/QUICK_START.md)** - Quick reference
+
+## 🚀 Recent Improvements
+
+### Phase 1: Data & Constants Organization
+✅ Extracted all data to `data/` files (team, FAQs, articles, testimonials)  
+✅ Created `constants/` folder (images, routes, site config)  
+✅ Added JSDoc type definitions for better IDE support  
+✅ Organized documentation into `docs/` folder
+
+### Phase 2: Utilities & Components
+✅ Created utility functions (routing, formatting, validation)  
+✅ Added custom React hooks (useAccordion)  
+✅ Created reusable UI component templates  
+✅ Enhanced package.json with validation scripts
+
+### Phase 3: Build & Configuration
+✅ Environment configuration with auto-detection  
+✅ Build preparation script with manifest generation  
+✅ Accessibility validation script  
+✅ Component registry system  
+✅ Comprehensive validation suite
+
+### Core Improvements
+✅ Production React builds (replaced development versions)  
+✅ SEO meta tags (description, Open Graph, Twitter)  
+✅ Accessibility (aria-labels, semantic HTML)  
+✅ Image constants (centralized URL management)  
+✅ Lazy loading (images optimized)
+
+## 📝 Notes
 
 This folder contains the production build output. Use the commands below to run and perform quick checks locally.
 

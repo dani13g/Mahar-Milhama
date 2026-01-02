@@ -1,0 +1,47 @@
+/**
+ * Image URLs Constants
+ * 
+ * Centralized image management for easy maintenance.
+ * 
+ * IMPORTANT: When images change, update them here in ONE place instead of searching through 1,400+ lines.
+ * 
+ * Migration plan:
+ * 1. Download images from Google URLs
+ * 2. Optimize and place in /images/ folder (see images/README.md)
+ * 3. Update URLs below to use local paths: "/images/heroes/hero-home.webp"
+ * 
+ * See IMAGE_MIGRATION_GUIDE.md for detailed instructions.
+ */
+
+const IMAGE_URLS = {
+    // Hero/Background Images
+    heroHome: "https://lh3.googleusercontent.com/aida-public/AB6AXuANbn6xOr3O5G2g8_J7B_BrJa6Uwtaz-hMYryM30fUThKcMa-CqZFcxpw0Ju8-lBaSo9bvJWI5YrXIXLE7IXuVDhBy2-oeoohpufS5TOEEt1BchTWIJON7BXz5Sqr7qSHElQycoeTA3Jl61WRIorpgIDMD66lIGxTauwAnf6zRn-4nFFla00Hdf6UFJOv-k1SjXenx0gnPDyJwEKjxIHAllj8QUTiXSSQvCaGj1eo6xxF6KhPa12BOJ7GbV18kGQ2ivYoxvnTUNBPGR",
+    heroTeam: "https://lh3.googleusercontent.com/aida-public/AB6AXuCM9n8lNfS--lq4nS6aRpEFFnd_arNw4dpvT5-i1IEyDnKwwMdRy3RmM3o8EmwRn69LggApZGy5ciHL8Mp8p4kzu5QD70E3p9kbcfKxcvMXsTS9FnrGPnc3eCjoCLDYq6Raxxp5DBgVZbkIC3eucBK-exDMGN-8V1-nrdiOdithU99FPQgdCOtnw3idvX1aE5bHSuxEluQ8Do3rb9gVnnd4vP26Aem0fbG-MznvAvkt0TQGzMd-tShDljWYXP792kuxf-pzPRnB12Uk",
+    heroMethod: "https://lh3.googleusercontent.com/aida-public/AB6AXuBQdZ0Zk4zwrTuPJdXwfkAeMyt3xIsEdBDM-85qMOIwkG9cLLOeFscM3q9obi6WQWl_2P1eaPlAA3SjD9oBO5G82mQ4Mc95cGzNkslcLdPuNe6E1PkwGRl-nwt42hx1dCWNqITqR-_Z0c2TyCC6vqZkHqflC25a5LdpXEedvKkftNB22ZpbcVH4o_53bCDR--ezBu_tCIxY2A-f1qmoXJPjiR4XYCRL0RIabmWir3hUXjjRRHRsj3TTblgdM8i0tDOGcJiAfQ72hMNF",
+    heroArticles: "https://lh3.googleusercontent.com/aida-public/AB6AXuAyWjgBdhLQkVyM6NBO6xzJLXHmNDrATl3odDav6UadmeegZAq8ozZ5ybl_0M7rly5pDLT_ZOK2cFcVB8thfUjXpVVaszoNckCfGd4WytAJdG0kwptQcaY8ryKbl5hrI_QHpVLmeZQ-x7FTypzIKC7IJnV7tnVh9AH6PImErIawPBhfp85P7qtAPJ2OrBpNCuDUAMR7vlPmQTwQufN8kNO9fJa7-qcDJWMjen7CyOZgddyqWpWfRrYl4DuP4_EzCjDcqkYhuInWyhpb",
+    heroContact: "https://lh3.googleusercontent.com/aida-public/AB6AXuCL7Whoyd_df4TMczDa9-X3GpviE5Kbc0USVxdiLU-MAkgQ9eL37mZqMINILoa8gdPrJdN4wLxsktihZ65niH1aim4BA3YRC9SJ-tywrRn4CKZ3m2BOC1MBZtT76lJgErlmpWwE3mUj-2f-Zh4ycInVRT1z5t4tmI48Regn_AuPuYdqeDV9-2Us8MG0K3Rd09lx7ukQG9qfU3qdoXBFFuLSy1bjKQbAOONq5gwC2ypIceieSd_XE04WiAtcD7-pt7doovlKqpDHdzUR",
+    heroFAQ: "https://lh3.googleusercontent.com/aida-public/AB6AXuBkbROdnGxA99vj_P9zqRaDpvxP4IVSNxZKG1kgjDNgKjmOxWXaAS6P0wuX0v4RINj7L7303_XXv6iQkIDq9Ihc6vyUbd2MY7rqzw5M7eSAJ3gFnu3Swm_5XqFThh5YzKQCrFg9p_XB18-17ehi972qEqj1vxBKcFzk2oF2CqF_BV0F_Q-Qg1oMb7B7VCU3wXBfwGpENEaNoksjKPvM--Mh6ocFNPbipv4_-nblRWzfk0UX4pqbWd4pSCLBkOpEYpqa30tGLPzB3kyp",
+    // Texture/Pattern Images
+    textureBg: "https://lh3.googleusercontent.com/aida-public/AB6AXuCzH4DqPl2rJIl12fWuyppirz35NwlkTU35N77bfSPmx-9VvvtE5ws5kzcvUVwL4qMNW8OEGi92w5wFJpCvOkTRihNV6dFBw0ly2XJABNc2QuItwpr7-pUl6HfEG-0MGgVHUXP7gdXohuU6bXp1rTp9JF-kdi6UxmlFJnzl8VPNC-Kfspk20Phf6MqJ0ifozAbxx7evym9-caQlXczInl9xyR9AnT4TNt5BEvAS5vMAKW0tAiFG_fZKJPOEZaM-EK4UlpxLYSlDMoSF",
+    // Team Members
+    teamMember1: "https://lh3.googleusercontent.com/aida-public/AB6AXuDtNoRS2yZLP116_m4kKtlkboYbNbR1snkPGJo4QO5CfV8pvomqam2Iz1aiLnFEOrN-Cj2ru9Iz3tnmj_wjc76Cd7uC50olYzQT_Dupo_xoSoGwfGt3b0rTBVlAobxE6EUpS588Yr_IjE5HB3iF7wzfqsUk1AGLUFvRPxih0paRwzm3WGslcgPcpKqQ4V1mMKoXDdeGWStP9hDC4zqvswzveUwA4H3rLcOVvOXbXL4Ziq9g5OT7ZqTUV29VtRfYQk49Ue1j9FS9yjDV",
+    teamMember2: "https://lh3.googleusercontent.com/aida-public/AB6AXuC0NHhk7VZUc2I0AME8XFwpU7wZ341ni6UPJy7OFNFPre8SjfsVFzbUa1V4CrqbgdRzyHgWBze4ENfRjdMih8Ufj0zBDFg5OwJ00bcyiS50j23IcnsYSp_ECE87E-568XHBTWx-AAV5l2X4TUy16mFWtXEKdk6Lvp2LRP-kL9M0t5XDX9MJgQsk7RUT55mxln5PeCwQbcgAnprfMqiQrN0sbh40xM6W70dagVg4pXvNwQ9wDcRiE3hiPO4dolSDLke2Sf72FJxdexxI",
+    teamMember3: "https://lh3.googleusercontent.com/aida-public/AB6AXuCq6THCIMSkfMkZaq4wSthKxREbTTg4Os5s9ijw_YhXUVpeXZ1zlm4880e9Ile10Sv8BZc9mdNmPmiLlt4a0KYyYgztXu_qX9XWIDEbltbi-X6NteTDFzxRn2r5J5XIoIvDcHlSF47n3hsoarRcIKfLuYNelOxVZ4cL-lRQF2mYlOgeOZeOeMJlZg0ZaAphzj-V9AEvuzLzEfhhLDAFBxS5D_idgeqzTkPNfomq5_749jtdyIh47ggO28ieeYhXFk5VPwwISCtCRKc3",
+    teamMember4: "https://lh3.googleusercontent.com/aida-public/AB6AXuDCNdha5v9qpRNMR6gZTKPrbSVy9_t4XR2IDydWYUpHW0IODK0Y0eOEjryNd_agTBKVgS_7b3tBpl59mXJLJ0up5W6wREqeL4WcQFuVISNDFKt35zkMUL1SDU3uKUFOWyv69lKOhiJCvJvONpAfB2d8CYixvubmwmDQNjLjLH_C7JJD8bmRbsDBs6ceMrq-oT6EYIuUh53bhzZrnlbM_uBVaSI79TNPrcPx3uZQzD2eX2dWEI1TtqUmRUqiumySrC3p5yzx_QGUKiU7",
+    // Testimonials
+    testimonial1: "https://lh3.googleusercontent.com/aida-public/AB6AXuDdqRNVmRsQaJ_tgGNDRxA_5LgzZ6nI1MwbdHYO2PecjAkamwEnQMTR5znOtGiMLQj0jmLRUO_SqwVa5gnlPJDSh0ebAHIiasLT_JtTvGYnf6GuqsGCG_ebjx3N6WNneQzZ_K1RJDi4XaO5MfrTWWlzNnYa2XJweTIue66ifDBAX6OAGS-jfC8z4Jmjg9K58TtCLjmOzftIDUWW_PjcU_4aRDjJn-G6BU_KVizeJHE5YWoZ4u_-NwUPnFXPt2rFWw3fHGrY_2ih3R_v",
+    testimonial2: "https://lh3.googleusercontent.com/aida-public/AB6AXuBSZQPqeyisGvD-hOvr-B1bnc_PWVVOT1OwJBEuKDPCtkxMXunRHMNeCd4AB0vzVzbso-wQ-ef4Gs6EUZ_QLsRaEgulsLeoaOb-Uj-1CBv0ZwsOA-NFZ2R13e98xPPaNZlv_4I2iDexgREPsTglzkYx5t0uEUwg3Uo-Hjtzjj5JgRQFviFaTxkAvLRudfeB9yX74IWhX8ImkAyz0DwKnHS6scTwtIpwuk-V3xPgiRHLiifPL1py0r37uz9bU0Y39wI7K-_zwguTVGgT",
+    testimonial3: "https://lh3.googleusercontent.com/aida-public/AB6AXuC1074rHjTtmqNlkuE7_qKylTqex095H7iMqUC6HDgKXKxtxUHUWBN3iHUHjU09pNdFRq-NKt0noQP76rraiLOEmtvpNimPbuxuN-xeSyeOZEmbirRqcw959e1eHfzCwjDkk3HkTJVAd8BIceFFlAeN2jspC61rAhpKBE5uDv2p-FKudVyoejWU8sO0ZSsa4BwxrvIcL8lnzaITb59P7S1h8zz7IK1RRaquCEdgn8Bd8Aif6Wu49zWJxGAf615ILNT755mlApPoYEx_",
+    // Articles
+    articleFeatured: "https://lh3.googleusercontent.com/aida-public/AB6AXuCSDaYUGVTMegSBqHi0_J_IJKKa5pOVmq3_B-LnMaaV9qJ4Hn3_A_boScln_S_kgbMvrXqiAUSwldE4IPiE0nxHhrKiIYGnekERn0hULMPEV6nHwnAyI7CQprHo0C8VNlgsslnS1ZVGlt_el6CE1oQ25_Ekn31lkp6NeBV3NV9F4z-tnMuwALJIaGd58dfYKIp0m7zeO3AOlE9k1Cvnd0RM1q0vreP72Kk2obT9SGIgRtVZsd6e3SH7Lu2OZUyN8V-gSGp2_p-8xxhs",
+    articleNutrition: "https://lh3.googleusercontent.com/aida-public/AB6AXuBFvqCh5gSABVQ8D_zeEx01ac2TGPv_fv8BpLU2zYEfQtIJfXHPvqeciAAUD86vziVJsTSjHIzdIgCLdjO-XaAYinUzZHWCpgiv2OTvCPVZw6jKw5gNjYOPbsUu6glhyfp-lxrFvQg7I8ZcMS9JFVc09AXCPvRpFzwa57K5GSNSfuZvK2NBhku_RO7FDnth7rUtjIKGOccUGdxHv1lm9wrpULWFeGOzCCjdCil6WHdpmXZBGlGw3Ae1OZA0rgVai9coXy7WVRorD9gN",
+    articleMental: "https://lh3.googleusercontent.com/aida-public/AB6AXuAMIv9wBOGuBCPchMZCxyg3DgV2STQ_HqlxvUPKtmC8MINeGkb73b__oy4834kYoee8pUsw-AWKNfeaYY2fMt1hsa5KkTu7c-F3Wb870ZfJZzAkxpXILoAJuvV65oyd4Zsh3mYP4gN1LZx7H5b7DhpgDiDa45GuBknYMRVp9DNs5iCKCOoTajMH46IBfKicsYGgEX9FnJCckICqYZurw36B7vZRUQCOElFd6bnZzM-Dp3FaA7DzlQa2oB3SliMmmCY1oP5ToBKK2PyB",
+    // Logo
+    logo: "/images/minimal-black-logo.png",
+};
+
+// Export for use in browser (global variable)
+if (typeof window !== 'undefined') {
+    window.IMAGE_URLS = IMAGE_URLS;
+}
+
