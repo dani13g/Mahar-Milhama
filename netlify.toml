@@ -1,7 +1,12 @@
+# Netlify configuration for static site
+# This is a static site with index.html at the root - no build step needed
 [build]
+  # No build command needed for static site
   command = ""
+  # Publish from root directory
   publish = "."
 
+# SPA routing - redirect all routes to index.html
 [[redirects]]
   from = "/*"
   to = "/index.html"
