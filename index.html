@@ -179,13 +179,15 @@
          * Features:
          * - Active route highlighting (uses React Router's useLocation)
          * - Sticky positioning with backdrop blur
-         * - Responsive design (mobile menu button visible on small screens)
+         * - Responsive design with working mobile menu
+         * - Mobile: Logo left, menu icon right (no "הצטרף עכשיו" button)
+         * - Desktop: Centered nav with "הצטרף עכשיו" button
          * - Accessibility: ARIA labels for screen readers
-         * 
-         * Note: Mobile menu functionality (toggle) not yet implemented.
          */
         const Navbar = () => {
             const location = useLocation();
+            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+            
             // Use utility function for route checking (if available, fallback to inline)
             const isActive = (path) => {
                 if (typeof window !== 'undefined' && window.RoutingUtils) {
@@ -194,32 +196,117 @@
                 return location.pathname === path;
             };
 
+            // Close mobile menu when route changes
+            useEffect(() => {
+                setIsMobileMenuOpen(false);
+            }, [location.pathname]);
+
+            // Close mobile menu when clicking outside
+            useEffect(() => {
+                const handleClickOutside = (event) => {
+                    if (isMobileMenuOpen && !event.target.closest('nav')) {
+                        setIsMobileMenuOpen(false);
+                    }
+                };
+                if (isMobileMenuOpen) {
+                    document.addEventListener('click', handleClickOutside);
+                    return () => document.removeEventListener('click', handleClickOutside);
+                }
+            }, [isMobileMenuOpen]);
+
+            const toggleMobileMenu = () => {
+                setIsMobileMenuOpen(!isMobileMenuOpen);
+            };
+
+            const navLinks = [
+                { path: ROUTES.HOME, label: 'דף הבית', ariaLabel: 'עבור לדף הבית' },
+                { path: ROUTES.TEAM, label: 'הצוות', ariaLabel: 'עבור לדף הצוות' },
+                { path: ROUTES.METHOD, label: 'השיטה', ariaLabel: 'עבור לדף השיטה' },
+                { path: ROUTES.ARTICLES, label: 'מאמרים', ariaLabel: 'עבור לדף המאמרים' },
+                { path: ROUTES.CONTACT, label: 'צור קשר', ariaLabel: 'עבור לדף יצירת קשר' },
+                { path: ROUTES.FAQ, label: 'שאלות נפוצות', ariaLabel: 'עבור לדף שאלות נפוצות' }
+            ];
+
             return (
                 <nav className="sticky top-0 z-50 border-b border-white/10 bg-background-dark/95 backdrop-blur-md" aria-label="ניווט ראשי">
                     <div className="flex justify-center w-full">
                         <div className="flex max-w-[1400px] flex-1 flex-col">
-                            <header className="flex items-center whitespace-nowrap px-6 py-4 lg:px-10">
-                                <Link to="/" className="flex items-center text-white flex-shrink-0" aria-label="עבור לדף הבית">
-                                    <img src={IMAGE_URLS.logo} alt="מחר מלחמה - לוגו" className="h-10 w-auto" loading="eager" />
-                            </Link>
+                            <header className="flex items-center justify-between whitespace-nowrap px-6 py-4 lg:px-10">
+                                {/* Mobile: Menu icon on left | Desktop: Logo on left */}
+                                <div className="flex items-center flex-shrink-0">
+                                    {/* Mobile: Menu toggle button - Left side */}
+                                    <button 
+                                        className="md:hidden text-white hover:text-primary transition-colors" 
+                                        aria-label={isMobileMenuOpen ? "סגור תפריט" : "פתח תפריט"} 
+                                        aria-expanded={isMobileMenuOpen}
+                                        onClick={toggleMobileMenu}
+                                    >
+                                        <span className="material-symbols-outlined" aria-hidden="true">
+                                            {isMobileMenuOpen ? 'close' : 'menu'}
+                                        </span>
+                                    </button>
+                                    
+                                    {/* Logo - Hidden on mobile (shown on right), visible on desktop (left) */}
+                                    <Link to="/" className="hidden md:flex items-center text-white flex-shrink-0" aria-label="עבור לדף הבית">
+                                        <img src={IMAGE_URLS.logo} alt="מחר מלחמה - לוגו" className="h-10 w-auto" loading="eager" />
+                                    </Link>
+                                </div>
+                                
+                                {/* Desktop Navigation - Centered */}
                                 <div className="hidden md:flex flex-1 justify-center gap-8 items-center" role="navigation" aria-label="תפריט ניווט">
-                                    <Link className={`text-sm font-bold transition-colors ${isActive(ROUTES.HOME) ? 'text-primary' : 'text-gray-300 hover:text-white'}`} to={ROUTES.HOME} aria-label="עבור לדף הבית">דף הבית</Link>
-                                    <Link className={`text-sm font-bold transition-colors ${isActive(ROUTES.TEAM) ? 'text-primary' : 'text-gray-300 hover:text-white'}`} to={ROUTES.TEAM} aria-label="עבור לדף הצוות">הצוות</Link>
-                                    <Link className={`text-sm font-bold transition-colors ${isActive(ROUTES.METHOD) ? 'text-primary' : 'text-gray-300 hover:text-white'}`} to={ROUTES.METHOD} aria-label="עבור לדף השיטה">השיטה</Link>
-                                    <Link className={`text-sm font-bold transition-colors ${isActive(ROUTES.ARTICLES) ? 'text-primary' : 'text-gray-300 hover:text-white'}`} to={ROUTES.ARTICLES} aria-label="עבור לדף המאמרים">מאמרים</Link>
-                                    <Link className={`text-sm font-bold transition-colors ${isActive(ROUTES.CONTACT) ? 'text-primary' : 'text-gray-300 hover:text-white'}`} to={ROUTES.CONTACT} aria-label="עבור לדף יצירת קשר">צור קשר</Link>
-                                    <Link className={`text-sm font-bold transition-colors ${isActive(ROUTES.FAQ) ? 'text-primary' : 'text-gray-300 hover:text-white'}`} to={ROUTES.FAQ} aria-label="עבור לדף שאלות נפוצות">שאלות נפוצות</Link>
-                            </div>
+                                    {navLinks.map((link) => (
+                                        <Link 
+                                            key={link.path}
+                                            className={`text-sm font-bold transition-colors ${isActive(link.path) ? 'text-primary' : 'text-gray-300 hover:text-white'}`} 
+                                            to={link.path} 
+                                            aria-label={link.ariaLabel}
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    ))}
+                                </div>
+                                
+                                {/* Mobile: Logo on right | Desktop: "הצטרף עכשיו" button */}
                                 <div className="flex items-center gap-4 flex-shrink-0">
-                                    <button className="group relative px-6 py-2 bg-transparent overflow-hidden rounded-none border border-white/30 hover:border-primary transition-all duration-300" aria-label="הצטרף עכשיו">
+                                    {/* Mobile: Logo on right side */}
+                                    <Link to="/" className="md:hidden flex items-center text-white flex-shrink-0" aria-label="עבור לדף הבית">
+                                        <img src={IMAGE_URLS.logo} alt="מחר מלחמה - לוגו" className="h-10 w-auto" loading="eager" />
+                                    </Link>
+                                    
+                                    {/* Desktop: "הצטרף עכשיו" button - Hidden on mobile */}
+                                    <button className="hidden md:flex group relative px-6 py-2 bg-transparent overflow-hidden rounded-none border border-white/30 hover:border-primary transition-all duration-300" aria-label="הצטרף עכשיו">
                                         <div className="absolute inset-0 w-0 bg-primary transition-all duration-[250ms] ease-out group-hover:w-full"></div>
                                         <span className="relative text-white text-sm font-black tracking-widest uppercase group-hover:text-white">הצטרף עכשיו</span>
                                     </button>
-                                    <button className="md:hidden text-white hover:text-primary" aria-label="פתח תפריט" aria-expanded="false">
-                                    <span className="material-symbols-outlined" aria-hidden="true">menu</span>
-                                </button>
-                            </div>
+                                </div>
                             </header>
+                            
+                            {/* Mobile Menu - Slide down animation */}
+                            <div 
+                                className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+                                    isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                                }`}
+                                role="navigation"
+                                aria-label="תפריט ניווט נייד"
+                            >
+                                <div className="px-6 py-4 bg-background-dark border-t border-white/10 flex flex-col gap-4">
+                                    {navLinks.map((link) => (
+                                        <Link 
+                                            key={link.path}
+                                            className={`text-base font-bold py-2 transition-colors border-r-4 pr-4 ${
+                                                isActive(link.path) 
+                                                    ? 'text-primary border-primary' 
+                                                    : 'text-gray-300 border-transparent hover:text-white hover:border-primary/50'
+                                            }`} 
+                                            to={link.path} 
+                                            aria-label={link.ariaLabel}
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </nav>
@@ -256,9 +343,6 @@
                                     </a>
                                     <a className="size-10 bg-white/5 hover:bg-primary text-white flex items-center justify-center transition-all border border-white/10" href="#">
                                         <svg className="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
-                                    </a>
-                                    <a className="size-10 bg-white/5 hover:bg-primary text-white flex items-center justify-center transition-all border border-white/10" href="#">
-                                        <svg className="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.996 0c-6.628 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
                                     </a>
                             </div>
                             </div>
@@ -336,21 +420,22 @@
                     {/* Hero Section */}
                     <div className="relative w-full bg-background-dark min-h-[90vh] flex flex-col">
                         <div className="absolute inset-0 z-0">
-                            <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/80 to-background-dark/60 z-10"></div>
+                            <div className="w-full h-full bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url('${IMAGE_URLS.heroBackground}')` }}></div>
+                            <div className="absolute inset-0 bg-black/40 z-10"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/80 to-background-dark/60 z-20"></div>
                             <div className="absolute inset-0 grid-bg opacity-30 z-0"></div>
-                            <div className="w-full h-full bg-cover bg-center bg-no-repeat opacity-50 grayscale mix-blend-overlay" style={{ backgroundImage: `url('${IMAGE_URLS.heroHome}')` }}></div>
                             </div>
-                        <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 py-20 lg:py-32">
-                            <div className="max-w-[1000px] w-full flex flex-col gap-8 items-center text-center">
+                        <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 lg:px-8 py-20 lg:py-32">
+                            <div className="max-w-[1200px] w-full flex flex-col gap-8 items-center text-center px-8 lg:px-12">
                                 <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/50 text-primary text-xs font-black tracking-[0.2em] uppercase backdrop-blur-sm">
                                     <span className="size-2 rounded-full bg-primary animate-pulse"></span>
                                     הרשמה לסימולציית יום סיירות אוק׳ 26 נפתחה!
                         </div>
-                                <h1 className="text-white text-6xl lg:text-8xl font-black leading-[0.9] tracking-tight drop-shadow-2xl uppercase italic">
+                                <h1 className="text-white text-6xl lg:text-8xl font-black tracking-tight drop-shadow-2xl uppercase italic w-full px-8 pr-12" style={{ lineHeight: '84px' }}>
                                     מחר מלחמה.<br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-red-500 to-red-800">האם אתה מוכן?</span>
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-red-500 to-red-800 inline-block pr-4" style={{ backgroundImage: 'linear-gradient(135deg, rgba(230, 26, 26, 1) 0%, rgba(171, 23, 23, 1) 50%, rgba(217, 84, 84, 1) 100%)', WebkitBackgroundClip: 'text', color: 'transparent', paddingRight: '1rem' }}>האם אתה מוכן?</span>
                                 </h1>
-                                <h2 className="text-gray-400 text-lg lg:text-2xl font-bold max-w-2xl mx-auto leading-relaxed border-l-4 border-primary pl-4">
+                                <h2 className="text-gray-400 text-base lg:text-2xl font-bold max-w-2xl mx-auto border-r-4 border-primary pr-4" style={{ lineHeight: '28px' }}>
                                     כושר קרבי שמוציא ממך את הגרסה הכי טובה שלך. <br />בלי תירוצים. בלי וויתורים. רק תוצאות.
                                 </h2>
                                 <div className="w-full max-w-4xl bg-black/60 backdrop-blur-md border border-white/10 p-1 lg:p-2 shadow-2xl mt-8 relative group">
@@ -358,21 +443,17 @@
                                     <div className="absolute -bottom-1 -right-1 size-4 border-b-2 border-r-2 border-primary"></div>
                                     <form className="flex flex-col lg:flex-row gap-2 w-full" onSubmit={e => e.preventDefault()}>
                                         <div className="relative flex-1">
-                                            <input className="w-full h-16 px-6 bg-white/5 text-white font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none" placeholder="שם מלא" required type="text" />
+                                            <input className="w-full h-14 px-6 bg-white/5 text-white font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none" placeholder="שם מלא" required type="text" />
                                         </div>
                                         <div className="relative flex-1">
-                                            <input className="w-full h-16 px-6 bg-white/5 text-white font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none" placeholder="טלפון נייד" required type="tel" />
+                                            <input className="w-full h-14 px-6 bg-white/5 text-white font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none text-right" placeholder="טלפון נייד" required type="tel" />
                                         </div>
-                                        <button className="flex-none h-16 px-10 bg-primary hover:bg-primary-hover active:scale-[0.98] transition-all rounded-none text-white text-xl font-black tracking-wider shadow-[0_0_30px_rgba(230,26,26,0.3)] flex items-center justify-center gap-3 uppercase clip-diagonal" aria-label="קבע אימון ניסיון">
-                                            <span>קבע אימון ניסיון</span>
-                                            <span className="material-symbols-outlined text-[28px] font-bold rotate-180" aria-hidden="true">arrow_right_alt</span>
+                                        <button className="flex-none h-14 px-10 bg-primary hover:bg-primary-hover active:scale-[0.98] transition-all rounded-none text-white text-xl font-black tracking-wider shadow-[0_0_30px_rgba(230,26,26,0.3)] flex items-center justify-center gap-3 uppercase" aria-label="קבע אימון ניסיון">
+                                            <span className="text-lg">קבע אימון ניסיון</span>
+                                            <span className="material-symbols-outlined text-[24px] font-bold rotate-180" aria-hidden="true">arrow_right_alt</span>
                                         </button>
                                     </form>
                                 </div>
-                                <p className="text-gray-600 text-xs text-center flex items-center justify-center gap-2 font-mono uppercase tracking-wider">
-                                    <span className="material-symbols-outlined text-[16px] text-accent">lock</span>
-                                    הפרטים שלך מוגנים ומוצפנים
-                                </p>
                                 </div>
                             </div>
                         <div className="absolute bottom-0 w-full h-32 bg-gradient-to-t from-background-dark to-transparent z-10"></div>
@@ -442,7 +523,7 @@
 
                     {/* Testimonials Section */}
                     <div className="bg-background-dark py-20 lg:py-32 bg-texture relative overflow-hidden">
-                        <div className="absolute inset-0 bg-black/80"></div>
+                        <div className="absolute inset-0 bg-black/90"></div>
                         <div className="max-w-[1200px] mx-auto px-6 lg:px-10 relative z-10">
                             <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-16 gap-6">
                                 <div>
@@ -450,7 +531,7 @@
                                         <span className="w-8 h-[3px] bg-primary block"></span>
                                         עדויות מהשטח
                                     </h2>
-                                    <h3 className="text-white text-4xl lg:text-5xl font-black uppercase italic">הלוחמים מדברים</h3>
+                                    <h3 className="text-white text-4xl lg:text-5xl font-black uppercase italic">בוגרים מספרים</h3>
                             </div>
                                 <div className="flex gap-3">
                                     <button className="size-14 bg-black border border-white/20 hover:border-primary hover:text-primary text-white flex items-center justify-center transition-all" aria-label="עבור לעדות הבאה">
@@ -528,13 +609,16 @@
                     {/* Final CTA Section */}
                     <div className="bg-primary relative overflow-hidden py-24">
                         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 mix-blend-multiply"></div>
-                        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/80"></div>
+                        <div className="absolute right-0 bottom-0 w-full h-full bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url('${IMAGE_URLS.ctaBackground}')` }}>
+                            <div className="absolute inset-0 bg-black/60"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/80"></div>
+                        </div>
                         <div className="max-w-[800px] mx-auto px-6 text-center relative z-10">
                             <h2 className="text-white text-4xl md:text-6xl font-black mb-6 uppercase italic drop-shadow-lg">האם יש לך את מה שצריך?</h2>
                             <p className="text-white/90 text-xl font-bold mb-10 max-w-2xl mx-auto">
                                 הצוותים שלנו מתמלאים במהירות. אל תחכה לרגע האחרון. <br />הצטרף לטובים ביותר עכשיו.
                             </p>
-                            <button className="bg-white text-primary hover:bg-black hover:text-white transition-all px-12 py-5 rounded-none font-black text-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] border-2 border-black transform duration-100 uppercase tracking-wider" aria-label="שריין מקום לאימון ניסיון">
+                            <button className="bg-white text-primary hover:bg-black hover:text-white transition-all px-12 py-5 rounded-none font-black text-lg shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] border-2 border-black transform duration-100 uppercase tracking-wider" aria-label="שריין מקום לאימון ניסיון">
                                 שריין מקום לאימון ניסיון
                             </button>
                         </div>
@@ -587,7 +671,7 @@
                                 <span className="block text-white font-black mt-2 uppercase tracking-wide">בלי תירוצים. בלי וויתורים.</span>
                             </p>
                             <div className="pt-8 flex flex-col sm:flex-row gap-5 justify-center">
-                                <button className="group cursor-pointer inline-flex items-center justify-center gap-3 h-14 px-10 bg-white text-black hover:bg-accent transition-all text-lg font-black tracking-wider uppercase border-2 border-white clip-corner shadow-[0_0_20px_rgba(255,255,255,0.2)]" aria-label="קבע אימון ניסיון">
+                                <button className="group cursor-pointer inline-flex items-center justify-center gap-3 h-14 px-10 bg-white text-black hover:bg-accent transition-all text-lg font-black tracking-wider uppercase border-2 border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]" aria-label="קבע אימון ניסיון">
                                     <span>קבע אימון ניסיון</span>
                                     <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform font-bold text-black" aria-hidden="true">arrow_back</span>
                                 </button>
@@ -671,7 +755,7 @@
                                                         <span>{badge}</span>
                                                     </div>
                                                 ))}
-                                                <button className="mt-4 w-full h-11 border border-zinc-700 bg-transparent hover:bg-white hover:border-white hover:text-black text-white text-sm font-black transition-all uppercase tracking-wider clip-corner" aria-label={`צפה בפרופיל של ${member.name}`}>
+                                                <button className="mt-4 w-full h-11 border border-zinc-700 bg-transparent hover:bg-white hover:border-white hover:text-black text-white text-sm font-black transition-all uppercase tracking-wider" aria-label={`צפה בפרופיל של ${member.name}`}>
                                                     צפה בפרופיל &gt;&gt;
                                                 </button>
                                             </div>
@@ -688,7 +772,7 @@
                                         </div>
                                         <h3 className="text-white text-4xl font-black uppercase mb-3 italic">חושב שאתה מתאים?</h3>
                                         <p className="text-zinc-400 text-base max-w-md">אנחנו תמיד מחפשים מדריכים יוצאי יחידות מובחרות שיצטרפו למשימה.</p>
-                                        <button className="mt-8 px-10 py-4 bg-accent text-black hover:bg-white font-black text-sm uppercase tracking-[0.2em] transition-all clip-corner shadow-[0_0_20px_rgba(204,255,0,0.4)] hover:shadow-[0_0_40px_rgba(255,255,255,0.6)]" aria-label="שלח קורות חיים להצטרפות לצוות">
+                                        <button className="mt-8 px-10 py-4 bg-accent text-black hover:bg-white font-black text-sm uppercase tracking-[0.2em] transition-all shadow-[0_0_20px_rgba(204,255,0,0.4)] hover:shadow-[0_0_40px_rgba(255,255,255,0.6)]" aria-label="שלח קורות חיים להצטרפות לצוות">
                                             שלח קורות חיים
                                         </button>
                                     </div>
@@ -710,7 +794,7 @@
                                 <span className="text-accent font-bold">מספר המקומות מוגבל בהחלט.</span>
                             </p>
                             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-6">
-                                <button className="w-full sm:w-auto h-20 px-14 bg-primary hover:bg-white text-black font-black text-2xl shadow-[0_0_30px_rgba(255,42,42,0.4)] hover:shadow-[0_0_50px_rgba(255,255,255,0.6)] transition-all hover:-translate-y-1 flex items-center justify-center gap-4 uppercase clip-corner">
+                                <button className="w-full sm:w-auto h-20 px-14 bg-primary hover:bg-white text-black font-black text-2xl shadow-[0_0_30px_rgba(255,42,42,0.4)] hover:shadow-[0_0_50px_rgba(255,255,255,0.6)] transition-all hover:-translate-y-1 flex items-center justify-center gap-4 uppercase">
                                     <span>שריין מקום עכשיו</span>
                                     <span className="material-symbols-outlined font-black">arrow_back</span>
                                 </button>
@@ -767,11 +851,11 @@
                                     בנייה הדרגתית של הלוחם המודרני משלב הגיבוש ועד למסלול.
                                 </p>
                                 <div className="mt-10 flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
-                                    <button className="clip-corner group flex min-w-[200px] cursor-pointer items-center justify-center h-14 px-8 bg-primary text-white text-lg font-black tracking-wider transition-all hover:bg-white hover:text-black">
+                                    <button className="group flex min-w-[200px] cursor-pointer items-center justify-center h-14 px-8 bg-primary text-white text-lg font-black tracking-wider transition-all hover:bg-white hover:text-black">
                                         התחל מסע
                                         <span className="material-symbols-outlined mr-2 group-hover:translate-x-1 transition-transform">arrow_back</span>
                                     </button>
-                                    <button className="clip-corner flex min-w-[200px] cursor-pointer items-center justify-center h-14 px-8 bg-transparent border border-white/30 text-white text-lg font-bold tracking-wider hover:bg-white/5 hover:border-primary transition-all">
+                                    <button className="flex min-w-[200px] cursor-pointer items-center justify-center h-14 px-8 bg-transparent border border-white/30 text-white text-lg font-bold tracking-wider hover:bg-white/5 hover:border-primary transition-all">
                                         למד עוד
                                     </button>
                         </div>
@@ -979,10 +1063,10 @@
                                         אנחנו מחפשים רק את אלו שמוכנים לעבוד קשה, להתמיד ולא לוותר לעצמם. מקומות מוגבלים לצוותים הקרובים.
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
-                                        <button className="clip-corner flex w-full sm:w-auto min-w-[240px] cursor-pointer items-center justify-center h-16 px-8 bg-primary text-white text-xl font-black uppercase tracking-wider transition-all hover:bg-white hover:text-primary shadow-[0_0_30px_rgba(212,17,17,0.3)] hover:shadow-[0_0_50px_rgba(212,17,17,0.6)]">
+                                        <button className="flex w-full sm:w-auto min-w-[240px] cursor-pointer items-center justify-center h-16 px-8 bg-primary text-white text-xl font-black uppercase tracking-wider transition-all hover:bg-white hover:text-primary shadow-[0_0_30px_rgba(212,17,17,0.3)] hover:shadow-[0_0_50px_rgba(212,17,17,0.6)]">
                                             הירשם לאימון ניסיון
                                         </button>
-                                        <Link to="/contact" className="clip-corner flex w-full sm:w-auto min-w-[240px] cursor-pointer items-center justify-center h-16 px-8 border border-white/20 hover:border-primary hover:bg-white/5 text-white text-xl font-bold uppercase tracking-wider transition-all">
+                                        <Link to="/contact" className="flex w-full sm:w-auto min-w-[240px] cursor-pointer items-center justify-center h-16 px-8 border border-white/20 hover:border-primary hover:bg-white/5 text-white text-xl font-bold uppercase tracking-wider transition-all">
                                             צור קשר עם המדריך
                                         </Link>
                                 </div>
@@ -1053,7 +1137,7 @@
                                                 value={searchQuery}
                                                 onChange={(e) => setSearchQuery(e.target.value)}
                                             />
-                                            <button className="bg-white hover:bg-gray-200 text-black px-8 text-base font-black uppercase transition-colors tracking-wide clip-path-slant ml-[-20px] my-2 mr-2">
+                                            <button className="bg-white hover:bg-gray-200 text-black px-8 text-base font-black uppercase transition-colors tracking-wide ml-[-20px] my-2 mr-2">
                                                 חפש
                                             </button>
                                         </div>
@@ -1200,7 +1284,7 @@
                                 <p className="text-gray-400 text-lg md:text-xl mb-12 max-w-xl mx-auto leading-relaxed">קבל את המאמרים החדשים ביותר, טיפים לגיבושים ועדכונים ישירות למייל שלך. בלי בולשיט.</p>
                                 <form className="flex flex-col sm:flex-row gap-0 max-w-xl mx-auto border border-white/20 p-1 bg-surface-dark" onSubmit={(e) => e.preventDefault()}>
                                     <input className="flex-1 bg-transparent px-6 py-4 text-white placeholder-gray-600 focus:outline-none text-lg font-medium" placeholder="הכנס את המייל שלך..." type="email" />
-                                    <button className="bg-primary hover:bg-white hover:text-black text-white font-black py-4 px-10 uppercase tracking-widest transition-colors whitespace-nowrap clip-path-slant my-1 mx-1 sm:my-0 sm:mx-0">
+                                    <button className="bg-primary hover:bg-white hover:text-black text-white font-black py-4 px-10 uppercase tracking-widest transition-colors whitespace-nowrap my-1 mx-1 sm:my-0 sm:mx-0">
                                         אני בפנים
                                     </button>
                                 </form>

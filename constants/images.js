@@ -38,6 +38,10 @@ const IMAGE_URLS = {
     articleMental: "https://lh3.googleusercontent.com/aida-public/AB6AXuAMIv9wBOGuBCPchMZCxyg3DgV2STQ_HqlxvUPKtmC8MINeGkb73b__oy4834kYoee8pUsw-AWKNfeaYY2fMt1hsa5KkTu7c-F3Wb870ZfJZzAkxpXILoAJuvV65oyd4Zsh3mYP4gN1LZx7H5b7DhpgDiDa45GuBknYMRVp9DNs5iCKCOoTajMH46IBfKicsYGgEX9FnJCckICqYZurw36B7vZRUQCOElFd6bnZzM-Dp3FaA7DzlQa2oB3SliMmmCY1oP5ToBKK2PyB",
     // Logo
     logo: "/images/minimal-black-logo.png",
+    // CTA Section Background
+    ctaBackground: "/images/soldiersimg2.jpg",
+    // Hero Section Background
+    heroBackground: "/images/soldiersimg3.jpg",
 };
 
 // Export for use in browser (global variable)
