@@ -41,7 +41,7 @@ const IMAGE_URLS = {
     // CTA Section Background
     ctaBackground: "/images/soldiersimg2.jpg",
     // Hero Section Background
-    heroBackground: "/images/soldiersimg3.jpg",
+    heroBackground: "/images/HeroBGSunset.png",
 };
 
 // Export for use in browser (global variable)

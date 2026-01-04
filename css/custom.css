@@ -199,3 +199,57 @@
 /* Example: Complex animations or state-based styles */
 /* .hero-section { ... } */
 
+/* ==========================================================================
+   5. MOBILE OPTIMIZATIONS
+   ========================================================================== */
+
+/* Ensure touch targets are at least 44x44px for accessibility */
+@media (max-width: 768px) {
+    /* Improve text readability on mobile */
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Better line heights for mobile readability */
+    h1, h2, h3, h4, h5, h6 {
+        line-height: 1.2;
+    }
+    
+    /* Optimize button touch targets */
+    button, a[role="button"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Improve form input spacing on mobile */
+    input, textarea, select {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    /* Better spacing for mobile cards */
+    .group {
+        padding: 1rem;
+    }
+    
+    /* Optimize image loading */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+/* Prevent horizontal scroll on mobile */
+@media (max-width: 640px) {
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+    }
+    
+    /* Reduce padding on very small screens */
+    .px-6 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
