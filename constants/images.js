@@ -16,7 +16,7 @@
 const IMAGE_URLS = {
     // Hero/Background Images
     heroHome: "https://lh3.googleusercontent.com/aida-public/AB6AXuANbn6xOr3O5G2g8_J7B_BrJa6Uwtaz-hMYryM30fUThKcMa-CqZFcxpw0Ju8-lBaSo9bvJWI5YrXIXLE7IXuVDhBy2-oeoohpufS5TOEEt1BchTWIJON7BXz5Sqr7qSHElQycoeTA3Jl61WRIorpgIDMD66lIGxTauwAnf6zRn-4nFFla00Hdf6UFJOv-k1SjXenx0gnPDyJwEKjxIHAllj8QUTiXSSQvCaGj1eo6xxF6KhPa12BOJ7GbV18kGQ2ivYoxvnTUNBPGR",
-    heroTeam: "https://lh3.googleusercontent.com/aida-public/AB6AXuCM9n8lNfS--lq4nS6aRpEFFnd_arNw4dpvT5-i1IEyDnKwwMdRy3RmM3o8EmwRn69LggApZGy5ciHL8Mp8p4kzu5QD70E3p9kbcfKxcvMXsTS9FnrGPnc3eCjoCLDYq6Raxxp5DBgVZbkIC3eucBK-exDMGN-8V1-nrdiOdithU99FPQgdCOtnw3idvX1aE5bHSuxEluQ8Do3rb9gVnnd4vP26Aem0fbG-MznvAvkt0TQGzMd-tShDljWYXP792kuxf-pzPRnB12Uk",
+    heroTeam: "/images/eilat_team_night.jpg",
     heroMethod: "https://lh3.googleusercontent.com/aida-public/AB6AXuBQdZ0Zk4zwrTuPJdXwfkAeMyt3xIsEdBDM-85qMOIwkG9cLLOeFscM3q9obi6WQWl_2P1eaPlAA3SjD9oBO5G82mQ4Mc95cGzNkslcLdPuNe6E1PkwGRl-nwt42hx1dCWNqITqR-_Z0c2TyCC6vqZkHqflC25a5LdpXEedvKkftNB22ZpbcVH4o_53bCDR--ezBu_tCIxY2A-f1qmoXJPjiR4XYCRL0RIabmWir3hUXjjRRHRsj3TTblgdM8i0tDOGcJiAfQ72hMNF",
     heroArticles: "https://lh3.googleusercontent.com/aida-public/AB6AXuAyWjgBdhLQkVyM6NBO6xzJLXHmNDrATl3odDav6UadmeegZAq8ozZ5ybl_0M7rly5pDLT_ZOK2cFcVB8thfUjXpVVaszoNckCfGd4WytAJdG0kwptQcaY8ryKbl5hrI_QHpVLmeZQ-x7FTypzIKC7IJnV7tnVh9AH6PImErIawPBhfp85P7qtAPJ2OrBpNCuDUAMR7vlPmQTwQufN8kNO9fJa7-qcDJWMjen7CyOZgddyqWpWfRrYl4DuP4_EzCjDcqkYhuInWyhpb",
     heroContact: "https://lh3.googleusercontent.com/aida-public/AB6AXuCL7Whoyd_df4TMczDa9-X3GpviE5Kbc0USVxdiLU-MAkgQ9eL37mZqMINILoa8gdPrJdN4wLxsktihZ65niH1aim4BA3YRC9SJ-tywrRn4CKZ3m2BOC1MBZtT76lJgErlmpWwE3mUj-2f-Zh4ycInVRT1z5t4tmI48Regn_AuPuYdqeDV9-2Us8MG0K3Rd09lx7ukQG9qfU3qdoXBFFuLSy1bjKQbAOONq5gwC2ypIceieSd_XE04WiAtcD7-pt7doovlKqpDHdzUR",
@@ -39,9 +39,19 @@ const IMAGE_URLS = {
     // Logo
     logo: "/images/minimal-black-logo.png",
     // CTA Section Background
-    ctaBackground: "/images/soldiersimg2.jpg",
+    ctaBackground: "/images/team_dune.jpg",
     // Hero Section Background
     heroBackground: "/images/HeroBGSunset.png",
+    // Method Page Hero Background
+    heroMethodBackground: "/images/sea_training.jpg",
+    // Gallery Images
+    galleryImages: [
+        "/images/sea_training.jpg",
+        "/images/soldiersimg2.jpg",
+        "/images/soldiersimg3.jpg",
+        "/images/team_dune.jpg",
+        "/images/HeroBGSunset.png"
+    ],
 };
 
 // Export for use in browser (global variable)

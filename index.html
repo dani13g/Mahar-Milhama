@@ -399,6 +399,124 @@
         };
 
         /**
+         * ImageGallery Component
+         * 
+         * Animated slideshow gallery with:
+         * - Auto-play functionality
+         * - Navigation arrows
+         * - Indicator dots
+         * - Smooth transitions
+         */
+        const ImageGallery = () => {
+            const galleryImages = (typeof window !== 'undefined' && window.IMAGE_URLS && window.IMAGE_URLS.galleryImages) ? window.IMAGE_URLS.galleryImages : [];
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [isPaused, setIsPaused] = useState(false);
+
+            useEffect(() => {
+                if (galleryImages.length === 0 || isPaused) return;
+                
+                const interval = setInterval(() => {
+                    setCurrentIndex((prevIndex) => (prevIndex + 1) % galleryImages.length);
+                }, 5000); // Change image every 5 seconds
+
+                return () => clearInterval(interval);
+            }, [galleryImages.length, isPaused]);
+
+            const goToSlide = (index) => {
+                setCurrentIndex(index);
+                setIsPaused(true);
+                setTimeout(() => setIsPaused(false), 3000); // Resume after 3 seconds
+            };
+
+            const goToPrevious = () => {
+                setCurrentIndex((prevIndex) => (prevIndex - 1 + galleryImages.length) % galleryImages.length);
+                setIsPaused(true);
+                setTimeout(() => setIsPaused(false), 3000);
+            };
+
+            const goToNext = () => {
+                setCurrentIndex((prevIndex) => (prevIndex + 1) % galleryImages.length);
+                setIsPaused(true);
+                setTimeout(() => setIsPaused(false), 3000);
+            };
+
+            if (galleryImages.length === 0) return null;
+
+            return (
+                <section className="bg-background-dark py-16 sm:py-20 md:py-24 border-t border-white/10">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center mb-12 sm:mb-16">
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/50 text-primary text-xs font-black tracking-[0.2em] uppercase backdrop-blur-sm mb-6">
+                                <span className="size-2 rounded-full bg-primary animate-pulse"></span>
+                                גלריית תמונות
+                            </div>
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 uppercase tracking-tighter">
+                                רגעים מהשטח
+                            </h2>
+                            <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto border-r-2 border-primary pr-4">
+                                הצצה לאימונים, לאתגרים ולרגעים הבלתי נשכחים
+                            </p>
+                        </div>
+
+                        <div className="relative max-w-6xl mx-auto">
+                            {/* Gallery Container */}
+                            <div className="relative overflow-hidden bg-black border border-white/10 shadow-2xl">
+                                <div 
+                                    className="flex flex-nowrap transition-transform duration-700 ease-in-out"
+                                    style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                                >
+                                    {galleryImages.map((image, index) => (
+                                        <div key={index} className="min-w-full relative" style={{ aspectRatio: '16/9' }}>
+                                            <img 
+                                                src={image} 
+                                                alt={`Gallery image ${index + 1}`}
+                                                className="w-full h-full object-cover"
+                                                loading={index === 0 ? "eager" : "lazy"}
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Navigation Arrows */}
+                                <button
+                                    onClick={goToPrevious}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/60 hover:bg-black/80 border border-white/20 hover:border-primary text-white p-3 transition-all backdrop-blur-sm"
+                                    aria-label="Previous image"
+                                >
+                                    <span className="material-symbols-outlined">chevron_right</span>
+                                </button>
+                                <button
+                                    onClick={goToNext}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/60 hover:bg-black/80 border border-white/20 hover:border-primary text-white p-3 transition-all backdrop-blur-sm"
+                                    aria-label="Next image"
+                                >
+                                    <span className="material-symbols-outlined">chevron_left</span>
+                                </button>
+
+                                {/* Indicator Dots */}
+                                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                                    {galleryImages.map((_, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => goToSlide(index)}
+                                            className={`h-2 transition-all ${
+                                                index === currentIndex 
+                                                    ? 'w-8 bg-primary' 
+                                                    : 'w-2 bg-white/30 hover:bg-white/50'
+                                            }`}
+                                            aria-label={`Go to slide ${index + 1}`}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        /**
          * HomePage Component
          * 
          * Main landing page featuring:
@@ -407,6 +525,7 @@
          * - "Why Choose Us" section
          * - Success stories/testimonials
          * - Blog preview section
+         * - Image gallery slideshow
          * - Call-to-action section
          */
         const HomePage = () => {
@@ -418,24 +537,24 @@
                     <main>
 
                     {/* Hero Section */}
-                    <div className="relative w-full bg-background-dark min-h-[90vh] flex flex-col">
+                    <div className="relative w-full bg-background-dark h-screen flex flex-col">
                         <div className="absolute inset-0 z-0">
                             <div className="w-full h-full bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url('/images/HeroBGSunset.png')` }}></div>
                             <div className="absolute inset-0 bg-black/20 z-10"></div>
                             <div className="absolute inset-0 bg-gradient-to-t from-background-dark/60 via-background-dark/50 to-background-dark/40 z-20"></div>
                             <div className="absolute inset-0 grid-bg opacity-20 z-0"></div>
                             </div>
-                        <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-[72px]">
-                            <div className="max-w-[1200px] w-full flex flex-col gap-6 sm:gap-8 items-center text-center px-4 sm:px-6 lg:px-12">
+                        <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+                            <div className="max-w-[1200px] w-full flex flex-col gap-6 sm:gap-8 items-center text-center px-0 sm:px-6 lg:px-12">
                                 <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/50 text-primary text-xs font-black tracking-[0.2em] uppercase backdrop-blur-sm">
                                     <span className="size-2 rounded-full bg-primary animate-pulse"></span>
-                                    הרשמה לסימולציית יום סיירות אוק׳ 26 נפתחה!
+                                    הרשמה לסימולציית יום סיירות נפתחה!
                         </div>
-                                <h1 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black tracking-tight drop-shadow-2xl uppercase italic w-full px-3 lg:px-8 lg:pr-12 text-center leading-[1.1]">
+                                <h1 className="text-white text-[3.5rem] sm:text-5xl md:text-6xl lg:text-8xl font-black tracking-tight drop-shadow-2xl uppercase italic w-full px-3 lg:px-8 lg:pr-12 text-center leading-[1.1]">
                                     מחר מלחמה.<br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-red-500 to-red-800 inline-block pr-4" style={{ backgroundImage: 'linear-gradient(135deg, rgba(230, 26, 26, 1) 0%, rgba(171, 23, 23, 1) 50%, rgba(217, 84, 84, 1) 100%)', WebkitBackgroundClip: 'text', color: 'transparent', paddingRight: '1rem' }}>האם אתה מוכן?</span>
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-red-500 to-red-800 inline-block pr-3 text-[3rem] lg:text-[3.5rem]" style={{ backgroundImage: 'linear-gradient(135deg, rgba(230, 26, 26, 1) 0%, rgba(171, 23, 23, 1) 50%, rgba(217, 84, 84, 1) 100%)', WebkitBackgroundClip: 'text', color: 'transparent', paddingRight: '1rem' }}>האם אתה מוכן?</span>
                                 </h1>
-                                <h2 className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-2xl font-bold max-w-2xl mx-auto border-r-4 border-primary pr-3 sm:pr-4 leading-relaxed">
+                                <h2 className="text-gray-400 text-base sm:text-base md:text-lg lg:text-2xl font-bold max-w-2xl mx-0 border-r-4 border-primary pr-3 sm:pr-4 leading-relaxed">
                                     כושר קרבי שמוציא ממך את הגרסה הכי טובה שלך. <br />בלי תירוצים. בלי וויתורים. רק תוצאות.
                                 </h2>
                                 <div className="w-full max-w-4xl bg-black/60 backdrop-blur-md border border-white/10 p-1 sm:p-2 lg:p-2 shadow-2xl mt-6 sm:mt-8 relative group">
@@ -448,9 +567,9 @@
                                         <div className="relative flex-1">
                                             <input className="w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none text-right" placeholder="טלפון נייד" required type="tel" inputMode="numeric" />
                                         </div>
-                                        <button className="flex-none h-12 sm:h-14 px-6 sm:px-10 bg-primary hover:bg-primary-hover active:scale-[0.98] transition-all rounded-none text-white text-base sm:text-xl font-black tracking-wider shadow-[0_0_30px_rgba(230,26,26,0.3)] flex items-center justify-center gap-2 sm:gap-3 uppercase min-h-[44px]" aria-label="צרו איתי קשר">
+                                        <button className="flex-none h-12 sm:h-14 px-6 sm:px-10 bg-primary hover:bg-primary-hover active:scale-[0.98] transition-all rounded-none text-white text-base sm:text-xl font-black tracking-wider shadow-[0_0_30px_rgba(230,26,26,0.3)] flex items-center justify-center gap-2 sm:gap-3 uppercase min-h-[2.75rem]" aria-label="צרו איתי קשר">
                                             <span className="text-sm sm:text-lg">צרו איתי קשר</span>
-                                            <span className="material-symbols-outlined text-[20px] sm:text-[24px] font-bold rotate-180" aria-hidden="true">arrow_right_alt</span>
+                                            <span className="material-symbols-outlined text-[1.25rem] sm:text-[1.5rem] font-bold rotate-180" aria-hidden="true">arrow_right_alt</span>
                                         </button>
                                     </form>
                                 </div>
@@ -464,7 +583,7 @@
 
                     {/* Why Choose Us Section */}
                     <div className="bg-surface-dark py-12 sm:py-16 md:py-20 lg:py-32 border-b border-white/5 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+                        <div className="absolute top-0 right-0 w-[31.25rem] h-[31.25rem] bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
                         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
                             <div className="text-center mb-12 sm:mb-16 md:mb-20">
                                 <h2 className="text-primary font-black tracking-[0.2em] uppercase mb-4 text-sm flex justify-center items-center gap-3">
@@ -503,7 +622,7 @@
                                     <h3 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase italic">בוגרים מספרים</h3>
                             </div>
                                 <div className="flex gap-2 sm:gap-3">
-                                    <button className="size-12 sm:size-14 bg-black border border-white/20 hover:border-primary hover:text-primary text-white flex items-center justify-center transition-all min-h-[44px] min-w-[44px]" aria-label="עבור לעדות הבאה">
+                                    <button className="size-12 sm:size-14 bg-black border border-white/20 hover:border-primary hover:text-primary text-white flex items-center justify-center transition-all min-h-[2.75rem] min-w-[2.75rem]" aria-label="עבור לעדות הבאה">
                                         <span className="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                                     </button>
                                     <button className="size-14 bg-black border border-white/20 hover:border-primary hover:text-primary text-white flex items-center justify-center transition-all" aria-label="עבור לעדות הקודמת">
@@ -569,19 +688,21 @@
                         </div>
                     </div>
 
+                    {/* Image Gallery Section */}
+                    <ImageGallery />
+
                     {/* Final CTA Section */}
                     <div className="bg-primary relative overflow-hidden py-24">
                         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 mix-blend-multiply"></div>
                         <div className="absolute right-0 bottom-0 w-full h-full bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url('${IMAGE_URLS.ctaBackground}')` }}>
                             <div className="absolute inset-0 bg-black/60"></div>
-                            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/80"></div>
                         </div>
                         <div className="max-w-[800px] mx-auto px-4 sm:px-6 text-center relative z-10">
                             <h2 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black mb-4 sm:mb-6 uppercase italic drop-shadow-lg">האם יש לך את מה שצריך?</h2>
                             <p className="text-white/90 text-base sm:text-lg md:text-xl font-bold mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto">
                                 הצוותים שלנו מתמלאים במהירות. אל תחכה לרגע האחרון. <br />הצטרף לטובים ביותר עכשיו.
                             </p>
-                            <button className="bg-white text-primary hover:bg-black hover:text-white transition-all px-6 sm:px-10 md:px-12 py-4 sm:py-5 rounded-none font-black text-base sm:text-lg shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] border-2 border-black transform duration-100 uppercase tracking-wider min-h-[44px]" aria-label="שריין מקום לאימון ניסיון">
+                            <button className="bg-white text-primary hover:bg-black hover:text-white transition-all px-6 sm:px-10 md:px-12 py-4 sm:py-5 rounded-none font-black text-base sm:text-lg shadow-[0.5rem_0.5rem_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[0.25rem] hover:translate-y-[0.25rem] border-2 border-black transform duration-100 uppercase tracking-wider min-h-[2.75rem]" aria-label="שריין מקום לאימון ניסיון">
                                 שריין מקום לאימון ניסיון
                             </button>
                         </div>
@@ -618,12 +739,12 @@
                     <Navbar />
                     
                     {/* Hero Section */}
-                    <section className="relative flex flex-col items-center justify-center min-h-[70vh] w-full bg-cover bg-center bg-no-repeat border-b border-border-dark pt-20" style={{ backgroundImage: 'linear-gradient(rgba(5, 5, 5, 0.4) 0%, rgba(5, 5, 5, 0.95) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCM9n8lNfS--lq4nS6aRpEFFnd_arNw4dpvT5-i1IEyDnKwwMdRy3RmM3o8EmwRn69LggApZGy5ciHL8Mp8p4kzu5QD70E3p9kbcfKxcvMXsTS9FnrGPnc3eCjoCLDYq6Raxxp5DBgVZbkIC3eucBK-exDMGN-8V1-nrdiOdithU99FPQgdCOtnw3idvX1aE5bHSuxEluQ8Do3rb9gVnnd4vP26Aem0fbG-MznvAvkt0TQGzMd-tShDljWYXP792kuxf-pzPRnB12Uk")' }}>
+                    <section className="relative flex flex-col items-center justify-center h-screen w-full bg-cover bg-center bg-no-repeat border-b border-border-dark" style={{ backgroundImage: `linear-gradient(rgba(5, 5, 5, 0.4) 0%, rgba(5, 5, 5, 0.95) 100%), url('${IMAGE_URLS.heroTeam}')` }}>
                         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-30 pointer-events-none"></div>
                         <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.5)_2px,transparent_2px),linear-gradient(90deg,rgba(0,0,0,0.5)_2px,transparent_2px)] bg-[length:40px_40px] opacity-20 pointer-events-none"></div>
-                        <div className="layout-content-container flex flex-col max-w-[1100px] px-4 sm:px-6 text-center z-10 space-y-6 sm:space-y-8 mt-6 sm:mt-10">
+                        <div className="layout-content-container flex flex-col items-center justify-center max-w-[1100px] px-4 sm:px-6 text-center z-10 space-y-6 sm:space-y-8 py-16 sm:py-20 md:py-24">
                             <h1 className="text-white text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black leading-[0.85] tracking-tighter drop-shadow-2xl uppercase italic px-2">
-                                הכר את <span className="text-transparent bg-clip-text bg-gradient-to-b from-primary to-red-800 inline-block pr-3">המדריכים</span>
+                                הכר את <span className="text-transparent bg-clip-text bg-gradient-to-b from-primary to-red-800 inline-block pr-3">הצוות</span>
                             </h1>
                             <p className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl font-medium max-w-3xl mx-auto leading-relaxed border-r-4 border-primary pr-4 sm:pr-6 bg-gradient-to-l from-black/50 to-transparent py-2">
                                 המאמנים שלנו הם יוצאי יחידות עילית וסיירות בצה״ל, מנוסים ומקצועיים. כל אחד נבחר בקפידה על מנת לדחוף אתכם לקצה ולממש את המקסימום של הפוטנציאל שלכם.
@@ -633,27 +754,9 @@
                                     <span>קבע אימון ניסיון</span>
                                     <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform font-bold text-black" aria-hidden="true">arrow_back</span>
                                 </button>
-                                <button className="group cursor-pointer inline-flex items-center justify-center gap-3 h-14 px-10 bg-transparent text-white hover:bg-white/5 transition-all text-lg font-bold tracking-wider uppercase border-2 border-zinc-700 hover:border-white" aria-label="למד איך זה עובד">
+                                <Link to={ROUTES.METHOD} className="group cursor-pointer inline-flex items-center justify-center gap-3 h-14 px-10 bg-transparent text-white hover:bg-white/5 transition-all text-lg font-bold tracking-wider uppercase border-2 border-zinc-700 hover:border-white" aria-label="למד איך זה עובד">
                                     <span>איך זה עובד?</span>
-                                </button>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Warning Section */}
-                    <section className="bg-primary relative overflow-hidden py-14 px-6 border-b border-black">
-                        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 10px, transparent 10px, transparent 20px)' }}></div>
-                        <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-8 relative z-10">
-                            <div className="flex items-center gap-6 bg-black p-6 -skew-x-12 border-r-4 border-white shadow-2xl">
-                                <span className="material-symbols-outlined text-white text-5xl skew-x-12">warning</span>
-                                <div className="skew-x-12">
-                                    <h3 className="text-white font-black text-3xl uppercase tracking-tighter">אזהרה: לא לכל אחד</h3>
-                                    <p className="text-zinc-400 font-bold tracking-wide">אנחנו לא בייביסיטר. אנחנו מכינים אתכם למלחמה.</p>
-                                </div>
-                            </div>
-                            <div className="hidden lg:block h-16 w-0.5 bg-black/30"></div>
-                            <div className="text-black font-bold text-lg md:text-xl max-w-2xl text-center lg:text-right leading-tight uppercase">
-                                "הצוות שלנו מורכב אך ורק מיוצאי יחידות עלית עם ניסיון פיקודי והדרכתי מוכח. המטרה שלנו היא אחת: להביא אתכם לקצה היכולת."
+                                </Link>
                             </div>
                         </div>
                     </section>
@@ -661,24 +764,12 @@
                     {/* Team Members Grid */}
                     <main className="flex-1 bg-background-dark py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 relative">
                         <div className="tactical-grid absolute inset-0 pointer-events-none opacity-20"></div>
-                        <div className="absolute top-20 left-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+                        <div className="absolute top-20 left-0 w-[37.5rem] h-[37.5rem] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
                         <div className="max-w-[1400px] mx-auto relative z-10">
                             <div className="flex flex-col md:flex-row items-end justify-between mb-10 sm:mb-12 md:mb-16 border-b border-border-dark pb-4 sm:pb-6 gap-4 sm:gap-6">
                                 <div>
-                                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                                        <div className="w-3 h-3 bg-accent animate-pulse"></div>
-                                        <span className="text-accent text-xs font-mono tracking-widest uppercase font-bold">Personnel_Data // Active_Roster</span>
-                                    </div>
                                     <h2 className="text-white text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase mb-2 italic">סגל הפיקוד</h2>
                                     <p className="text-zinc-500 font-mono text-sm border-r-2 border-primary pr-3 uppercase">האנשים שיהפכו אתכם מנערים ללוחמים</p>
-                                </div>
-                                <div className="flex gap-2">
-                                    <button className="w-12 h-12 flex items-center justify-center border border-primary bg-primary/10 text-primary hover:bg-primary hover:text-black transition-colors">
-                                        <span className="material-symbols-outlined">grid_view</span>
-                                    </button>
-                                    <button className="w-12 h-12 flex items-center justify-center border border-border-dark hover:border-white text-zinc-500 hover:text-white transition-colors">
-                                        <span className="material-symbols-outlined">list</span>
-                                    </button>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -693,7 +784,7 @@
                                                 </div>
                                             )}
                                             <div className="absolute bottom-0 right-0 left-0 p-6 z-10">
-                                                {member.role && <span className="inline-block px-2 py-0.5 bg-primary text-black text-[10px] font-black uppercase tracking-wider mb-2 skew-x-[-10deg]">{member.role}</span>}
+                                                {member.role && <span className="inline-block px-2 py-0.5 bg-primary text-black text-[0.625rem] font-black uppercase tracking-wider mb-2 skew-x-[-10deg]">{member.role}</span>}
                                                 <h3 className="text-white text-3xl font-black leading-none uppercase italic group-hover:text-primary transition-colors">{member.name}</h3>
                                             </div>
                                         </div>
@@ -739,14 +830,13 @@
                     {/* Final CTA Section */}
                     <section className="relative py-16 sm:py-20 md:py-24 lg:py-32 px-4 sm:px-6 overflow-hidden border-t-2 border-primary bg-[#080808]">
                         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-30"></div>
-                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[400px] bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"></div>
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[25rem] bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"></div>
                         <div className="relative z-10 max-w-5xl mx-auto text-center space-y-8 sm:space-y-10 md:space-y-12">
                             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-8xl font-black text-white uppercase tracking-tighter leading-[0.85] italic">
                                 מוכנים להתחיל <span className="text-primary text-stroke-1 block md:inline mt-2 md:mt-0">במלחמה?</span>
                             </h2>
                             <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-zinc-400 max-w-3xl mx-auto font-light">
-                                הצוות מחכה לכם בשטח. ההרשמה למחזור הקרוב נפתחה. 
-                                <span className="text-accent font-bold">מספר המקומות מוגבל בהחלט.</span>
+                                המדריכים שלנו מחכים לכם בשטח. ההרשמה למחזור הקרוב נפתחה. מספר המקומות מוגבל.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-6">
                                 <button className="w-full sm:w-auto h-20 px-14 bg-primary hover:bg-white text-black font-black text-2xl shadow-[0_0_30px_rgba(255,42,42,0.4)] hover:shadow-[0_0_50px_rgba(255,255,255,0.6)] transition-all hover:-translate-y-1 flex items-center justify-center gap-4 uppercase">
@@ -756,9 +846,6 @@
                                 <Link to="/contact" className="w-full sm:w-auto h-20 px-14 bg-transparent border-2 border-zinc-700 hover:border-white hover:bg-white/5 text-white font-bold text-xl transition-all uppercase tracking-wide flex items-center justify-center">
                                     צור קשר להתייעצות
                                 </Link>
-                            </div>
-                            <div className="inline-block border border-zinc-800 bg-black/50 px-6 py-3 text-zinc-500 text-xs font-mono uppercase tracking-widest mt-8">
-                                * מותנה במעבר ראיון אישי ומבחן כושר בסיסי // SYSTEM_CHECK_REQUIRED
                             </div>
                         </div>
                     </section>
@@ -785,18 +872,14 @@
 
                     <main className="flex flex-col flex-1">
                         {/* Hero Section */}
-                        <section className="relative flex min-h-[70vh] flex-col items-center justify-center overflow-hidden bg-background-dark py-20 border-b border-white/10">
+                        <section className="relative flex h-screen flex-col items-center justify-center overflow-hidden bg-background-dark border-b border-white/10">
                             <div className="absolute inset-0 z-0">
+                                <div className="h-full w-full bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url('${IMAGE_URLS.heroMethodBackground}')` }}></div>
                                 <div className="absolute inset-0 bg-grid-pattern tactical-grid opacity-20"></div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent z-10"></div>
                                 <div className="absolute inset-0 bg-black/60 z-0"></div>
-                                <div className="h-full w-full bg-cover bg-center bg-no-repeat grayscale mix-blend-overlay contrast-125" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBQdZ0Zk4zwrTuPJdXwfkAeMyt3xIsEdBDM-85qMOIwkG9cLLOeFscM3q9obi6WQWl_2P1eaPlAA3SjD9oBO5G82mQ4Mc95cGzNkslcLdPuNe6E1PkwGRl-nwt42hx1dCWNqITqR-_Z0c2TyCC6vqZkHqflC25a5LdpXEedvKkftNB22ZpbcVH4o_53bCDR--ezBu_tCIxY2A-f1qmoXJPjiR4XYCRL0RIabmWir3hUXjjRRHRsj3TTblgdM8i0tDOGcJiAfQ72hMNF")' }}></div>
                             </div>
-                            <div className="relative z-20 flex w-full max-w-[1000px] flex-col items-center gap-6 sm:gap-8 px-4 sm:px-6 text-center">
-                                <div className="inline-flex items-center gap-3 border border-primary/40 bg-black/50 backdrop-blur px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-primary shadow-[0_0_20px_rgba(212,17,17,0.15)]">
-                                    <span className="w-2 h-2 bg-primary animate-pulse shadow-[0_0_10px_#d41111]"></span>
-                                    פילוסופיית האימון // CLASSIFIED
-                                </div>
+                            <div className="relative z-20 flex w-full max-w-[1000px] flex-col items-center gap-6 sm:gap-8 px-4 sm:px-6 text-center py-16 sm:py-20">
                                 <h1 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-8xl xl:text-9xl font-black leading-[0.9] tracking-tighter uppercase drop-shadow-2xl">
                                     השיטה
                             </h1>
@@ -806,20 +889,14 @@
                                     בנייה הדרגתית של הלוחם המודרני משלב הגיבוש ועד למסלול.
                                 </p>
                                 <div className="mt-10 flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
-                                    <button className="group flex min-w-[200px] cursor-pointer items-center justify-center h-14 px-8 bg-primary text-white text-lg font-black tracking-wider transition-all hover:bg-white hover:text-black">
+                                    <button className="group flex min-w-[12.5rem] cursor-pointer items-center justify-center h-14 px-8 bg-primary text-white text-lg font-black tracking-wider transition-all hover:bg-white hover:text-black">
                                         התחל מסע
                                         <span className="material-symbols-outlined mr-2 group-hover:translate-x-1 transition-transform">arrow_back</span>
                                     </button>
-                                    <button className="flex min-w-[200px] cursor-pointer items-center justify-center h-14 px-8 bg-transparent border border-white/30 text-white text-lg font-bold tracking-wider hover:bg-white/5 hover:border-primary transition-all">
+                                    <button className="flex min-w-[12.5rem] cursor-pointer items-center justify-center h-14 px-8 bg-transparent border border-white/30 text-white text-lg font-bold tracking-wider hover:bg-white/5 hover:border-primary transition-all">
                                         למד עוד
                                     </button>
                         </div>
-                            </div>
-                            <div className="absolute bottom-10 right-10 hidden md:block">
-                                <div className="flex items-center gap-2 text-[10px] text-gray-500 font-mono tracking-widest uppercase">
-                                    <span className="material-symbols-outlined text-base">radar</span>
-                                    System Status: Active
-                                </div>
                             </div>
                     </section>
 
@@ -829,13 +906,13 @@
                                 <div className="flex-1">
                                     <h2 className="text-3xl md:text-4xl font-black text-white leading-tight uppercase tracking-tight">
                                         מוטיבציה היא זולה. <br />
-                                        <span className="text-primary">משמעת ומדע</span> מנצחים מלחמות.
+                                        משמעת והתמדה מנצחים מלחמות.
                                     </h2>
                                 </div>
                                 <div className="w-px h-32 bg-white/10 hidden md:block"></div>
                                 <div className="flex-1">
                                     <p className="text-gray-400 text-lg leading-relaxed font-light">
-                                        אנחנו לא מאמינים בצעקות חסרות תכלית או "שבירת דיסטנס" מזויפת. השיטה שלנו נבנתה על ידי יוצאי יחידות עילית ומאמני כושר קרבי מוסמכים. המטרה אחת: בנייה פיזיולוגית ומנטלית מדויקת לקראת העומסים הקיצוניים של השירות הצבאי.
+                                        אנחנו לא מאמינים בצעקות חסרות תכלית או ש״הכל בראש״. השיטה שלנו נבנתה על ידי יוצאי יחידות עילית ומאמני כושר קרבי מוסמכים. המטרה אחת: בנייה פיזיולוגית ומנטלית מדויקת ומדורגת לקראת העומסים הקיצוניים של השירות הצבאי.״
                                     </p>
                                 </div>
                                         </div>
@@ -850,11 +927,6 @@
                                         <div className="text-accent text-xs font-bold tracking-[0.2em] uppercase mb-2">Tactical Foundation</div>
                                         <h2 className="text-4xl font-black text-white md:text-5xl uppercase tracking-tighter">שלושת עמודי התווך</h2>
                                     </div>
-                                    <div className="flex items-center gap-2 text-gray-500 font-mono text-sm mt-4 md:mt-0">
-                                        <span>SEQ-001</span>
-                                        <span className="w-12 h-px bg-primary"></span>
-                                        <span>SEQ-003</span>
-                                </div>
                             </div>
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                     {(typeof window !== 'undefined' && window.METHOD_PILLARS ? window.METHOD_PILLARS : []).map((pillar, i) => (
@@ -924,86 +996,6 @@
                             </div>
                         </section>
 
-                        {/* Advanced Techniques Section */}
-                        <section className="bg-surface-dark py-20 px-6 border-b border-white/5">
-                            <div className="max-w-4xl mx-auto">
-                                <div className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4">
-                                    <span className="material-symbols-outlined text-primary text-3xl">school</span>
-                                    <h2 className="text-3xl font-black text-white uppercase tracking-tighter">טכניקות מתקדמות</h2>
-                                </div>
-                                <div className="space-y-4">
-                                    {[
-                                        { code: "TECH-01", title: "ניווט תחת לחץ", desc: "שילוב אלמנטים של התמצאות במרחב תוך כדי מאמץ פיזי עציים. היכולת לזכור ציר או לזהות נקודת ציון כשהדופק על 180 היא קריטית ללוחם סיירת." },
-                                        { code: "TECH-02", title: "קרב מגע מבצעי", desc: "אגרסיביות מבוקרת. תרגול קרב מגע בסיסי ליצירת ביטחון עצמי, אסרטיביות ויכולת מעבר מאפס למאה בשבריר שנייה." },
-                                        { code: "TECH-03", title: "סימולציות גיבוש", desc: "אחת לחודש: אימון סימולציה המדמה במדויק יום בגיבוש צה״לי: סוציומטרי, משימות פיקודיות, זחילה בצוותים ואקטים של מחשבה." }
-                                    ].map((tech, i) => (
-                                        <details key={i} className="group bg-[#0f0f0f] border border-white/10 open:border-primary/50 transition-all duration-300">
-                                            <summary className="flex items-center justify-between p-6 cursor-pointer list-none hover:bg-white/5 transition-colors">
-                                                <div className="flex items-center gap-6">
-                                                    <span className="text-gray-600 font-mono text-sm">{tech.code}</span>
-                                                    <h3 className="text-lg font-bold text-white uppercase tracking-wide">{tech.title}</h3>
-                                        </div>
-                                                <span className="material-symbols-outlined text-gray-500 group-open:text-primary group-open:rotate-180 transition-all">expand_more</span>
-                                            </summary>
-                                            <div className="px-6 pb-6 pt-2 text-gray-400 leading-relaxed border-t border-white/5 flex gap-4">
-                                                <div className="w-1 bg-primary shrink-0"></div>
-                                                <div>{tech.desc}</div>
-                                    </div>
-                                        </details>
-                                ))}
-                            </div>
-                        </div>
-                    </section>
-
-                        {/* Testimonials Section */}
-                        <section className="bg-background-dark py-24 px-6 relative overflow-hidden border-b border-white/5">
-                            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
-                            <div className="max-w-7xl mx-auto relative z-10">
-                                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                                    <div>
-                                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-4">
-                                            <span className="text-primary">דו״ח</span> מבצעי
-                                        </h2>
-                                        <p className="text-gray-400 max-w-xl text-lg border-r-2 border-primary pr-4">
-                                            עדויות מהשטח. הבוגרים שלנו משרתים בחוד החנית של צה״ל.
-                                </p>
-                            </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="h-3 w-3 bg-accent rounded-full animate-pulse"></span>
-                                        <span className="text-accent font-mono text-sm tracking-widest uppercase">Live Database</span>
-                                            </div>
-                                        </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                    {[
-                                        { name: "עידו ר.", unit: "סיירת מטכ״ל", quote: '"ההכנה במחר מלחמה לא הייתה רק פיזית. המנטליות שבניתי כאן שירתה אותי ברגעים הכי קשים במסלול. הכלים שקיבלתי כאן הם יתרון לא הוגן."', id: "8821-A" },
-                                        { name: "יובל ד.", unit: "שייטת 13", quote: '"אימוני המים והסימולציות של הלחץ המנטלי היו אחד לאחד מה שפגשתי בגיבוש. הגעתי לגיבוש בידיעה שאני לא הולך לנסות לעבור, אלא לטרוף את המשימות."', id: "13-NAV" },
-                                        { name: "נועה ל.", unit: "יחידת עוקץ", quote: '"לא עשו לי הנחות. דחפו אותי לקצה גבול היכולת והראו לי שאני יכולה לעבור אותו. הגישה המקצועית בנתה אותי להיות לוחמת ומפקדת טובה יותר."', id: "K9-UNIT" }
-                                    ].map((testimonial, i) => (
-                                        <div key={i} className="bg-[#0f0f0f] border border-white/10 p-0 hover:border-primary transition-colors group relative clip-corner-top">
-                                            <div className="h-1 bg-primary w-full absolute top-0 left-0 hidden group-hover:block"></div>
-                                            <div className="bg-surface-card p-4 border-b border-white/5 flex justify-between items-center">
-                                                <span className="text-white font-black uppercase tracking-wider">{testimonial.name}</span>
-                                                <span className="bg-primary/20 text-primary text-xs font-bold px-2 py-1 uppercase tracking-widest border border-primary/30">{testimonial.unit}</span>
-                                    </div>
-                                            <div className="p-8">
-                                                <div className="mb-6 opacity-30">
-                                                    <span className="material-symbols-outlined text-4xl text-white">format_quote</span>
-                                            </div>
-                                                <p className="text-gray-300 leading-relaxed text-lg font-medium mb-8">{testimonial.quote}</p>
-                                                <div className="flex items-center justify-between border-t border-white/5 pt-4">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="material-symbols-outlined text-accent text-lg">verified</span>
-                                                        <span className="text-gray-500 text-xs font-mono uppercase">Verified Personnel</span>
-                                        </div>
-                                                    <span className="text-gray-600 text-xs font-mono">ID: {testimonial.id}</span>
-                                    </div>
-                                </div>
-                                                    </div>
-                                    ))}
-                                                    </div>
-                                    </div>
-                        </section>
-
                         {/* Final CTA Section */}
                         <section className="py-24 px-6 bg-[#050505] relative border-t border-white/10">
                             <div className="absolute inset-0 overflow-hidden">
@@ -1018,10 +1010,10 @@
                                         אנחנו מחפשים רק את אלו שמוכנים לעבוד קשה, להתמיד ולא לוותר לעצמם. מקומות מוגבלים לצוותים הקרובים.
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
-                                        <button className="flex w-full sm:w-auto min-w-[240px] cursor-pointer items-center justify-center h-16 px-8 bg-primary text-white text-xl font-black uppercase tracking-wider transition-all hover:bg-white hover:text-primary shadow-[0_0_30px_rgba(212,17,17,0.3)] hover:shadow-[0_0_50px_rgba(212,17,17,0.6)]">
+                                        <button className="flex w-full sm:w-auto min-w-[15rem] cursor-pointer items-center justify-center h-16 px-8 bg-primary text-white text-xl font-black uppercase tracking-wider transition-all hover:bg-white hover:text-primary shadow-[0_0_30px_rgba(212,17,17,0.3)] hover:shadow-[0_0_50px_rgba(212,17,17,0.6)]">
                                             הירשם לאימון ניסיון
                                         </button>
-                                        <Link to="/contact" className="flex w-full sm:w-auto min-w-[240px] cursor-pointer items-center justify-center h-16 px-8 border border-white/20 hover:border-primary hover:bg-white/5 text-white text-xl font-bold uppercase tracking-wider transition-all">
+                                        <Link to="/contact" className="flex w-full sm:w-auto min-w-[15rem] cursor-pointer items-center justify-center h-16 px-8 border border-white/20 hover:border-primary hover:bg-white/5 text-white text-xl font-bold uppercase tracking-wider transition-all">
                                             צור קשר עם המדריך
                                         </Link>
                                 </div>
@@ -1062,7 +1054,7 @@
                         <section className="relative px-4 pt-16 pb-20 sm:px-6 lg:px-8 flex justify-center border-b border-border-dark bg-[#0a0a0a]">
                             <div className="absolute inset-0 bg-grid-pattern opacity-10" style={{ backgroundSize: '40px 40px' }}></div>
                             <div className="w-full max-w-7xl relative">
-                                <div className="relative overflow-hidden bg-cover bg-center bg-no-repeat min-h-[500px] flex flex-col items-center justify-center text-center p-8 gap-10 border border-border-dark group shadow-2xl" style={{ backgroundImage: 'linear-gradient(rgba(5, 5, 5, 0.85) 0%, rgba(5, 5, 5, 0.95) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAyWjgBdhLQkVyM6NBO6xzJLXHmNDrATl3odDav6UadmeegZAq8ozZ5ybl_0M7rly5pDLT_ZOK2cFcVB8thfUjXpVVaszoNckCfGd4WytAJdG0kwptQcaY8ryKbl5hrI_QHpVLmeZQ-x7FTypzIKC7IJnV7tnVh9AH6PImErIawPBhfp85P7qtAPJ2OrBpNCuDUAMR7vlPmQTwQufN8kNO9fJa7-qcDJWMjen7CyOZgddyqWpWfRrYl4DuP4_EzCjDcqkYhuInWyhpb")' }}>
+                                <div className="relative overflow-hidden bg-cover bg-center bg-no-repeat min-h-[31.25rem] flex flex-col items-center justify-center text-center p-8 gap-10 border border-border-dark group shadow-2xl" style={{ backgroundImage: 'linear-gradient(rgba(5, 5, 5, 0.85) 0%, rgba(5, 5, 5, 0.95) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAyWjgBdhLQkVyM6NBO6xzJLXHmNDrATl3odDav6UadmeegZAq8ozZ5ybl_0M7rly5pDLT_ZOK2cFcVB8thfUjXpVVaszoNckCfGd4WytAJdG0kwptQcaY8ryKbl5hrI_QHpVLmeZQ-x7FTypzIKC7IJnV7tnVh9AH6PImErIawPBhfp85P7qtAPJ2OrBpNCuDUAMR7vlPmQTwQufN8kNO9fJa7-qcDJWMjen7CyOZgddyqWpWfRrYl4DuP4_EzCjDcqkYhuInWyhpb")' }}>
                                     <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-primary"></div>
                                     <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-primary"></div>
                                     <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-primary"></div>
@@ -1147,7 +1139,7 @@
                                         </div>
                                         <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 z-10">
                                             <div className="flex items-center gap-2 mb-3 opacity-80">
-                                                <span className="bg-accent text-black text-[10px] font-black uppercase px-2 py-0.5 tracking-wider">{featuredArticle.category}</span>
+                                                <span className="bg-accent text-black text-[0.625rem] font-black uppercase px-2 py-0.5 tracking-wider">{featuredArticle.category}</span>
                                                 <span className="text-gray-300 text-xs font-mono">{featuredArticle.date}</span>
                                             </div>
                                             <h3 className="font-display text-3xl md:text-5xl font-black text-white mb-4 uppercase leading-[0.9] group-hover:text-primary transition-colors whitespace-pre-line">{featuredArticle.title}</h3>
@@ -1165,7 +1157,7 @@
                                             <article key={i} className="group relative flex flex-col h-full bg-surface-light border border-border-dark hover:border-accent transition-all duration-300">
                                                 <div className="h-48 w-full bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-500 relative" style={{ backgroundImage: `url('${article.img}')` }}>
                                                     <div className="absolute inset-0 bg-black/50 group-hover:bg-transparent transition-all"></div>
-                                                    <div className="absolute top-3 right-3 bg-black/80 px-2 py-1 text-[10px] font-bold text-accent uppercase border border-accent/30">{article.category}</div>
+                                                    <div className="absolute top-3 right-3 bg-black/80 px-2 py-1 text-[0.625rem] font-bold text-accent uppercase border border-accent/30">{article.category}</div>
                                                 </div>
                                                 <div className="p-6 flex flex-col justify-between flex-1 relative overflow-hidden">
                                                     <div>
@@ -1235,7 +1227,7 @@
                             </div>
                             <div className="mx-auto max-w-4xl text-center relative z-10">
                                 <div className="inline-block border border-primary/50 bg-primary/10 px-4 py-1 mb-6 text-primary text-xs font-bold uppercase tracking-widest">הצטרף לקהילה</div>
-                                <h2 className="font-display text-4xl sm:text-6xl font-black text-white mb-6 uppercase tracking-tighter">הצטרף <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-red-500">ליחידה</span></h2>
+                                <h2 className="font-display text-4xl sm:text-6xl font-black text-white mb-6 uppercase tracking-tighter">הצטרף <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-red-500">לקהילה</span></h2>
                                 <p className="text-gray-400 text-lg md:text-xl mb-12 max-w-xl mx-auto leading-relaxed">קבל את המאמרים החדשים ביותר, טיפים לגיבושים ועדכונים ישירות למייל שלך. בלי בולשיט.</p>
                                 <form className="flex flex-col sm:flex-row gap-0 max-w-xl mx-auto border border-white/20 p-1 bg-surface-dark" onSubmit={(e) => e.preventDefault()}>
                                     <input className="flex-1 bg-transparent px-6 py-4 text-white placeholder-gray-600 focus:outline-none text-lg font-medium" placeholder="הכנס את המייל שלך..." type="email" />
@@ -1326,9 +1318,8 @@
                                     <div className="flex flex-col gap-8 lg:pt-16 order-1 lg:order-2">
                                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
                                             {[
-                                                { icon: "call", title: "חמ״ל טלפוני", value: "050-987-6543", desc: "זמינים 24/7 לחירום" },
-                                                { icon: "alternate_email", title: "דוא״ל גיוס", value: "join@mahar-milhama.co.il", desc: "מענה תוך 24 שעות" },
-                                                { icon: "pin_drop", title: "שטח כינוס", value: "פארק הירקון, תל אביב", desc: "חניון רידינג מזרח, שעה 18:00" }
+                                                { icon: "call", title: "טלפון לשאלות", value: "050-987-6543", desc: "זמינים 24/7" },
+                                                { icon: "alternate_email", title: "דוא״ל", value: "join@mahar-milhama.co.il", desc: "מענה תוך 24 שעות" }
                                             ].map((contact, i) => (
                                                 <div key={i} className="group relative bg-[#0a0a0a] border border-white/5 p-6 transition-all hover:border-primary/50 hover:bg-[#0f0f0f]">
                                                     <div className="flex items-start gap-5">
@@ -1343,6 +1334,19 @@
                                 </div>
                             </div>
                                             ))}
+                                        </div>
+                                        <div className="bg-surface-dark border border-white/10 p-8 text-center relative overflow-hidden">
+                                            <div className="mx-auto mb-6 flex size-14 items-center justify-center bg-transparent border-2 border-primary text-primary">
+                                                <span className="material-symbols-outlined text-3xl">chat_error</span>
+                                            </div>
+                                            <h3 className="mb-2 text-xl font-black text-white uppercase tracking-tight font-display">עדיין מתלבטים?</h3>
+                                            <p className="mb-8 text-sm text-gray-400 font-body">
+                                                המפקדים שלנו זמינים בוואטסאפ לכל שאלה. <br />אל תבזבזו זמן יקר על ספקות.
+                                            </p>
+                                            <button className="flex w-full items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1ebc57] px-4 py-4 text-black transition-all font-black uppercase shadow-[0_0_10px_rgba(37,211,102,0.3)] font-display">
+                                                <span className="material-symbols-outlined">chat</span>
+                                                דברו איתנו בוואטסאפ
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

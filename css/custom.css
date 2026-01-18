@@ -29,8 +29,8 @@
     --color-text-muted: #9CA3AF;
     
     /* Spacing */
-    --spacing-grid: 50px;
-    --spacing-grid-small: 40px;
+    --spacing-grid: 3.125rem; /* 50px */
+    --spacing-grid-small: 2.5rem; /* 40px */
     
     /* Effects */
     --shadow-glow: 0 0 15px rgba(220, 38, 38, 0.2);
@@ -96,8 +96,8 @@
         clip-path: polygon(
             0 0,
             100% 0,
-            100% calc(100% - 15px),
-            calc(100% - 15px) 100%,
+            100% calc(100% - 0.9375rem),
+            calc(100% - 0.9375rem) 100%,
             0 100%
         );
     }
@@ -105,11 +105,11 @@
     /* Corner cut at top-left (inverse of clip-corner) */
     .clip-corner-top {
         clip-path: polygon(
-            10px 0,
+            0.625rem 0,
             100% 0,
             100% 100%,
             0 100%,
-            0 10px
+            0 0.625rem
         );
     }
 
@@ -171,8 +171,8 @@
         position: absolute;
         top: 0;
         left: 0;
-        width: 12px;
-        height: 12px;
+        width: 0.75rem;
+        height: 0.75rem;
         background: currentColor; /* Uses text color of parent */
         clip-path: polygon(0 0, 100% 0, 0 100%);
     }
@@ -183,8 +183,8 @@
         position: absolute;
         bottom: 0;
         right: 0;
-        width: 12px;
-        height: 12px;
+        width: 0.75rem;
+        height: 0.75rem;
         background: currentColor; /* Uses text color of parent */
         clip-path: polygon(100% 0, 0 100%, 100% 100%);
     }
@@ -252,4 +252,3 @@
         padding-right: 1rem;
     }
 }
-
