@@ -44,13 +44,24 @@ const IMAGE_URLS = {
     heroBackground: "/images/HeroBGSunset.png",
     // Method Page Hero Background
     heroMethodBackground: "/images/sea_training.jpg",
-    // Gallery Images
+    // Gallery Images (from images/gallery-images folder)
     galleryImages: [
-        "/images/sea_training.jpg",
-        "/images/soldiersimg2.jpg",
-        "/images/soldiersimg3.jpg",
-        "/images/team_dune.jpg",
-        "/images/HeroBGSunset.png"
+        "/images/gallery-images/20230825_095035.jpg",
+        "/images/gallery-images/20240215_170422.jpg",
+        "/images/gallery-images/20240216_100729.jpg",
+        "/images/gallery-images/20240315_080014.jpg",
+        "/images/gallery-images/20240315_084043.jpg",
+        "/images/gallery-images/20240404_150533.jpg",
+        "/images/gallery-images/20240830_084717.jpg",
+        "/images/gallery-images/20240927_063929.jpg",
+        "/images/gallery-images/20240927_064135.jpg",
+        "/images/gallery-images/a90c5834-c34e-4341-b1c9-46fdca1236ea.jpg",
+        "/images/gallery-images/ef6e30d3-1b60-4402-b3e5-87f186d17b02.jpg",
+        "/images/gallery-images/IMG_4557.JPG",
+        "/images/gallery-images/IMG-20240217-WA0143.jpg",
+        "/images/gallery-images/InShot_20240126_231811468.jpg",
+        "/images/gallery-images/Screenshot_20240221_130958.jpg",
+        "/images/gallery-images/Screenshot_20240309-224500_Photos.jpg"
     ],
 };
 

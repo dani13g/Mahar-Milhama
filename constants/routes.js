@@ -10,6 +10,7 @@ const ROUTES = {
     TEAM: '/team',
     METHOD: '/method',
     ARTICLES: '/articles',
+    ARTICLE_DETAIL: '/articles/:id',
     CONTACT: '/contact',
     FAQ: '/faq'
 };

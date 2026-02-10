@@ -166,7 +166,7 @@
         
         const { useState, useEffect } = React;
         const { createRoot } = ReactDOM;
-        const { HashRouter, Routes, Route, Link, useNavigate, useLocation } = ReactRouterDOM;
+        const { HashRouter, Routes, Route, Link, useNavigate, useLocation, useParams } = ReactRouterDOM;
 
         // Constants and data are loaded via script tags in <head>
         // Available globals: IMAGE_URLS, ROUTES, SITE_CONFIG, TEAM_MEMBERS, FAQS, TESTIMONIALS, FEATURES, METHOD_PILLARS, etc.
@@ -274,10 +274,10 @@
                                     </Link>
                                     
                                     {/* Desktop: "הצטרף עכשיו" button - Hidden on mobile */}
-                                    <button className="hidden md:flex group relative px-6 py-2 bg-transparent overflow-hidden rounded-none border border-white/30 hover:border-primary transition-all duration-300" aria-label="הצטרף עכשיו">
+                                    <a href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer" className="hidden md:flex group relative px-6 py-2 bg-transparent overflow-hidden rounded-none border border-white/30 hover:border-primary transition-all duration-300" aria-label="הצטרף עכשיו">
                                         <div className="absolute inset-0 w-0 bg-primary transition-all duration-[250ms] ease-out group-hover:w-full"></div>
                                         <span className="relative text-white text-sm font-black tracking-widest uppercase group-hover:text-white">הצטרף עכשיו</span>
-                                    </button>
+                                    </a>
                                 </div>
                             </header>
                             
@@ -338,10 +338,10 @@
                                     הבית של הלוחמים לעתיד. אנחנו כאן כדי להכין אותך לכל אתגר שהצבא יזרוק עליך.
                                 </p>
                                 <div className="flex gap-3">
-                                    <a className="size-10 bg-white/5 hover:bg-primary text-white flex items-center justify-center transition-all border border-white/10" href="#">
+                                    <a className="size-10 bg-white/5 hover:bg-primary text-white flex items-center justify-center transition-all border border-white/10" href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.social.facebook) || '#'} target="_blank" rel="noopener noreferrer" aria-label="Facebook - מחר מלחמה כושר קרבי">
                                         <svg className="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path></svg>
                                     </a>
-                                    <a className="size-10 bg-white/5 hover:bg-primary text-white flex items-center justify-center transition-all border border-white/10" href="#">
+                                    <a className="size-10 bg-white/5 hover:bg-primary text-white flex items-center justify-center transition-all border border-white/10" href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.social.instagram) || '#'} target="_blank" rel="noopener noreferrer" aria-label="Instagram - מחר מלחמה כושר קרבי">
                                         <svg className="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
                                     </a>
                             </div>
@@ -442,6 +442,9 @@
 
             if (galleryImages.length === 0) return null;
 
+            const currentSrc = galleryImages[currentIndex];
+            const total = galleryImages.length;
+
             return (
                 <section className="bg-background-dark py-16 sm:py-20 md:py-24 border-t border-white/10">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -458,54 +461,48 @@
                             </p>
                         </div>
 
-                        <div className="relative max-w-6xl mx-auto">
-                            {/* Gallery Container */}
-                            <div className="relative overflow-hidden bg-black border border-white/10 shadow-2xl">
-                                <div 
-                                    className="flex flex-nowrap transition-transform duration-700 ease-in-out"
-                                    style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-                                >
-                                    {galleryImages.map((image, index) => (
-                                        <div key={index} className="min-w-full relative" style={{ aspectRatio: '16/9' }}>
-                                            <img 
-                                                src={image} 
-                                                alt={`Gallery image ${index + 1}`}
-                                                className="w-full h-full object-cover"
-                                                loading={index === 0 ? "eager" : "lazy"}
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                                        </div>
-                                    ))}
-                                </div>
+                        <div className="relative max-w-6xl mx-auto" dir="ltr">
+                            {/* Single visible image - one at a time for reliable display */}
+                            <div className="relative w-full overflow-hidden bg-black border border-white/10 shadow-2xl" style={{ aspectRatio: '16/9' }}>
+                                <img
+                                    key={currentIndex}
+                                    src={currentSrc}
+                                    alt={`Gallery image ${currentIndex + 1} of ${total}`}
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                    loading="eager"
+                                    decoding="async"
+                                    onError={(e) => { e.target.style.background = '#1a1a1a'; e.target.alt = ''; }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" aria-hidden="true" />
 
-                                {/* Navigation Arrows */}
                                 <button
+                                    type="button"
                                     onClick={goToPrevious}
                                     className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/60 hover:bg-black/80 border border-white/20 hover:border-primary text-white p-3 transition-all backdrop-blur-sm"
                                     aria-label="Previous image"
                                 >
-                                    <span className="material-symbols-outlined">chevron_right</span>
+                                    <span className="material-symbols-outlined">chevron_left</span>
                                 </button>
                                 <button
+                                    type="button"
                                     onClick={goToNext}
                                     className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/60 hover:bg-black/80 border border-white/20 hover:border-primary text-white p-3 transition-all backdrop-blur-sm"
                                     aria-label="Next image"
                                 >
-                                    <span className="material-symbols-outlined">chevron_left</span>
+                                    <span className="material-symbols-outlined">chevron_right</span>
                                 </button>
 
-                                {/* Indicator Dots */}
                                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
                                     {galleryImages.map((_, index) => (
                                         <button
                                             key={index}
+                                            type="button"
                                             onClick={() => goToSlide(index)}
                                             className={`h-2 transition-all ${
-                                                index === currentIndex 
-                                                    ? 'w-8 bg-primary' 
-                                                    : 'w-2 bg-white/30 hover:bg-white/50'
+                                                index === currentIndex ? 'w-8 bg-primary' : 'w-2 bg-white/30 hover:bg-white/50'
                                             }`}
-                                            aria-label={`Go to slide ${index + 1}`}
+                                            aria-label={`Go to image ${index + 1}`}
+                                            aria-current={index === currentIndex ? 'true' : undefined}
                                         />
                                     ))}
                                 </div>
@@ -550,7 +547,7 @@
                                     <span className="size-2 rounded-full bg-primary animate-pulse"></span>
                                     הרשמה לסימולציית יום סיירות נפתחה!
                         </div>
-                                <h1 className="text-white text-[3.5rem] sm:text-5xl md:text-6xl lg:text-8xl font-black tracking-tight drop-shadow-2xl uppercase italic w-full px-3 lg:px-8 lg:pr-12 text-center leading-[1.1]">
+                                <h1 className="text-white text-[3.5rem] sm:text-5xl md:text-6xl lg:text-8xl font-black tracking-tight drop-shadow-2xl uppercase w-full px-3 lg:px-8 lg:pr-12 text-center leading-[1.1]">
                                     מחר מלחמה.<br />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-red-500 to-red-800 inline-block pr-3 text-[3rem] lg:text-[3.5rem]" style={{ backgroundImage: 'linear-gradient(135deg, rgba(230, 26, 26, 1) 0%, rgba(171, 23, 23, 1) 50%, rgba(217, 84, 84, 1) 100%)', WebkitBackgroundClip: 'text', color: 'transparent', paddingRight: '1rem' }}>האם אתה מוכן?</span>
                                 </h1>
@@ -591,7 +588,7 @@
                                     היתרון שלנו
                                     <span className="w-12 h-[2px] bg-primary"></span>
                                 </h2>
-                                <h3 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 uppercase italic">למה דווקא "מחר מלחמה"?</h3>
+                                <h3 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 uppercase">למה דווקא "מחר מלחמה"?</h3>
                                 <p className="text-gray-400 max-w-2xl mx-auto text-lg">אנחנו לא סתם עוד קבוצת כושר. אנחנו מכשירים את דור המפקדים הבא של צה״ל בשיטות הייחודיות שלנו.</p>
                                 </div>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -619,7 +616,7 @@
                                         <span className="w-8 h-[3px] bg-primary block"></span>
                                         עדויות מהשטח
                                     </h2>
-                                    <h3 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase italic">בוגרים מספרים</h3>
+                                    <h3 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase">בוגרים מספרים</h3>
                             </div>
                                 <div className="flex gap-2 sm:gap-3">
                                     <button className="size-12 sm:size-14 bg-black border border-white/20 hover:border-primary hover:text-primary text-white flex items-center justify-center transition-all min-h-[2.75rem] min-w-[2.75rem]" aria-label="עבור לעדות הבאה">
@@ -659,7 +656,7 @@
                                         <span className="w-8 h-[3px] bg-primary block"></span>
                                         בלוג מקצועי
                                     </h2>
-                                    <h3 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase italic">ידע זה כוח</h3>
+                                    <h3 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase">ידע זה כוח</h3>
                                 </div>
                                 <Link to="/articles" className="hidden sm:flex items-center gap-2 text-white hover:text-primary font-black uppercase text-sm border-b-2 border-transparent hover:border-primary pb-1 transition-all">
                                     כל המאמרים
@@ -698,18 +695,18 @@
                             <div className="absolute inset-0 bg-black/60"></div>
                         </div>
                         <div className="max-w-[800px] mx-auto px-4 sm:px-6 text-center relative z-10">
-                            <h2 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black mb-4 sm:mb-6 uppercase italic drop-shadow-lg">האם יש לך את מה שצריך?</h2>
+                            <h2 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black mb-4 sm:mb-6 uppercase drop-shadow-lg">האם יש לך את מה שצריך?</h2>
                             <p className="text-white/90 text-base sm:text-lg md:text-xl font-bold mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto">
                                 הצוותים שלנו מתמלאים במהירות. אל תחכה לרגע האחרון. <br />הצטרף לטובים ביותר עכשיו.
                             </p>
-                            <button className="bg-white text-primary hover:bg-black hover:text-white transition-all px-6 sm:px-10 md:px-12 py-4 sm:py-5 rounded-none font-black text-base sm:text-lg shadow-[0.5rem_0.5rem_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[0.25rem] hover:translate-y-[0.25rem] border-2 border-black transform duration-100 uppercase tracking-wider min-h-[2.75rem]" aria-label="שריין מקום לאימון ניסיון">
+                            <a href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer" className="inline-block bg-white text-primary hover:bg-black hover:text-white transition-all px-6 sm:px-10 md:px-12 py-4 sm:py-5 rounded-none font-black text-base sm:text-lg shadow-[0.5rem_0.5rem_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[0.25rem] hover:translate-y-[0.25rem] border-2 border-black transform duration-100 uppercase tracking-wider min-h-[2.75rem]" aria-label="שריין מקום לאימון ניסיון">
                                 שריין מקום לאימון ניסיון
-                            </button>
+                            </a>
                         </div>
                     </div>
 
                     {/* WhatsApp Button */}
-                    <a aria-label="Chat on WhatsApp" className="fixed bottom-6 left-6 z-50 bg-[#25D366] text-white p-4 shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] hover:scale-110 transition-all duration-300 flex items-center justify-center group rounded-none clip-diagonal" href="#">
+                    <a aria-label="Chat on WhatsApp" className="fixed bottom-6 left-6 z-50 bg-[#25D366] text-white p-4 shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] hover:scale-110 transition-all duration-300 flex items-center justify-center group rounded-none clip-diagonal" href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer">
                         <svg className="size-8 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
                         </svg>
@@ -743,17 +740,17 @@
                         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-30 pointer-events-none"></div>
                         <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.5)_2px,transparent_2px),linear-gradient(90deg,rgba(0,0,0,0.5)_2px,transparent_2px)] bg-[length:40px_40px] opacity-20 pointer-events-none"></div>
                         <div className="layout-content-container flex flex-col items-center justify-center max-w-[1100px] px-4 sm:px-6 text-center z-10 space-y-6 sm:space-y-8 py-16 sm:py-20 md:py-24">
-                            <h1 className="text-white text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black leading-[0.85] tracking-tighter drop-shadow-2xl uppercase italic px-2">
+                            <h1 className="text-white text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black leading-[0.85] tracking-tighter drop-shadow-2xl uppercase px-2">
                                 הכר את <span className="text-transparent bg-clip-text bg-gradient-to-b from-primary to-red-800 inline-block pr-3">הצוות</span>
                             </h1>
                             <p className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl font-medium max-w-3xl mx-auto leading-relaxed border-r-4 border-primary pr-4 sm:pr-6 bg-gradient-to-l from-black/50 to-transparent py-2">
                                 המאמנים שלנו הם יוצאי יחידות עילית וסיירות בצה״ל, מנוסים ומקצועיים. כל אחד נבחר בקפידה על מנת לדחוף אתכם לקצה ולממש את המקסימום של הפוטנציאל שלכם.
                             </p>
                             <div className="pt-8 flex flex-col sm:flex-row gap-5 justify-center">
-                                <button className="group cursor-pointer inline-flex items-center justify-center gap-3 h-14 px-10 bg-white text-black hover:bg-accent transition-all text-lg font-black tracking-wider uppercase border-2 border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]" aria-label="קבע אימון ניסיון">
+                                <a href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer" className="group cursor-pointer inline-flex items-center justify-center gap-3 h-14 px-10 bg-white text-black hover:bg-accent transition-all text-lg font-black tracking-wider uppercase border-2 border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]" aria-label="קבע אימון ניסיון">
                                     <span>קבע אימון ניסיון</span>
                                     <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform font-bold text-black" aria-hidden="true">arrow_back</span>
-                                </button>
+                                </a>
                                 <Link to={ROUTES.METHOD} className="group cursor-pointer inline-flex items-center justify-center gap-3 h-14 px-10 bg-transparent text-white hover:bg-white/5 transition-all text-lg font-bold tracking-wider uppercase border-2 border-zinc-700 hover:border-white" aria-label="למד איך זה עובד">
                                     <span>איך זה עובד?</span>
                                 </Link>
@@ -768,7 +765,7 @@
                         <div className="max-w-[1400px] mx-auto relative z-10">
                             <div className="flex flex-col md:flex-row items-end justify-between mb-10 sm:mb-12 md:mb-16 border-b border-border-dark pb-4 sm:pb-6 gap-4 sm:gap-6">
                                 <div>
-                                    <h2 className="text-white text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase mb-2 italic">סגל הפיקוד</h2>
+                                    <h2 className="text-white text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase mb-2">סגל הפיקוד</h2>
                                     <p className="text-zinc-500 font-mono text-sm border-r-2 border-primary pr-3 uppercase">האנשים שיהפכו אתכם מנערים ללוחמים</p>
                                 </div>
                             </div>
@@ -785,7 +782,7 @@
                                             )}
                                             <div className="absolute bottom-0 right-0 left-0 p-6 z-10">
                                                 {member.role && <span className="inline-block px-2 py-0.5 bg-primary text-black text-[0.625rem] font-black uppercase tracking-wider mb-2 skew-x-[-10deg]">{member.role}</span>}
-                                                <h3 className="text-white text-3xl font-black leading-none uppercase italic group-hover:text-primary transition-colors">{member.name}</h3>
+                                                <h3 className="text-white text-3xl font-black leading-none uppercase group-hover:text-primary transition-colors">{member.name}</h3>
                                             </div>
                                         </div>
                                         <div className="p-6 flex flex-col gap-5 flex-1 relative">
@@ -816,7 +813,7 @@
                                         <div className="p-6 border-2 border-zinc-800 rounded-none bg-zinc-900 text-accent mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-[0_0_30px_rgba(204,255,0,0.15)] group-hover:border-accent">
                                             <span className="material-symbols-outlined text-5xl">group_add</span>
                                         </div>
-                                        <h3 className="text-white text-4xl font-black uppercase mb-3 italic">חושב שאתה מתאים?</h3>
+                                        <h3 className="text-white text-4xl font-black uppercase mb-3">חושב שאתה מתאים?</h3>
                                         <p className="text-zinc-400 text-base max-w-md">אנחנו תמיד מחפשים מדריכים יוצאי יחידות מובחרות שיצטרפו למשימה.</p>
                                         <button className="mt-8 px-10 py-4 bg-accent text-black hover:bg-white font-black text-sm uppercase tracking-[0.2em] transition-all shadow-[0_0_20px_rgba(204,255,0,0.4)] hover:shadow-[0_0_40px_rgba(255,255,255,0.6)]" aria-label="שלח קורות חיים להצטרפות לצוות">
                                             שלח קורות חיים
@@ -832,7 +829,7 @@
                         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-30"></div>
                         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[25rem] bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"></div>
                         <div className="relative z-10 max-w-5xl mx-auto text-center space-y-8 sm:space-y-10 md:space-y-12">
-                            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-8xl font-black text-white uppercase tracking-tighter leading-[0.85] italic">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-8xl font-black text-white uppercase tracking-tighter leading-[0.85]">
                                 מוכנים להתחיל <span className="text-primary text-stroke-1 block md:inline mt-2 md:mt-0">במלחמה?</span>
                             </h2>
                             <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-zinc-400 max-w-3xl mx-auto font-light">
@@ -889,10 +886,10 @@
                                     בנייה הדרגתית של הלוחם המודרני משלב הגיבוש ועד למסלול.
                                 </p>
                                 <div className="mt-10 flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
-                                    <button className="group flex min-w-[12.5rem] cursor-pointer items-center justify-center h-14 px-8 bg-primary text-white text-lg font-black tracking-wider transition-all hover:bg-white hover:text-black">
+                                    <a href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer" className="group flex min-w-[12.5rem] cursor-pointer items-center justify-center h-14 px-8 bg-primary text-white text-lg font-black tracking-wider transition-all hover:bg-white hover:text-black">
                                         התחל מסע
                                         <span className="material-symbols-outlined mr-2 group-hover:translate-x-1 transition-transform">arrow_back</span>
-                                    </button>
+                                    </a>
                                     <button className="flex min-w-[12.5rem] cursor-pointer items-center justify-center h-14 px-8 bg-transparent border border-white/30 text-white text-lg font-bold tracking-wider hover:bg-white/5 hover:border-primary transition-all">
                                         למד עוד
                                     </button>
@@ -1038,12 +1035,15 @@
          * - Article cards with images, titles, categories, and read time
          */
         const ArticlesPage = () => {
-            const [searchQuery, setSearchQuery] = useState("");
             const [activeFilter, setActiveFilter] = useState("הכל");
-            // Articles data loaded from data/articles.js
-            const featuredArticle = (typeof window !== 'undefined' && window.FEATURED_ARTICLE) ? window.FEATURED_ARTICLE : { title: '', desc: '', category: '', date: '', img: '' };
-            const sidebarArticles = (typeof window !== 'undefined' && window.SIDEBAR_ARTICLES) ? window.SIDEBAR_ARTICLES : [];
-            const allArticles = (typeof window !== 'undefined' && window.ALL_ARTICLES) ? window.ALL_ARTICLES : [];
+            const allArticlesData = (typeof window !== 'undefined' && window.ARTICLES) ? window.ARTICLES : [];
+            const filteredArticles = activeFilter === "הכל"
+                ? allArticlesData
+                : allArticlesData.filter((a) => (a.tags && a.tags.includes(activeFilter)) || a.category === activeFilter);
+            const featuredArticle = filteredArticles[0] || { title: '', desc: '', category: '', date: '', img: '', id: '' };
+            const sidebarArticles = filteredArticles.slice(1, 3);
+            const gridArticles = filteredArticles.slice(3);
+            const filterTags = ["הכל", "כושר קרבי", "מנטלי", "תזונה", "גיבושים", "אימונים", "בריאות", "ציוד", "רפואה", "פיקוד", "ראיונות"];
 
             return (
                 <div className="relative flex min-h-screen w-full flex-col overflow-hidden bg-background-dark text-white font-body antialiased overflow-x-hidden selection:bg-primary selection:text-white">
@@ -1072,23 +1072,6 @@
                                             ידע הוא מכפיל כוח. קבל גישה למאגר המידע המקיף ביותר להכנה לצה"ל, כושר קרבי וחוסן מנטלי.
                                         </h2>
                                     </div>
-                                    <div className="w-full max-w-xl mt-4 z-10">
-                                        <div className="flex h-16 w-full items-stretch shadow-[0_0_20px_rgba(0,0,0,0.5)] border border-gray-700 bg-surface-dark focus-within:border-primary transition-colors group/search">
-                                            <div className="flex w-16 items-center justify-center text-gray-400 group-focus-within/search:text-primary transition-colors">
-                                                <span className="material-symbols-outlined text-2xl">search</span>
-                                            </div>
-                                            <input 
-                                                className="w-full bg-transparent px-2 text-lg font-medium text-white placeholder-gray-600 border-none focus:ring-0" 
-                                                placeholder="חפש מאמר, נושא, או יחידה..." 
-                                                type="text"
-                                                value={searchQuery}
-                                                onChange={(e) => setSearchQuery(e.target.value)}
-                                            />
-                                            <button className="bg-white hover:bg-gray-200 text-black px-8 text-base font-black uppercase transition-colors tracking-wide ml-[-20px] my-2 mr-2">
-                                                חפש
-                                            </button>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </section>
@@ -1100,7 +1083,7 @@
                                     <span className="text-xs font-black text-gray-500 uppercase tracking-widest ml-4 hidden md:flex items-center gap-2">
                                         <span className="material-symbols-outlined text-sm">filter_list</span> סינון:
                                     </span>
-                                    {["הכל", "כושר קרבי", "מנטלי", "תזונה", "גיבושים", "ראיונות"].map((filter) => (
+                                    {filterTags.map((filter) => (
                                         <button 
                                             key={filter}
                                             onClick={() => setActiveFilter(filter)}
@@ -1117,19 +1100,20 @@
                             </div>
                         </section>
 
-                        {/* Featured Section */}
+                        {/* Featured Section - only when there are filtered articles */}
+                        {filteredArticles.length > 0 && (
                         <section className="px-4 py-16 flex justify-center bg-background-dark">
                             <div className="w-full max-w-7xl flex flex-col gap-10">
                                 <div className="flex items-end justify-between border-b border-border-dark pb-6">
                                     <div>
-                                        <h2 className="font-display text-4xl sm:text-5xl font-black text-white uppercase tracking-tighter italic">
+                                        <h2 className="font-display text-4xl sm:text-5xl font-black text-white uppercase tracking-tighter">
                                             <span className="text-primary mr-2 text-6xl leading-none">///</span>מומלצים
                                         </h2>
                                     </div>
-                                    <a className="group flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-primary transition-colors uppercase tracking-wider" href="#">
+                                    <Link to="/articles" className="group flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-primary transition-colors uppercase tracking-wider">
                                         צפה בכל המומלצים
                                         <span className="material-symbols-outlined text-lg transition-transform group-hover:-translate-x-1 rotate-180">arrow_right_alt</span>
-                                    </a>
+                                    </Link>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                                     <div className="md:col-span-8 group relative bg-surface-light border border-border-dark hover:border-primary transition-all duration-300 shadow-2xl">
@@ -1144,17 +1128,17 @@
                                             </div>
                                             <h3 className="font-display text-3xl md:text-5xl font-black text-white mb-4 uppercase leading-[0.9] group-hover:text-primary transition-colors whitespace-pre-line">{featuredArticle.title}</h3>
                                             <p className="text-gray-300 text-sm md:text-lg mb-8 max-w-2xl border-r-4 border-primary pr-4 bg-black/30 p-2 backdrop-blur-sm">{featuredArticle.desc}</p>
-                                            <button className="inline-flex items-center gap-3 text-sm font-bold text-white bg-white/10 hover:bg-primary border border-white/20 hover:border-primary px-6 py-3 uppercase tracking-wider transition-all duration-300">
+                                            <Link to={`/articles/${featuredArticle.id}`} className="inline-flex items-center gap-3 text-sm font-bold text-white bg-white/10 hover:bg-primary border border-white/20 hover:border-primary px-6 py-3 uppercase tracking-wider transition-all duration-300">
                                                 קרא את המאמר המלא
                                                 <span className="material-symbols-outlined text-lg rotate-180">arrow_back</span>
-                                            </button>
+                                            </Link>
                                         </div>
                                         <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-white/30 group-hover:border-primary transition-colors"></div>
                                         <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/30 group-hover:border-primary transition-colors"></div>
                                     </div>
                                     <div className="md:col-span-4 flex flex-col gap-6">
                                         {sidebarArticles.map((article, i) => (
-                                            <article key={i} className="group relative flex flex-col h-full bg-surface-light border border-border-dark hover:border-accent transition-all duration-300">
+                                            <Link key={article.id} to={`/articles/${article.id}`} className="group relative flex flex-col h-full bg-surface-light border border-border-dark hover:border-accent transition-all duration-300">
                                                 <div className="h-48 w-full bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-500 relative" style={{ backgroundImage: `url('${article.img}')` }}>
                                                     <div className="absolute inset-0 bg-black/50 group-hover:bg-transparent transition-all"></div>
                                                     <div className="absolute top-3 right-3 bg-black/80 px-2 py-1 text-[0.625rem] font-bold text-accent uppercase border border-accent/30">{article.category}</div>
@@ -1165,16 +1149,17 @@
                                                         <p className="text-sm text-gray-500 line-clamp-2">{article.desc}</p>
                                                     </div>
                                                     <div className="mt-4 flex justify-between items-center border-t border-gray-800 pt-3">
-                                                        <span className="text-xs font-mono text-gray-600">{article.readTime}</span>
+                                                        <span className="text-xs font-mono text-gray-600">{article.readTime || article.date}</span>
                                                         <span className="material-symbols-outlined text-accent text-sm rotate-180 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">arrow_right_alt</span>
                                                     </div>
                                                 </div>
-                                            </article>
+                                            </Link>
                                         ))}
                                     </div>
                                 </div>
                             </div>
                         </section>
+                        )}
 
                         {/* All Articles Section */}
                         <section className="px-4 py-16 flex justify-center bg-[#050505] relative border-t border-border-dark">
@@ -1183,11 +1168,11 @@
                                     <div className="h-10 w-2 bg-primary"></div>
                                     <h3 className="font-display text-3xl font-black text-white uppercase tracking-wide">כל המאמרים</h3>
                                     <div className="h-[1px] flex-1 bg-border-dark"></div>
-                                    <div className="text-gray-500 text-sm font-mono hidden sm:block">מציג 1-6 מתוך 42</div>
+                                    <div className="text-gray-500 text-sm font-mono hidden sm:block">מציג {filteredArticles.length === 0 ? '0' : `1-${filteredArticles.length}`} מתוך {filteredArticles.length}</div>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                                    {allArticles.map((article, i) => (
-                                        <article key={i} className="group flex flex-col bg-surface-dark border border-border-dark hover:border-gray-500 transition-all duration-200 hover:-translate-y-1">
+                                    {gridArticles.map((article) => (
+                                        <Link key={article.id} to={`/articles/${article.id}`} className="group flex flex-col bg-surface-dark border border-border-dark hover:border-gray-500 transition-all duration-200 hover:-translate-y-1">
                                             <div className="relative h-60 overflow-hidden border-b border-border-dark">
                                                 <div className="h-full w-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" style={{ backgroundImage: `url('${article.img}')` }}></div>
                                                 <div className={`absolute top-0 right-0 px-3 py-1 text-xs font-bold text-white shadow-md z-10 ${
@@ -1202,20 +1187,15 @@
                                                 <p className="text-sm text-gray-400 leading-relaxed line-clamp-3 mb-4">{article.desc}</p>
                                                 <div className="mt-auto pt-4 border-t border-dashed border-gray-800 flex items-center justify-between">
                                                     <span className="text-xs font-mono text-gray-500">{article.date}</span>
-                                                    <span className="text-xs font-bold text-primary uppercase tracking-widest group-hover:underline cursor-pointer">קרא עוד</span>
+                                                    <span className="text-xs font-bold text-primary uppercase tracking-widest group-hover:underline">קרא עוד</span>
                                                 </div>
                                             </div>
-                                        </article>
+                                        </Link>
                                     ))}
                                 </div>
-                                <div className="mt-20 flex justify-center gap-2">
-                                    <button className="flex h-12 w-12 items-center justify-center border border-primary bg-primary text-black font-black hover:bg-white transition-colors text-lg">1</button>
-                                    <button className="flex h-12 w-12 items-center justify-center border border-gray-800 bg-transparent text-gray-500 font-bold hover:border-primary hover:text-primary transition-colors text-lg">2</button>
-                                    <button className="flex h-12 w-12 items-center justify-center border border-gray-800 bg-transparent text-gray-500 font-bold hover:border-primary hover:text-primary transition-colors text-lg">3</button>
-                                    <button className="flex h-12 w-12 items-center justify-center border border-gray-800 bg-transparent text-gray-500 font-bold hover:border-primary hover:text-primary transition-colors">
-                                        <span className="material-symbols-outlined rotate-180">arrow_right_alt</span>
-                                    </button>
-                                </div>
+                                {filteredArticles.length === 0 && (
+                                    <p className="text-center text-gray-500 py-12">לא נמצאו מאמרים בקטגוריה זו.</p>
+                                )}
                             </div>
                         </section>
 
@@ -1240,6 +1220,66 @@
                         </section>
                     </main>
 
+                    <Footer />
+                </div>
+            );
+        };
+
+        /**
+         * ArticleDetailPage Component
+         * Single article page with placeholder content. Content will be refined later.
+         */
+        const ArticleDetailPage = () => {
+            const { id } = useParams();
+            const articles = (typeof window !== 'undefined' && window.ARTICLES) ? window.ARTICLES : [];
+            const article = articles.find((a) => a.id === id);
+
+            if (!article) {
+                return (
+                    <div className="bg-background-dark text-white min-h-screen flex flex-col">
+                        <Navbar />
+                        <main className="flex-1 flex items-center justify-center px-4">
+                            <div className="text-center">
+                                <h1 className="text-2xl font-black mb-4">מאמר לא נמצא</h1>
+                                <Link to="/articles" className="text-primary font-bold hover:underline">חזרה לבלוג</Link>
+                            </div>
+                        </main>
+                        <Footer />
+                    </div>
+                );
+            }
+
+            return (
+                <div className="bg-background-dark text-white font-body min-h-screen flex flex-col overflow-x-hidden selection:bg-primary selection:text-white">
+                    <Navbar />
+                    <main className="flex-1">
+                        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+                            <Link to="/articles" className="inline-flex items-center gap-2 text-gray-400 hover:text-primary text-sm font-bold uppercase tracking-wider mb-8">
+                                <span className="material-symbols-outlined text-lg rotate-180">arrow_back</span>
+                                חזרה לבלוג
+                            </Link>
+                            <header className="mb-10">
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                    <span className="bg-primary/20 text-primary text-xs font-black uppercase px-3 py-1 border border-primary/50">{article.category}</span>
+                                    {(article.tags || []).filter((t) => t !== article.category).slice(0, 3).map((tag) => (
+                                        <span key={tag} className="bg-white/5 text-gray-400 text-xs font-bold uppercase px-3 py-1 border border-white/10">{tag}</span>
+                                    ))}
+                                </div>
+                                <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight uppercase tracking-tighter whitespace-pre-line">{article.title}</h1>
+                                <p className="text-gray-500 text-sm font-mono mt-4">{article.date}</p>
+                            </header>
+                            <div className="relative w-full aspect-video bg-black border border-white/10 mb-12" style={{ backgroundImage: `url('${article.img}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+                            <div className="prose prose-invert max-w-none">
+                                <p className="text-gray-300 text-lg leading-relaxed mb-6">{article.desc}</p>
+                                <p className="text-gray-400 leading-relaxed">
+                                    תוכן המאמר יופיע כאן. זהו טקסט placeholder שיוחלף בתוכן מעודכן בהמשך.
+                                </p>
+                                <p className="text-gray-400 leading-relaxed mt-4">
+                                    לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אלית קולהע צופעט למרקוח איבן איף, ברומץ כלרשט מיחוצים. קלאצי סחטיר בובט למרדף או פליג למנצף מחטף. גולר מונפרר סוברט לורם שבצק יהול, לכנוץ בעריר גק ליץ, ושבעגט ליבם סולגק. נולום ארווס סאפיאן - פוסיליס קוויס, אקווזמן קוואזי במר מודוף.
+                                </p>
+                            </div>
+                        </article>
+                    </main>
                     <Footer />
                 </div>
             );
@@ -1343,10 +1383,10 @@
                                             <p className="mb-8 text-sm text-gray-400 font-body">
                                                 המפקדים שלנו זמינים בוואטסאפ לכל שאלה. <br />אל תבזבזו זמן יקר על ספקות.
                                             </p>
-                                            <button className="flex w-full items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1ebc57] px-4 py-4 text-black transition-all font-black uppercase shadow-[0_0_10px_rgba(37,211,102,0.3)] font-display">
+                                            <a href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1ebc57] px-4 py-4 text-black transition-all font-black uppercase shadow-[0_0_10px_rgba(37,211,102,0.3)] font-display">
                                                 <span className="material-symbols-outlined">chat</span>
                                                 דברו איתנו בוואטסאפ
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -1434,10 +1474,10 @@
                                         <p className="mb-8 text-sm text-gray-400 font-body">
                                             המפקדים שלנו זמינים בוואטסאפ לכל שאלה. <br />אל תבזבזו זמן יקר על ספקות.
                                         </p>
-                                        <button className="flex w-full items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1ebc57] px-4 py-4 text-black transition-all font-black uppercase shadow-[0_0_10px_rgba(37,211,102,0.3)] font-display">
+                                        <a href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1ebc57] px-4 py-4 text-black transition-all font-black uppercase shadow-[0_0_10px_rgba(37,211,102,0.3)] font-display">
                                             <span className="material-symbols-outlined">chat</span>
                                             דברו איתנו בוואטסאפ
-                                </button>
+                                </a>
                                     </div>
                                 </div>
                             </div>
@@ -1471,6 +1511,7 @@
                         <Route path={ROUTES.HOME} element={<HomePage />} />
                         <Route path={ROUTES.TEAM} element={<TeamPage />} />
                         <Route path={ROUTES.METHOD} element={<MethodPage />} />
+                        <Route path="/articles/:id" element={<ArticleDetailPage />} />
                         <Route path={ROUTES.ARTICLES} element={<ArticlesPage />} />
                         <Route path={ROUTES.CONTACT} element={<ContactPage />} />
                         <Route path={ROUTES.FAQ} element={<FAQPage />} />
