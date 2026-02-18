@@ -4,15 +4,18 @@ package-lock.json
 
 # Build artifacts
 build-manifest.json
+asset-manifest.json
+static/
 *.log
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# IDE
+# IDE / Editor
 .vscode/
 .idea/
+.cursor/
 *.swp
 *.swo
 
