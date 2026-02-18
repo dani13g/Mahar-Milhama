@@ -42,6 +42,21 @@
    2. BASE STYLES
    ========================================================================== */
 
+/* Headings use Secular One (loaded from Google Fonts) with Hebrew-safe fallbacks */
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Secular One", "Heebo", "Rubik", "Noto Sans Hebrew", sans-serif;
+}
+
+/* Same letter-spacing (0) for all headings site-wide - overrides Tailwind tracking-* on headings */
+body.font-display h1,
+body.font-display h2,
+body.font-display h3,
+body.font-display h4,
+body.font-display h5,
+body.font-display h6 {
+    letter-spacing: 0;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 6px;

@@ -1,39 +1,42 @@
 /**
- * Testimonials Data
- * 
- * @typedef {Object} Testimonial
- * @property {string} name - Name (may be abbreviated)
- * @property {string} unit - Military unit
- * @property {string} img - Image URL
- * @property {string} quote - Testimonial quote
+ * Testimonials Data - Image gallery for "בוגרים מספרים" section
+ * Images are stored in /images/testimonials/ (3 shown per page).
  */
-
-/**
- * @type {Testimonial[]}
- */
-const TESTIMONIALS = [
-    { 
-        name: "רועי כ.", 
-        unit: "סיירת מטכ״ל", 
-        img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDdqRNVmRsQaJ_tgGNDRxA_5LgzZ6nI1MwbdHYO2PecjAkamwEnQMTR5znOtGiMLQj0jmLRUO_SqwVa5gnlPJDSh0ebAHIiasLT_JtTvGYnf6GuqsGCG_ebjx3N6WNneQzZ_K1RJDi4XaO5MfrTWWlzNnYa2XJweTIue66ifDBAX6OAGS-jfC8z4Jmjg9K58TtCLjmOzftIDUWW_PjcU_4aRDjJn-G6BU_KVizeJHE5YWoZ4u_-NwUPnFXPt2rFWw3fHGrY_2ih3R_v", 
-        quote: '"100% מהבוגרים שלנו עברו את הגיבוש. האימונים כאן הם לא משחק ילדים. הכינו אותי לרגעים הכי קשים בגיבוש, וברגע האמת - פשוט ידעתי שאני לא נשבר."' 
-    },
-    { 
-        name: "עידו ל.", 
-        unit: "שייטת 13", 
-        img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBSZQPqeyisGvD-hOvr-B1bnc_PWVVOT1OwJBEuKDPCtkxMXunRHMNeCd4AB0vzVzbso-wQ-ef4Gs6EUZ_QLsRaEgulsLeoaOb-Uj-1CBv0ZwsOA-NFZ2R13e98xPPaNZlv_4I2iDexgREPsTglzkYx5t0uEUwg3Uo-Hjtzjj5JgRQFviFaTxkAvLRudfeB9yX74IWhX8ImkAyz0DwKnHS6scTwtIpwuk-V3xPgiRHLiifPL1py0r37uz9bU0Y39wI7K-_zwguTVGgT", 
-        quote: '"שינה לי את החיים מקצה לקצה. הגעתי ילד, יצאתי לוחם. המנטליות שנבנתה כאן מלווה אותי כל יום בשירות."' 
-    },
-    { 
-        name: "דניאל א.", 
-        unit: "יחידת שלדג", 
-        img: "https://lh3.googleusercontent.com/aida-public/AB6AXuC1074rHjTtmqNlkuE7_qKylTqex095H7iMqUC6HDgKXKxtxUHUWBN3iHUHjU09pNdFRq-NKt0noQP76rraiLOEmtvpNimPbuxuN-xeSyeOZEmbirRqcw959e1eHfzCwjDkk3HkTJVAd8BIceFFlAeN2jspC61rAhpKBE5uDv2p-FKudVyoejWU8sO0ZSsa4BwxrvIcL8lnzaITb59P7S1h8zz7IK1RRaquCEdgn8Bd8Aif6Wu49zWJxGAf615ILNT755mlApPoYEx_", 
-        quote: '"הכנה מנטלית ופיזית ברמה אחרת. המדריכים הם אנשי מקצוע שלא מוותרים לך על מילימטר. תודה על הכל."' 
-    }
+const TESTIMONIAL_IMAGES = [
+    "Whatsapp testimonials 2.png",
+    "Whatsapp testimonials 3.png",
+    "Whatsapp testimonials 5.png",
+    "Whatsapp testimonials 6.png",
+    "Whatsapp testimonials 7.png",
+    "Whatsapp testimonials 9.png",
+    "Whatsapp testimonials 10.png",
+    "Whatsapp testimonials 11.png",
+    "Whatsapp testimonials 12.png",
+    "Whatsapp testimonials 18.png",
+    "Whatsapp testimonials 21.png",
+    "Whatsapp testimonials 22.png",
+    "Whatsapp testimonials 23.png",
+    "Whatsapp testimonials 24.png",
+    "Whatsapp testimonials 25.png",
+    "Whatsapp testimonials 26.png",
+    "Whatsapp testimonials 27.png",
+    "Whatsapp testimonials 29.png",
+    "Whatsapp testimonials 31.png",
+    "Whatsapp testimonials 32.png",
+    "Whatsapp testimonials 36.png",
+    "Whatsapp testimonials 37.png",
+    "Whatsapp testimonials 38.png",
+    "Whatsapp testimonials 39.png",
+    "Whatsapp testimonials 42.png",
+    "Whatsapp testimonials 43.png",
+    "Whatsapp testimonials 44.png",
+    "Whatsapp testimonials 45.png"
 ];
 
-// Export for use in browser (global variable)
+// Legacy: keep TESTIMONIALS for any external reference
+const TESTIMONIALS = TESTIMONIAL_IMAGES;
+
 if (typeof window !== 'undefined') {
+    window.TESTIMONIAL_IMAGES = TESTIMONIAL_IMAGES;
     window.TESTIMONIALS = TESTIMONIALS;
 }
-

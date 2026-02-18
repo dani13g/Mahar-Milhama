@@ -56,7 +56,7 @@
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link
-        href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700;900&family=Heebo:wght@400;700;900&family=Noto+Sans+Hebrew:wght@400;700;900&family=Rubik:wght@300;400;500;700;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700;900&family=Heebo:wght@400;700;900&family=Noto+Sans+Hebrew:wght@400;700;900&family=Rubik:wght@300;400;500;700;900&family=Secular+One&display=swap"
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
@@ -97,7 +97,8 @@
                     },
                     // Font families - Hebrew-friendly fonts with fallbacks
                     fontFamily: {
-                        "display": ["Heebo", "Rubik", "Noto Sans Hebrew", "sans-serif"], // Headings
+                        "display": ["Heebo", "Rubik", "Noto Sans Hebrew", "sans-serif"], // Body / UI
+                        "heading": ["Secular One", "Heebo", "Rubik", "Noto Sans Hebrew", "sans-serif"], // Headings (h1–h6)
                         "body": ["Heebo", "sans-serif"], // Body text
                         "sans": ["Heebo", "Noto Sans Hebrew", "sans-serif"] // Default sans-serif
                     },
@@ -276,7 +277,7 @@
                                     {/* Desktop: "הצטרף עכשיו" button - Hidden on mobile */}
                                     <a href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer" className="hidden md:flex group relative px-6 py-2 bg-transparent overflow-hidden rounded-none border border-white/30 hover:border-primary transition-all duration-300" aria-label="הצטרף עכשיו">
                                         <div className="absolute inset-0 w-0 bg-primary transition-all duration-[250ms] ease-out group-hover:w-full"></div>
-                                        <span className="relative text-white text-sm font-black tracking-widest uppercase group-hover:text-white">הצטרף עכשיו</span>
+                                        <span className="relative text-white text-sm font-black tracking-normal uppercase group-hover:text-white">הצטרף עכשיו</span>
                                     </a>
                                 </div>
                             </header>
@@ -526,7 +527,9 @@
          * - Call-to-action section
          */
         const HomePage = () => {
-            // Load data from global variables with fallbacks
+            const [testimonialPage, setTestimonialPage] = useState(0);
+            const testimonialImages = (typeof window !== 'undefined' && window.TESTIMONIAL_IMAGES) ? window.TESTIMONIAL_IMAGES : [];
+            const testimonialTotalPages = Math.max(0, Math.ceil(testimonialImages.length / 3) - 1);
             const homeBlogArticles = (typeof window !== 'undefined' && window.HOME_BLOG_ARTICLES) ? window.HOME_BLOG_ARTICLES : [];
             return (
                 <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-dark text-white font-display overflow-x-hidden">
@@ -545,14 +548,13 @@
                             <div className="max-w-[1200px] w-full flex flex-col gap-6 sm:gap-8 items-center text-center px-0 sm:px-6 lg:px-12">
                                 <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/50 text-primary text-xs font-black tracking-[0.2em] uppercase backdrop-blur-sm">
                                     <span className="size-2 rounded-full bg-primary animate-pulse"></span>
-                                    הרשמה לסימולציית יום סיירות נפתחה!
+                                    ההרשמה לסימולציית גיבוש יחטיות נפתחה
                         </div>
-                                <h1 className="text-white text-[3.5rem] sm:text-5xl md:text-6xl lg:text-8xl font-black tracking-tight drop-shadow-2xl uppercase w-full px-3 lg:px-8 lg:pr-12 text-center leading-[1.1]">
-                                    מחר מלחמה.<br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-red-500 to-red-800 inline-block pr-3 text-[3rem] lg:text-[3.5rem]" style={{ backgroundImage: 'linear-gradient(135deg, rgba(230, 26, 26, 1) 0%, rgba(171, 23, 23, 1) 50%, rgba(217, 84, 84, 1) 100%)', WebkitBackgroundClip: 'text', color: 'transparent', paddingRight: '1rem' }}>האם אתה מוכן?</span>
+                                <h1 className="text-white text-[3rem] sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-black tracking-tight drop-shadow-2xl uppercase w-full px-3 lg:px-8 lg:pr-12 text-center leading-[1.1]">
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-red-500 to-red-800 inline-block pr-3" style={{ backgroundImage: 'linear-gradient(135deg, rgba(230, 26, 26, 1) 0%, rgba(171, 23, 23, 1) 50%, rgba(217, 84, 84, 1) 100%)', WebkitBackgroundClip: 'text', color: 'transparent', paddingRight: '1rem' }}>מחפש שירות משמעותי?</span>
                                 </h1>
                                 <h2 className="text-gray-400 text-base sm:text-base md:text-lg lg:text-2xl font-bold max-w-2xl mx-0 border-r-4 border-primary pr-3 sm:pr-4 leading-relaxed">
-                                    כושר קרבי שמוציא ממך את הגרסה הכי טובה שלך. <br />בלי תירוצים. בלי וויתורים. רק תוצאות.
+                                    מסגרת הכנה מובילה ליחידות העילית, קומנדו והסיירות.
                                 </h2>
                                 <div className="w-full max-w-4xl bg-black/60 backdrop-blur-md border border-white/10 p-1 sm:p-2 lg:p-2 shadow-2xl mt-6 sm:mt-8 relative group">
                                     <div className="absolute -top-1 -left-1 size-4 border-t-2 border-l-2 border-primary"></div>
@@ -589,7 +591,7 @@
                                     <span className="w-12 h-[2px] bg-primary"></span>
                                 </h2>
                                 <h3 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 uppercase">למה דווקא "מחר מלחמה"?</h3>
-                                <p className="text-gray-400 max-w-2xl mx-auto text-lg">אנחנו לא סתם עוד קבוצת כושר. אנחנו מכשירים את דור המפקדים הבא של צה״ל בשיטות הייחודיות שלנו.</p>
+                                <p className="text-gray-400 max-w-2xl mx-auto text-lg">לא עוד קבוצה של 2 אימונים בשבוע<br />הצלחה בגיבוש דורשת הכשרה מקיפה של מגבשים מהיחידות המובחרות הכוללת</p>
                                 </div>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                 {(typeof window !== 'undefined' && window.FEATURES ? window.FEATURES : []).map((feature, i) => (
@@ -606,7 +608,7 @@
                             </div>
                         </div>
 
-                    {/* Testimonials Section */}
+                    {/* Testimonials Section - Image gallery, 3 per page */}
                     <div className="bg-background-dark py-12 sm:py-16 md:py-20 lg:py-32 bg-texture relative overflow-hidden">
                         <div className="absolute inset-0 bg-black/90"></div>
                         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
@@ -617,32 +619,30 @@
                                         עדויות מהשטח
                                     </h2>
                                     <h3 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase">בוגרים מספרים</h3>
-                            </div>
+                                </div>
                                 <div className="flex gap-2 sm:gap-3">
-                                    <button className="size-12 sm:size-14 bg-black border border-white/20 hover:border-primary hover:text-primary text-white flex items-center justify-center transition-all min-h-[2.75rem] min-w-[2.75rem]" aria-label="עבור לעדות הבאה">
+                                    <button type="button" onClick={() => setTestimonialPage(p => Math.min(p + 1, testimonialTotalPages))} disabled={testimonialPage >= testimonialTotalPages} className="size-12 sm:size-14 bg-black border border-white/20 hover:border-primary hover:text-primary text-white flex items-center justify-center transition-all min-h-[2.75rem] min-w-[2.75rem] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-white/20 disabled:hover:text-white" aria-label="עבור ל־3 העדויות הבאות">
                                         <span className="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                                     </button>
-                                    <button className="size-14 bg-black border border-white/20 hover:border-primary hover:text-primary text-white flex items-center justify-center transition-all" aria-label="עבור לעדות הקודמת">
+                                    <button type="button" onClick={() => setTestimonialPage(p => Math.max(p - 1, 0))} disabled={testimonialPage <= 0} className="size-12 sm:size-14 bg-black border border-white/20 hover:border-primary hover:text-primary text-white flex items-center justify-center transition-all min-h-[2.75rem] min-w-[2.75rem] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-white/20 disabled:hover:text-white" aria-label="עבור ל־3 העדויות הקודמות">
                                         <span className="material-symbols-outlined" aria-hidden="true">arrow_back</span>
                                     </button>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-                                {(typeof window !== 'undefined' && window.TESTIMONIALS ? window.TESTIMONIALS : []).map((testimonial, i) => (
-                                    <div key={i} className="group bg-surface-card border border-white/5 p-4 sm:p-6 md:p-8 relative hover:border-primary/30 transition-all">
-                                        <div className="absolute -left-[1px] top-0 bottom-0 w-1 bg-primary"></div>
-                                        <div className="flex justify-between items-start mb-4 sm:mb-6">
-                                        <div className="flex items-center gap-3 sm:gap-4">
-                                                <div className="size-12 sm:size-14 md:size-16 bg-gray-800 bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-500 flex-shrink-0" style={{ backgroundImage: `url('${testimonial.img}')` }}></div>
-                                                <div>
-                                                    <p className="text-white font-black text-base sm:text-lg uppercase">{testimonial.name}</p>
-                                                    <p className="text-primary text-xs font-bold uppercase tracking-wider">{testimonial.unit}</p>
-                                                </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+                                {[0, 1, 2].map((slot) => {
+                                    const idx = testimonialPage * 3 + slot;
+                                    const filename = testimonialImages[idx];
+                                    if (!filename) return <div key={slot} className="bg-surface-card border border-white/5 min-h-[200px] md:min-h-[280px]" aria-hidden="true"></div>;
+                                    const src = '/images/testimonials/' + encodeURIComponent(filename);
+                                    return (
+                                        <div key={idx} className="group bg-surface-card border border-white/5 overflow-hidden relative hover:border-primary/30 transition-all">
+                                            <div className="min-h-[200px] md:min-h-[280px] bg-gray-900 flex items-center justify-center">
+                                                <img src={src} alt="" className="w-full h-auto max-h-[70vh] object-contain" loading={testimonialPage === 0 && slot < 3 ? 'eager' : 'lazy'} />
                                             </div>
                                         </div>
-                                        <p className="text-gray-400 text-xs sm:text-sm leading-relaxed font-medium">{testimonial.quote}</p>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
@@ -706,7 +706,7 @@
                     </div>
 
                     {/* WhatsApp Button */}
-                    <a aria-label="Chat on WhatsApp" className="fixed bottom-6 left-6 z-50 bg-[#25D366] text-white p-4 shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] hover:scale-110 transition-all duration-300 flex items-center justify-center group rounded-none clip-diagonal" href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer">
+                    <a aria-label="Chat on WhatsApp" className="fixed bottom-6 left-6 z-50 bg-[#25D366] text-white p-4 shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] hover:scale-110 transition-all duration-300 flex items-center justify-center group rounded-full" href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer">
                         <svg className="size-8 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
                         </svg>
@@ -744,7 +744,7 @@
                                 הכר את <span className="text-transparent bg-clip-text bg-gradient-to-b from-primary to-red-800 inline-block pr-3">הצוות</span>
                             </h1>
                             <p className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl font-medium max-w-3xl mx-auto leading-relaxed border-r-4 border-primary pr-4 sm:pr-6 bg-gradient-to-l from-black/50 to-transparent py-2">
-                                המאמנים שלנו הם יוצאי יחידות עילית וסיירות בצה״ל, מנוסים ומקצועיים. כל אחד נבחר בקפידה על מנת לדחוף אתכם לקצה ולממש את המקסימום של הפוטנציאל שלכם.
+                                המדריכים שלנו כולם יוצאי יחידות עילית וסיירות, מנוסים, מקצועיים ונבחרו בקפידה על מנת ממש את מקסימום הפוטנציאל שלכם בצבא.
                             </p>
                             <div className="pt-8 flex flex-col sm:flex-row gap-5 justify-center">
                                 <a href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer" className="group cursor-pointer inline-flex items-center justify-center gap-3 h-14 px-10 bg-white text-black hover:bg-accent transition-all text-lg font-black tracking-wider uppercase border-2 border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]" aria-label="קבע אימון ניסיון">
@@ -881,18 +881,18 @@
                                     השיטה
                             </h1>
                                 <p className="max-w-[700px] text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 font-medium leading-relaxed tracking-wide border-r-2 border-primary pr-4 sm:pr-6">
-                                    דיוק מדעי. <span className="text-white">אינטנסיביות ללא פשרות.</span>
+                                    תוכנית מקצועית בסטנדרטים הגבוהים ביותר
                                     <br />
-                                    בנייה הדרגתית של הלוחם המודרני משלב הגיבוש ועד למסלול.
+                                    תוך שמירה על ניהול עומסים מדויק מהאימון הראשון ועד לרגע הגיוס
                                 </p>
                                 <div className="mt-10 flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
                                     <a href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer" className="group flex min-w-[12.5rem] cursor-pointer items-center justify-center h-14 px-8 bg-primary text-white text-lg font-black tracking-wider transition-all hover:bg-white hover:text-black">
                                         התחל מסע
                                         <span className="material-symbols-outlined mr-2 group-hover:translate-x-1 transition-transform">arrow_back</span>
                                     </a>
-                                    <button className="flex min-w-[12.5rem] cursor-pointer items-center justify-center h-14 px-8 bg-transparent border border-white/30 text-white text-lg font-bold tracking-wider hover:bg-white/5 hover:border-primary transition-all">
+                                    <Link to={ROUTES.ARTICLES} className="flex min-w-[12.5rem] cursor-pointer items-center justify-center h-14 px-8 bg-transparent border border-white/30 text-white text-lg font-bold tracking-wider hover:bg-white/5 hover:border-primary transition-all" aria-label="עבור לדף המאמרים">
                                         למד עוד
-                                    </button>
+                                    </Link>
                         </div>
                             </div>
                     </section>
@@ -902,14 +902,13 @@
                             <div className="max-w-5xl w-full flex flex-col md:flex-row items-center gap-12">
                                 <div className="flex-1">
                                     <h2 className="text-3xl md:text-4xl font-black text-white leading-tight uppercase tracking-tight">
-                                        מוטיבציה היא זולה. <br />
-                                        משמעת והתמדה מנצחים מלחמות.
+                                        מוטיבציה היא זולה. משמעת והתמדה מובילים להצלחה
                                     </h2>
                                 </div>
                                 <div className="w-px h-32 bg-white/10 hidden md:block"></div>
                                 <div className="flex-1">
                                     <p className="text-gray-400 text-lg leading-relaxed font-light">
-                                        אנחנו לא מאמינים בצעקות חסרות תכלית או ש״הכל בראש״. השיטה שלנו נבנתה על ידי יוצאי יחידות עילית ומאמני כושר קרבי מוסמכים. המטרה אחת: בנייה פיזיולוגית ומנטלית מדויקת ומדורגת לקראת העומסים הקיצוניים של השירות הצבאי.״
+                                        אנחנו לא מאמינים בצעקות חסרות תכלית או ש״הכל בראש״. השיטה שלנו נבנתה על ידי מאמני כושר קרבי מוסמכים. המטרה אחת: בנייה פיזיולוגית ומנטלית מדויקת ומדורגת לקראת העומסים הקיצוניים של השירות הצבאי.
                                     </p>
                                 </div>
                                         </div>
@@ -921,7 +920,6 @@
                             <div className="w-full max-w-7xl mx-auto relative z-10">
                                 <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-6">
                                     <div>
-                                        <div className="text-accent text-xs font-bold tracking-[0.2em] uppercase mb-2">Tactical Foundation</div>
                                         <h2 className="text-4xl font-black text-white md:text-5xl uppercase tracking-tighter">שלושת עמודי התווך</h2>
                                     </div>
                             </div>
@@ -1007,9 +1005,9 @@
                                         אנחנו מחפשים רק את אלו שמוכנים לעבוד קשה, להתמיד ולא לוותר לעצמם. מקומות מוגבלים לצוותים הקרובים.
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
-                                        <button className="flex w-full sm:w-auto min-w-[15rem] cursor-pointer items-center justify-center h-16 px-8 bg-primary text-white text-xl font-black uppercase tracking-wider transition-all hover:bg-white hover:text-primary shadow-[0_0_30px_rgba(212,17,17,0.3)] hover:shadow-[0_0_50px_rgba(212,17,17,0.6)]">
+                                        <a href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer" className="flex w-full sm:w-auto min-w-[15rem] cursor-pointer items-center justify-center h-16 px-8 bg-primary text-white text-xl font-black uppercase tracking-wider transition-all hover:bg-white hover:text-primary shadow-[0_0_30px_rgba(212,17,17,0.3)] hover:shadow-[0_0_50px_rgba(212,17,17,0.6)]" aria-label="הירשם לאימון ניסיון ב-WhatsApp">
                                             הירשם לאימון ניסיון
-                                        </button>
+                                        </a>
                                         <Link to="/contact" className="flex w-full sm:w-auto min-w-[15rem] cursor-pointer items-center justify-center h-16 px-8 border border-white/20 hover:border-primary hover:bg-white/5 text-white text-xl font-bold uppercase tracking-wider transition-all">
                                             צור קשר עם המדריך
                                         </Link>
@@ -1358,8 +1356,8 @@
                                     <div className="flex flex-col gap-8 lg:pt-16 order-1 lg:order-2">
                                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
                                             {[
-                                                { icon: "call", title: "טלפון לשאלות", value: "050-987-6543", desc: "זמינים 24/7" },
-                                                { icon: "alternate_email", title: "דוא״ל", value: "join@mahar-milhama.co.il", desc: "מענה תוך 24 שעות" }
+                                                { icon: "call", title: "טלפון לשאלות", value: "052-796-0293", desc: "זמינים 24/7" },
+                                                { icon: "alternate_email", title: "דוא״ל", value: "Maharmilhama212@gmail.com", desc: "מענה תוך 24 שעות" }
                                             ].map((contact, i) => (
                                                 <div key={i} className="group relative bg-[#0a0a0a] border border-white/5 p-6 transition-all hover:border-primary/50 hover:bg-[#0f0f0f]">
                                                     <div className="flex items-start gap-5">
