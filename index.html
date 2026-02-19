@@ -339,7 +339,7 @@
                                 <div className="flex items-center text-white">
                                     <img src={IMAGE_URLS.logo} alt="מחר מלחמה - לוגו" className="h-10 w-auto" loading="lazy" />
                                 </div>
-                                <p className="text-sm leading-relaxed border-r-2 border-primary pr-4">
+                                <p className="text-base sm:text-lg leading-relaxed border-r-2 border-primary pr-4">
                                     הבית של הלוחמים לעתיד. אנחנו כאן כדי להכין אותך לכל אתגר שהצבא יזרוק עליך.
                                 </p>
                                 <div className="flex gap-3">
@@ -461,7 +461,7 @@
                             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 uppercase tracking-tighter">
                                 רגעים מהשטח
                             </h2>
-                            <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto border-r-2 border-primary pr-4">
+                            <p className="text-gray-400 text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed border-r-2 border-primary pr-4">
                                 הצצה לאימונים, לאתגרים ולרגעים הבלתי נשכחים
                             </p>
                         </div>
@@ -497,14 +497,14 @@
                                     <span className="material-symbols-outlined">chevron_right</span>
                                 </button>
 
-                                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
+                                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-1 md:gap-1.5">
                                     {galleryImages.map((_, index) => (
                                         <button
                                             key={index}
                                             type="button"
                                             onClick={() => goToSlide(index)}
-                                            className={`h-1.5 transition-all rounded-full ${
-                                                index === currentIndex ? 'w-4 bg-primary' : 'w-1.5 bg-white/30 hover:bg-white/50'
+                                            className={`h-[8px] w-[8px] min-h-0 min-w-0 p-0 transition-all rounded-full flex-shrink-0 ${
+                                                index === currentIndex ? 'bg-primary' : 'bg-white/30 hover:bg-white/50'
                                             }`}
                                             aria-label={`Go to image ${index + 1}`}
                                             aria-current={index === currentIndex ? 'true' : undefined}
@@ -568,7 +568,7 @@
                                 <h1 className="text-white text-[3rem] sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-black tracking-tight drop-shadow-2xl uppercase w-full px-3 lg:px-8 lg:pr-12 text-center leading-[1.1]">
                                     <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-red-500 to-red-800 inline-block pr-3" style={{ backgroundImage: 'linear-gradient(135deg, rgba(230, 26, 26, 1) 0%, rgba(171, 23, 23, 1) 50%, rgba(217, 84, 84, 1) 100%)', WebkitBackgroundClip: 'text', color: 'transparent', paddingRight: '1rem' }}>מחפש שירות משמעותי?</span>
                                 </h1>
-                                <h2 className="text-gray-400 text-base sm:text-base md:text-lg lg:text-2xl font-bold max-w-2xl mx-0 border-r-4 border-primary pr-3 sm:pr-4 leading-relaxed">
+                                <h2 className="text-gray-400 text-base sm:text-lg md:text-xl font-bold max-w-2xl mx-0 border-r-4 border-primary pr-3 sm:pr-4 leading-relaxed">
                                     מסגרת הכנה מובילה ליחידות העילית, קומנדו והסיירות.
                                 </h2>
                                 <div className="w-full max-w-4xl bg-black/60 backdrop-blur-md border border-white/10 p-1 sm:p-2 lg:p-2 shadow-2xl mt-6 sm:mt-8 relative group">
@@ -607,7 +607,7 @@
                                     <span className="w-12 h-[2px] bg-primary"></span>
                                 </h2>
                                 <h3 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 uppercase">למה דווקא "מחר מלחמה"?</h3>
-                                <p className="text-gray-400 max-w-2xl mx-auto text-lg">לא עוד קבוצה של 2 אימונים בשבוע<br />הצלחה בגיבוש דורשת הכשרה מקיפה של מגבשים מהיחידות המובחרות הכוללת</p>
+                                <p className="text-gray-400 max-w-2xl mx-auto text-base sm:text-lg md:text-xl leading-relaxed">לא עוד קבוצה של 2 אימונים בשבוע<br />הצלחה בגיבוש דורשת הכשרה מקיפה של מגבשים מהיחידות המובחרות הכוללת</p>
                                 </div>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                 {(typeof window !== 'undefined' && window.FEATURES ? window.FEATURES : []).map((feature, i) => (
@@ -759,7 +759,7 @@
                             <h1 className="text-white text-[3rem] sm:text-4xl md:text-6xl lg:text-8xl font-black leading-[0.85] tracking-tighter drop-shadow-2xl uppercase px-2">
                                 הכר את <span className="text-transparent bg-clip-text bg-gradient-to-b from-primary to-red-800 inline-block pr-3">הצוות</span>
                             </h1>
-                            <p className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl font-medium max-w-3xl mx-auto leading-relaxed border-r-4 border-primary pr-4 sm:pr-6 bg-gradient-to-l from-black/50 to-transparent py-2">
+                            <p className="text-gray-300 text-base sm:text-lg md:text-xl font-medium max-w-3xl mx-auto leading-relaxed border-r-4 border-primary pr-4 sm:pr-6 bg-gradient-to-l from-black/50 to-transparent py-2">
                                 המדריכים שלנו כולם יוצאי יחידות עילית וסיירות, מנוסים, מקצועיים ונבחרו בקפידה על מנת ממש את מקסימום הפוטנציאל שלכם בצבא.
                             </p>
                             <div className="pt-8 flex flex-col sm:flex-row gap-5 justify-center">
@@ -779,8 +779,8 @@
                         <div className="tactical-grid absolute inset-0 pointer-events-none opacity-20"></div>
                         <div className="absolute top-20 left-0 w-[37.5rem] h-[37.5rem] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
                         <div className="max-w-[1400px] mx-auto relative z-10">
-                            <div className="flex flex-col md:flex-row items-end justify-between mb-10 sm:mb-12 md:mb-16 border-b border-border-dark pb-4 sm:pb-6 gap-4 sm:gap-6">
-                                <div>
+                            <div className="flex flex-col md:flex-row items-end justify-start mb-10 sm:mb-12 md:mb-16 border-b border-border-dark pb-4 sm:pb-6 gap-4 sm:gap-6">
+                                <div className="text-right">
                                     <h2 className="text-white text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase mb-2">סגל הפיקוד</h2>
                                     <p className="text-zinc-500 font-mono text-sm border-r-2 border-primary pr-3 uppercase">האנשים שיהפכו אתכם מנערים ללוחמים</p>
                                 </div>
@@ -1023,7 +1023,7 @@
                                     <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase mb-6">
                                         האם אתה מוכן <span className="text-primary">להתחייב?</span>
                                     </h2>
-                                    <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-light">
+                                    <p className="text-gray-300 text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 font-light leading-relaxed">
                                         אנחנו מחפשים רק את אלו שמוכנים לעבוד קשה, להתמיד ולא לוותר לעצמם. מקומות מוגבלים לצוותים הקרובים.
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
@@ -1082,15 +1082,15 @@
                                     <div className="max-w-4xl space-y-6 z-10">
                                         <div className="flex items-center justify-center gap-2 mb-2">
                                             <span className="h-[2px] w-8 bg-primary inline-block"></span>
-                                            <span className="text-primary text-xs font-black uppercase tracking-[0.2em]">מרכז הידע הטקטי</span>
+                                            <span className="text-primary text-xs font-black uppercase tracking-[0.2em]">מרכז המידע</span>
                                             <span className="h-[2px] w-8 bg-primary inline-block"></span>
                                         </div>
                                         <h1 className="font-display text-white text-[3rem] sm:text-4xl md:text-6xl lg:text-8xl font-black leading-[0.85] tracking-tighter drop-shadow-2xl uppercase px-2">
-                                            מנטליות <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-300 to-gray-600">לוחמים</span>
+                                            ידע הוא כוח
                                         </h1>
-                                        <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-400 font-body max-w-2xl mx-auto leading-relaxed">
-                                            ידע הוא מכפיל כוח. קבל גישה למאגר המידע המקיף ביותר להכנה לצה"ל, כושר קרבי וחוסן מנטלי.
-                                        </h2>
+                                        <p className="text-base sm:text-lg md:text-xl font-medium text-gray-400 font-body max-w-2xl mx-auto leading-relaxed">
+                                            הרכבנו בשבילכם את מאגר המידע המקיף ביותר להכנה לצה"ל, כושר קרבי וחוסן מנטלי.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -1130,10 +1130,6 @@
                                             <span className="text-primary mr-2 text-6xl leading-none">///</span>מומלצים
                                         </h2>
                                     </div>
-                                    <Link to="/articles" className="group flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-primary transition-colors uppercase tracking-wider">
-                                        צפה בכל המומלצים
-                                        <span className="material-symbols-outlined text-lg transition-transform group-hover:-translate-x-1 rotate-180">arrow_right_alt</span>
-                                    </Link>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                                     <div className="md:col-span-8 group relative bg-surface-light border border-border-dark hover:border-primary transition-all duration-300 shadow-2xl flex flex-col overflow-hidden">
@@ -1383,17 +1379,17 @@
                                                 { icon: "alternate_email", title: "דוא״ל", value: "Maharmilhama212@gmail.com", desc: "מענה תוך 24 שעות" }
                                             ].map((contact, i) => (
                                                 <div key={i} className="group relative bg-[#0a0a0a] border border-white/5 p-6 transition-all hover:border-primary/50 hover:bg-[#0f0f0f]">
-                                                    <div className="flex items-start gap-5">
-                                                        <div className="p-3 bg-white/5 text-primary group-hover:bg-primary group-hover:text-black transition-colors skew-x-[-10deg]">
+                                                    <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:gap-5">
+                                                        <div className="p-3 bg-white/5 text-primary group-hover:bg-primary group-hover:text-black transition-colors skew-x-[-10deg] flex-shrink-0">
                                                             <span className="material-symbols-outlined text-2xl skew-x-[10deg]">{contact.icon}</span>
-                                        </div>
-                                                        <div>
+                                                        </div>
+                                                        <div className="text-center sm:text-right min-w-0 w-full sm:w-auto">
                                                             <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">{contact.title}</p>
-                                                            <p className="text-2xl font-black text-white dir-ltr text-right tracking-tight hover:text-primary transition-colors cursor-pointer">{contact.value}</p>
+                                                            <p className="text-2xl font-black text-white dir-ltr tracking-tight hover:text-primary transition-colors cursor-pointer break-all sm:break-normal">{contact.value}</p>
                                                             <p className="text-xs text-gray-600 mt-1">{contact.desc}</p>
-                                    </div>
-                                </div>
-                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             ))}
                                         </div>
                                         <div className="bg-surface-dark border border-white/10 p-8 text-center relative overflow-hidden">
@@ -1448,14 +1444,10 @@
                         <div className="absolute inset-0 bg-[url(\'https://www.transparenttextures.com/patterns/carbon-fibre.png\')] opacity-20"></div>
                         <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 text-center sm:text-right">
                             <div className="max-w-4xl">
-                                <div className="inline-flex items-center gap-2 border border-accent/30 bg-accent/5 px-3 py-1.5 text-xs font-bold text-accent mb-8 tracking-widest uppercase font-display">
-                                    <span className="material-symbols-outlined text-sm">terminal</span>
-                                    <span>מרכז המידע // 01</span>
-                                </div>
                                 <h1 className="text-5xl md:text-7xl font-black tracking-tight text-white mb-6 uppercase drop-shadow-lg font-display">
                                     שאלות נפוצות
                                 </h1>
-                                <p className="text-lg text-gray-400 sm:text-xl leading-relaxed max-w-2xl border-r-4 border-primary pr-6 font-body">
+                                <p className="text-base sm:text-lg md:text-xl text-gray-400 leading-relaxed max-w-2xl border-r-4 border-primary pr-6 font-body">
                                     יש ספקות? כאן מחסלים אותם. כל המידע שצריך לפני שיוצאים למסע שישנה לכם את החיים. <span className="text-white font-bold">בלי סיפורים, בלי תירוצים.</span>
                                 </p>
                             </div>
@@ -1510,6 +1502,27 @@
         };
 
         /**
+         * NotFoundPage Component
+         * Shown when the user navigates to an unknown hash route (e.g. /#/typo).
+         */
+        const NotFoundPage = () => {
+            return (
+                <div className="bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white">
+                    <Navbar />
+                    <main className="flex-1 flex flex-col items-center justify-center px-4 py-20 text-center">
+                        <h1 className="text-4xl sm:text-5xl font-black text-white mb-4 uppercase font-display">הדף לא נמצא</h1>
+                        <p className="text-gray-400 text-base sm:text-lg mb-8 max-w-md">הדף שחיפשת לא קיים או הוזז.</p>
+                        <Link to={typeof ROUTES !== 'undefined' ? ROUTES.HOME : '/'} className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3 uppercase tracking-wider transition-colors">
+                            חזרה לדף הבית
+                            <span className="material-symbols-outlined text-xl rotate-180">arrow_back</span>
+                        </Link>
+                    </main>
+                    <Footer />
+                </div>
+            );
+        };
+
+        /**
          * App Component - Main Router
          * 
          * Configures all application routes using React Router's HashRouter.
@@ -1536,6 +1549,7 @@
                         <Route path={ROUTES.ARTICLES} element={<ArticlesPage />} />
                         <Route path={ROUTES.CONTACT} element={<ContactPage />} />
                         <Route path={ROUTES.FAQ} element={<FAQPage />} />
+                        <Route path="*" element={<NotFoundPage />} />
                     </Routes>
                 </HashRouter>
             );
