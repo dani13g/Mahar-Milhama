@@ -227,10 +227,10 @@
                 { path: ROUTES.HOME, label: 'דף הבית', ariaLabel: 'עבור לדף הבית' },
                 { path: ROUTES.TEAM, label: 'הצוות', ariaLabel: 'עבור לדף הצוות' },
                 { path: ROUTES.METHOD, label: 'השיטה', ariaLabel: 'עבור לדף השיטה' },
-                { path: ROUTES.ARTICLES, label: 'מאמרים', ariaLabel: 'עבור לדף המאמרים' },
+                { path: ROUTES.ARTICLES, label: 'מאמרים', ariaLabel: 'עבור לדף המאמרים', showInNav: false },
                 { path: ROUTES.CONTACT, label: 'צור קשר', ariaLabel: 'עבור לדף יצירת קשר' },
                 { path: ROUTES.FAQ, label: 'שאלות נפוצות', ariaLabel: 'עבור לדף שאלות נפוצות' }
-            ];
+            ].filter((link) => link.showInNav !== false);
 
             return (
                 <nav className="sticky top-0 z-50 border-b border-white/10 bg-background-dark/95 backdrop-blur-md" aria-label="ניווט ראשי">
@@ -546,6 +546,7 @@
                 setTestimonialPage(p => Math.min(p, testimonialTotalPages));
             }, [testimonialPerPage]);
             const homeBlogArticles = (typeof window !== 'undefined' && window.HOME_BLOG_ARTICLES) ? window.HOME_BLOG_ARTICLES : [];
+            const SHOW_HOME_BLOG_SECTION = false;
             return (
                 <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-dark text-white font-display overflow-x-hidden">
                     <Navbar />
@@ -559,7 +560,7 @@
                             <div className="absolute inset-0 bg-gradient-to-t from-background-dark/60 via-background-dark/50 to-background-dark/40 z-20"></div>
                             <div className="absolute inset-0 grid-bg opacity-20 z-0"></div>
                             </div>
-                        <div className="relative z-10 flex flex-1 flex-col items-center justify-start md:justify-center px-4 sm:px-6 lg:px-8 pt-[120px] pb-16 sm:pb-20 md:pb-16 lg:pb-20">
+                        <div className="relative z-10 flex flex-1 flex-col items-center justify-start md:justify-center px-4 sm:px-6 lg:px-8 pt-[120px] md:pt-[84px] pb-16 sm:pb-20 md:pb-16 lg:pb-20">
                             <div className="max-w-[1200px] w-full flex flex-col gap-6 sm:gap-8 items-center text-center px-0 sm:px-6 lg:px-12">
                                 <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/50 text-primary text-xs font-black tracking-[0.2em] uppercase backdrop-blur-sm">
                                     <span className="size-2 rounded-full bg-primary animate-pulse"></span>
@@ -663,7 +664,8 @@
                         </div>
                     </div>
 
-                    {/* Blog Preview Section */}
+                    {/* Blog Preview Section - hidden when SHOW_HOME_BLOG_SECTION is false; set to true to show again */}
+                    {SHOW_HOME_BLOG_SECTION && (
                     <div className="bg-[#080808] pt-[84px] pb-12 sm:pb-16 md:pb-20 lg:pb-24 border-t border-white/5">
                         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10">
                             <div className="flex justify-between items-end mb-10 sm:mb-12 md:mb-16">
@@ -700,6 +702,7 @@
                             </div>
                         </div>
                     </div>
+                    )}
 
                     {/* Image Gallery Section */}
                     <ImageGallery />
