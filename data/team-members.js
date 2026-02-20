@@ -16,40 +16,49 @@
  */
 const TEAM_MEMBERS = [
     { 
-        name: "עידן לוי", 
+        name: "שחריה לופט", 
         role: "מנהל ראשי", 
-        unit: "יוצא סיירת מטכ״ל", 
+        unit: "מייסד ומנכ\"ל", 
         icon: "military_tech",
-        img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDtNoRS2yZLP116_m4kKtlkboYbNbR1snkPGJo4QO5CfV8pvomqam2Iz1aiLnFEOrN-Cj2ru9Iz3tnmj_wjc76Cd7uC50olYzQT_Dupo_xoSoGwfGt3b0rTBVlAobxE6EUpS588Yr_IjE5HB3iF7wzfqsUk1AGLUFvRPxih0paRwzm3WGslcgPcpKqQ4V1mMKoXDdeGWStP9hDC4zqvswzveUwA4H3rLcOVvOXbXL4Ziq9g5OT7ZqTUV29VtRfYQk49Ue1j9FS9yjDV", 
+        img: "/images/team/Manager.jpg?v=2", 
+        desc: "מייסד ומנהל מחר מלחמה. מוביל את החזון וההכשרה ליחידות העילית.",
+        badges: ["מייסד", "מנכ\"ל"]
+    },
+    { 
+        name: "ד", 
+        role: "", 
+        unit: "יוצא דובדבן", 
+        icon: "military_tech",
+        img: "/images/team/Instructor_Duvdevan.jpg", 
         desc: "מומחה בלוחמה בטרור וקרב מגע. 5 שנות ניסיון בהכשרת לוחמים ביחידות המובחרות ביותר.",
         badges: ["מאמן כושר קרבי בכיר", "מדריך לוט\"ר מוסמך"]
     },
     { 
-        name: "רועי כהן", 
+        name: "מ", 
         role: "", 
-        unit: "יוצא שייטת 13", 
+        unit: "יוצא מגלן", 
         icon: "sailing",
-        img: "https://lh3.googleusercontent.com/aida-public/AB6AXuC0NHhk7VZUc2I0AME8XFwpU7wZ341ni6UPJy7OFNFPre8SjfsVFzbUa1V4CrqbgdRzyHgWBze4ENfRjdMih8Ufj0zBDFg5OwJ00bcyiS50j23IcnsYSp_ECE87E-568XHBTWx-AAV5l2X4TUy16mFWtXEKdk6Lvp2LRP-kL9M0t5XDX9MJgQsk7RUT55mxln5PeCwQbcgAnprfMqiQrN0sbh40xM6W70dagVg4pXvNwQ9wDcRiE3hiPO4dolSDLke2Sf72FJxdexxI", 
-        desc: "מדריך צלילה קרבית וכושר מבצעי. מתמחה בבניית חוסן מנטלי תחת לחץ קיצוני.",
-        badges: ["מומחה לפעילות ימית", "קואוצ'ר מנטלי"]
+        img: "/images/team/Instructor_Maglan.jpg", 
+        desc: "מדריך קרוספיט ומתמחה בבניית תוכניות אימון ובניית חוסן מנטלי.",
+        badges: ["מדריך קרוספיט", "בניית תוכניות אימון", "חוסן מנטלי"]
     },
     { 
-        name: "נועה בן-ארי", 
+        name: "ד", 
         role: "", 
-        unit: "יוצאת יחידת עוקץ", 
+        unit: "יוצא שייטת 13", 
         icon: "pets",
-        img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCq6THCIMSkfMkZaq4wSthKxREbTTg4Os5s9ijw_YhXUVpeXZ1zlm4880e9Ile10Sv8BZc9mdNmPmiLlt4a0KYyYgztXu_qX9XWIDEbltbi-X6NteTDFzxRn2r5J5XIoIvDcHlSF47n3hsoarRcIKfLuYNelOxVZ4cL-lRQF2mYlOgeOZeOeMJlZg0ZaAphzj-V9AEvuzLzEfhhLDAFBxS5D_idgeqzTkPNfomq5_749jtdyIh47ggO28ieeYhXFk5VPwwISCtCRKc3", 
-        desc: "אחראית תחום ניווטים והתמצאות בשטח. מביאה גישה חדה, מדויקת ובלתי מתפשרת.",
+        img: "/images/team/Instructor_shayetet.jpg", 
+        desc: "חובב אקסטרים, בעל נסיון מבצעי רב. יורד לפרטים הכי קטנים.",
         badges: ["מדריכת ניווט מבצעי", "קצינה מצטיינת"]
     },
     { 
-        name: "סער אברהם", 
+        name: "ס׳", 
         role: "", 
-        unit: "יוצא יחידת דובדבן", 
+        unit: "יוצא יחידת מגלן", 
         icon: "target",
-        img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDCNdha5v9qpRNMR6gZTKPrbSVy9_t4XR2IDydWYUpHW0IODK0Y0eOEjryNd_agTBKVgS_7b3tBpl59mXJLJ0up5W6wREqeL4WcQFuVISNDFKt35zkMUL1SDU3uKUFOWyv69lKOhiJCvJvONpAfB2d8CYixvubmwmDQNjLjLH_C7JJD8bmRbsDBs6ceMrq-oT6EYIuUh53bhzZrnlbM_uBVaSI79TNPrcPx3uZQzD2eX2dWEI1TtqUmRUqiumySrC3p5yzx_QGUKiU7", 
-        desc: "מומחה ללוחמה בשטח בנוי והסוואה. מתמקד בפיתוח זריזות וקבלת החלטות.",
-        badges: ["מדריך קרב מגע", "מומחה פציעות"]
+        img: "/images/team/Paramedic.jpg", 
+        desc: "פרמדיק ופיזיותרפיסט מוסמך בעל קליניקה מובילה. אחראי על תחום הפציעות ובניית תוכניות האימון ב\"מחר מלחמה\".",
+        badges: ["פרמדיק", "פיזיותרפיסט", "תחום פציעות"]
     }
 ];
 
