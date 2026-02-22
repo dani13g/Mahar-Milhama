@@ -227,10 +227,10 @@
                 { path: ROUTES.HOME, label: 'דף הבית', ariaLabel: 'עבור לדף הבית' },
                 { path: ROUTES.TEAM, label: 'הצוות', ariaLabel: 'עבור לדף הצוות' },
                 { path: ROUTES.METHOD, label: 'השיטה', ariaLabel: 'עבור לדף השיטה' },
-                { path: ROUTES.ARTICLES, label: 'מאמרים', ariaLabel: 'עבור לדף המאמרים', showInNav: false },
+                { path: ROUTES.ARTICLES, label: 'מאמרים', ariaLabel: 'עבור לדף המאמרים' },
                 { path: ROUTES.CONTACT, label: 'צור קשר', ariaLabel: 'עבור לדף יצירת קשר' },
                 { path: ROUTES.FAQ, label: 'שאלות נפוצות', ariaLabel: 'עבור לדף שאלות נפוצות' }
-            ].filter((link) => link.showInNav !== false);
+            ];
 
             return (
                 <nav className="sticky top-0 z-50 border-b border-white/10 bg-background-dark/95 backdrop-blur-md" aria-label="ניווט ראשי">
@@ -546,7 +546,7 @@
                 setTestimonialPage(p => Math.min(p, testimonialTotalPages));
             }, [testimonialPerPage]);
             const homeBlogArticles = (typeof window !== 'undefined' && window.HOME_BLOG_ARTICLES) ? window.HOME_BLOG_ARTICLES : [];
-            const SHOW_HOME_BLOG_SECTION = false;
+            const SHOW_HOME_BLOG_SECTION = true;
             return (
                 <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-dark text-white font-display overflow-x-hidden">
                     <Navbar />
