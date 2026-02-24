@@ -1087,12 +1087,8 @@ const FEATURED_ARTICLE = ARTICLES[0];
 const SIDEBAR_ARTICLES = ARTICLES.slice(1, 3);
 const ALL_ARTICLES = ARTICLES.slice(3); // 6 articles in grid (כל המאמרים)
 
-// Home page blog preview (subset)
-const HOME_BLOG_ARTICLES = [
-  { title: "איך לשפר את ריצת ה-2000 שלך ב-30 יום", date: "12 SEP, 2023 // 14:00", category: "אימונים", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD60L04AL19-HTUN-l_f5KRuFjYxUcMQ57IFI1UIdnSbGz4uWKoRkvxOYJD_rnr7QOOz-8aw8QMfCi9MLC0sEE4AfS7rDny1TgG0YNgHoSKSnQO9gMA0yD4DPWKI9aT8SCwgPzngogy5dyYv6Ep8y-rbidq6iue7TAXBHZMA9b9wpMlzegYeMNTc0NrWfDOsWhOZjjXUXasIS6tZW6rBj_uT3zBzwnpxmQYbA3_kpgFsvkg4cKJkkSjY8rBBmWIebzcXu_5kd0L1NjT" },
-  { title: "חוסן מנטלי: הנשק הסודי של הלוחם", date: "05 SEP, 2023 // 09:30", category: "מנטלי", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDh6qRR2L9qesEs67aGzOhSNt9CIpTWth5bInlbwHtKalSpiIZgkdH2l6O9yHYJj0yWjVqsN9q8ERIBY7eR6sM5MNdPb1Yy0eUZjuoSv6XHVrf7iCDXjP8mArNPn_WBYFSctCPQjTO0DYLGBvulICfH8LQ_8qoUIpihYjQ0xY5tnDy8HqJxE2Xz8KiLxjvOWH2j_XOYreHyp3MQgWJBL3If7wUOFxxkpGbWd0-FQtAtVo2-KafsaYuePD-tkgqPpFuO8JQ6sT46tGCF" },
-  { title: "תזונה קרבית: מה לאכול לפני מסע כומתה", date: "28 AUG, 2023 // 18:45", category: "תזונה", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuADhMGx-tvGi_T_-YD3POECAz4v6VllY_85Y8Q2NN0Ql6iDQo3xyBpSq6hVG5vFkxXNYIvksh-GaXPbNkZPKRlFtl5aDNnOtBE45LQS-iLt3bhc2g25o5xcMMyjf3Vr5wX1uzfSdOaOScjrr4Y89Foc4BvQiTTEQ0SliEa2_jygsnyGzwnLmRTottRT0qDyO3mrrVso6PZketX-9EbdDlzbrMfTN0X3-UcbbK2Guli9uO1iPtnuK0lo0IzDD1q73YpqXncp0s1tOIAP" },
-];
+// Home page blog preview: running, mental resilience, nutrition
+const HOME_BLOG_ARTICLES = ARTICLES.filter(a => ["15", "3", "2"].includes(a.id));
 
 if (typeof window !== 'undefined') {
   window.ARTICLES = ARTICLES;
