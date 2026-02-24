@@ -12,7 +12,10 @@ const ROUTES = {
     ARTICLES: '/articles',
     ARTICLE_DETAIL: '/articles/:id',
     CONTACT: '/contact',
-    FAQ: '/faq'
+    FAQ: '/faq',
+    TERMS: '/terms',
+    PRIVACY: '/privacy',
+    ACCESSIBILITY: '/accessibility'
 };
 
 // Export for use in browser (global variable)

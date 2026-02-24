@@ -10,11 +10,21 @@
         "check:images": "node scripts/check-images.js",
         "check:accessibility": "node scripts/check-accessibility.js",
         "check:all": "npm run validate && npm run check:images && npm run check:accessibility",
+        "build:css": "tailwindcss -i src/input.css -o css/tailwind.build.css -m",
+        "build:js": "node -e \"require('fs').mkdirSync('dist',{recursive:true})\" && babel src/app.jsx -o dist/app.js",
+        "build": "npm run build:js && npm run build:css",
         "build:prep": "node scripts/build-prep.js",
-        "pre-deploy": "npm run check:all && npm run build:prep",
+        "pre-deploy": "npm run check:all && npm run build && npm run build:prep",
         "headless-check": "python3 tools/headless_check.py",
         "asset-sizes": "bash -c 'for f in static/js/*.js static/css/*.css; do [ -f \"$f\" ] || continue; echo \"$f\"; ls -lh \"$f\" | gzip -c \"$f\" | wc -c; echo; done'",
         "preview": "npm run serve:3001"
     },
-    "devDependencies": {}
+    "devDependencies": {
+        "@babel/cli": "^7.23.0",
+        "@babel/core": "^7.23.0",
+        "@babel/preset-react": "^7.23.0",
+        "tailwindcss": "^3.4.0",
+        "@tailwindcss/forms": "^0.5.7",
+        "@tailwindcss/container-queries": "^0.1.1"
+    }
 }

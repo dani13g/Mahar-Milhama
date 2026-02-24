@@ -67,10 +67,10 @@ if (!fs.existsSync(indexPath)) {
     // Check if index.html loads data/constants
     const indexContent = fs.readFileSync(indexPath, 'utf8');
     const requiredScripts = [
-        '/constants/images.js',
-        '/constants/routes.js',
-        '/data/team-members.js',
-        '/data/faqs.js'
+        'constants/images.js',
+        'constants/routes.js',
+        'data/team-members.js',
+        'data/faqs.js'
     ];
     
     requiredScripts.forEach(script => {

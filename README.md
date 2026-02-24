@@ -15,9 +15,10 @@ npm run check:images   # Check image URLs
 npm run check:accessibility  # Check accessibility
 npm run check:all      # Run all checks
 
-# Build Preparation
-npm run build:prep     # Prepare for deployment
-npm run pre-deploy     # Run all checks before deployment
+# Production build (Tailwind CSS + Babel-compiled React)
+npm run build         # Build css/tailwind.build.css and dist/app.js
+npm run build:prep    # Prepare for deployment
+npm run pre-deploy    # Run all checks + build + build:prep
 
 # Testing
 npm run headless-check # Run smoke tests
