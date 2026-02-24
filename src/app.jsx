@@ -43,6 +43,11 @@ if (typeof window !== 'undefined') {
     }
 }
 
+// Use window globals so app works when loaded via script tags (no module scope)
+const ROUTES = typeof window !== 'undefined' ? window.ROUTES : {};
+const IMAGE_URLS = typeof window !== 'undefined' ? window.IMAGE_URLS : {};
+const SITE_CONFIG = typeof window !== 'undefined' ? window.SITE_CONFIG : {};
+
 // Constants and data are loaded via script tags in <head>
 // Available globals: IMAGE_URLS, ROUTES, SITE_CONFIG, TEAM_MEMBERS, FAQS, TESTIMONIALS, FEATURES, METHOD_PILLARS, etc.
 // See constants/index.js and data/*.js files for structure
@@ -1758,22 +1763,14 @@ const NotFoundPage = () => {
 
 /**
  * App Component - Main Router
- * 
- * Configures all application routes using React Router's HashRouter.
- * HashRouter is used instead of BrowserRouter for static hosting compatibility.
- * 
- * Routes:
- * - "/" → HomePage (landing page)
- * - "/team" → TeamPage (team members)
- * - "/method" → MethodPage (training methodology)
- * - "/articles" → ArticlesPage (blog/articles)
- * - "/contact" → ContactPage (contact form)
- * - "/faq" → FAQPage (frequently asked questions)
- * 
- * Note: All routes use HashRouter, so URLs will be: /#/team, /#/method, etc.
+ *
+ * Uses a single catch-all Route so the only component that uses router hooks
+ * (useLocation) is the one rendered by Routes, avoiding "pathname" undefined errors
+ * when router context is not ready. RouterShell then picks the page by pathname.
  */
-const AppContent = () => {
+const RouterShell = () => {
     const location = useLocation();
+    const pathname = location && typeof location.pathname === 'string' ? location.pathname : '';
     const [announcement, setAnnouncement] = useState('');
 
     useEffect(() => {
@@ -1782,26 +1779,43 @@ const AppContent = () => {
         if (mainContent) {
             mainContent.focus();
         }
-        const pathname = location && location.pathname;
         setAnnouncement(document.title || (pathname ? `ניווט לעמוד ${pathname}` : ''));
-    }, [location]);
+    }, [pathname]);
+
+    const routes = ROUTES || {};
+    let page = null;
+    if (pathname === '' || pathname === (routes.HOME || '/')) {
+        page = <HomePage />;
+    } else if (pathname === (routes.TEAM || '/team')) {
+        page = <TeamPage />;
+    } else if (pathname === (routes.METHOD || '/method')) {
+        page = <MethodPage />;
+    } else if (pathname === (routes.ARTICLES || '/articles')) {
+        page = <ArticlesPage />;
+    } else if (pathname === (routes.CONTACT || '/contact')) {
+        page = <ContactPage />;
+    } else if (pathname === (routes.FAQ || '/faq')) {
+        page = <FAQPage />;
+    } else if (pathname === (routes.ACCESSIBILITY || '/accessibility')) {
+        page = <AccessibilityPage />;
+    } else if (pathname === (routes.TERMS || '/terms')) {
+        page = <TermsPage />;
+    } else if (pathname === (routes.PRIVACY || '/privacy')) {
+        page = <PrivacyPage />;
+    } else if (/^\/articles\/[^/]+$/.test(pathname)) {
+        page = (
+            <Routes>
+                <Route path="/articles/:id" element={<ArticleDetailPage />} />
+            </Routes>
+        );
+    } else {
+        page = <NotFoundPage />;
+    }
 
     return (
         <React.Fragment>
             <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
-            <Routes>
-                <Route path={ROUTES.HOME} element={<HomePage />} />
-                <Route path={ROUTES.TEAM} element={<TeamPage />} />
-                <Route path={ROUTES.METHOD} element={<MethodPage />} />
-                <Route path="/articles/:id" element={<ArticleDetailPage />} />
-                <Route path={ROUTES.ARTICLES} element={<ArticlesPage />} />
-                <Route path={ROUTES.CONTACT} element={<ContactPage />} />
-                <Route path={ROUTES.FAQ} element={<FAQPage />} />
-                <Route path={ROUTES.ACCESSIBILITY} element={<AccessibilityPage />} />
-                <Route path={ROUTES.TERMS} element={<TermsPage />} />
-                <Route path={ROUTES.PRIVACY} element={<PrivacyPage />} />
-                <Route path="*" element={<NotFoundPage />} />
-            </Routes>
+            {page}
         </React.Fragment>
     );
 };
@@ -1809,7 +1823,9 @@ const AppContent = () => {
 const App = () => {
     return (
         <HashRouter>
-            <AppContent />
+            <Routes>
+                <Route path="*" element={<RouterShell />} />
+            </Routes>
         </HashRouter>
     );
 };

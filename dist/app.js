@@ -94,6 +94,11 @@ if (typeof window !== 'undefined') {
   }
 }
 
+// Use window globals so app works when loaded via script tags (no module scope)
+const ROUTES = typeof window !== 'undefined' ? window.ROUTES : {};
+const IMAGE_URLS = typeof window !== 'undefined' ? window.IMAGE_URLS : {};
+const SITE_CONFIG = typeof window !== 'undefined' ? window.SITE_CONFIG : {};
+
 // Constants and data are loaded via script tags in <head>
 // Available globals: IMAGE_URLS, ROUTES, SITE_CONFIG, TEAM_MEMBERS, FAQS, TESTIMONIALS, FEATURES, METHOD_PILLARS, etc.
 // See constants/index.js and data/*.js files for structure
@@ -2004,22 +2009,14 @@ const NotFoundPage = () => {
 
 /**
  * App Component - Main Router
- * 
- * Configures all application routes using React Router's HashRouter.
- * HashRouter is used instead of BrowserRouter for static hosting compatibility.
- * 
- * Routes:
- * - "/" → HomePage (landing page)
- * - "/team" → TeamPage (team members)
- * - "/method" → MethodPage (training methodology)
- * - "/articles" → ArticlesPage (blog/articles)
- * - "/contact" → ContactPage (contact form)
- * - "/faq" → FAQPage (frequently asked questions)
- * 
- * Note: All routes use HashRouter, so URLs will be: /#/team, /#/method, etc.
+ *
+ * Uses a single catch-all Route so the only component that uses router hooks
+ * (useLocation) is the one rendered by Routes, avoiding "pathname" undefined errors
+ * when router context is not ready. RouterShell then picks the page by pathname.
  */
-const AppContent = () => {
+const RouterShell = () => {
   const location = useLocation();
+  const pathname = location && typeof location.pathname === 'string' ? location.pathname : '';
   const [announcement, setAnnouncement] = useState('');
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -2027,50 +2024,47 @@ const AppContent = () => {
     if (mainContent) {
       mainContent.focus();
     }
-    const pathname = location && location.pathname;
     setAnnouncement(document.title || (pathname ? `ניווט לעמוד ${pathname}` : ''));
-  }, [location]);
+  }, [pathname]);
+  const routes = ROUTES || {};
+  let page = null;
+  if (pathname === '' || pathname === (routes.HOME || '/')) {
+    page = /*#__PURE__*/React.createElement(HomePage, null);
+  } else if (pathname === (routes.TEAM || '/team')) {
+    page = /*#__PURE__*/React.createElement(TeamPage, null);
+  } else if (pathname === (routes.METHOD || '/method')) {
+    page = /*#__PURE__*/React.createElement(MethodPage, null);
+  } else if (pathname === (routes.ARTICLES || '/articles')) {
+    page = /*#__PURE__*/React.createElement(ArticlesPage, null);
+  } else if (pathname === (routes.CONTACT || '/contact')) {
+    page = /*#__PURE__*/React.createElement(ContactPage, null);
+  } else if (pathname === (routes.FAQ || '/faq')) {
+    page = /*#__PURE__*/React.createElement(FAQPage, null);
+  } else if (pathname === (routes.ACCESSIBILITY || '/accessibility')) {
+    page = /*#__PURE__*/React.createElement(AccessibilityPage, null);
+  } else if (pathname === (routes.TERMS || '/terms')) {
+    page = /*#__PURE__*/React.createElement(TermsPage, null);
+  } else if (pathname === (routes.PRIVACY || '/privacy')) {
+    page = /*#__PURE__*/React.createElement(PrivacyPage, null);
+  } else if (/^\/articles\/[^/]+$/.test(pathname)) {
+    page = /*#__PURE__*/React.createElement(Routes, null, /*#__PURE__*/React.createElement(Route, {
+      path: "/articles/:id",
+      element: /*#__PURE__*/React.createElement(ArticleDetailPage, null)
+    }));
+  } else {
+    page = /*#__PURE__*/React.createElement(NotFoundPage, null);
+  }
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "sr-only",
     "aria-live": "polite",
     "aria-atomic": "true"
-  }, announcement), /*#__PURE__*/React.createElement(Routes, null, /*#__PURE__*/React.createElement(Route, {
-    path: ROUTES.HOME,
-    element: /*#__PURE__*/React.createElement(HomePage, null)
-  }), /*#__PURE__*/React.createElement(Route, {
-    path: ROUTES.TEAM,
-    element: /*#__PURE__*/React.createElement(TeamPage, null)
-  }), /*#__PURE__*/React.createElement(Route, {
-    path: ROUTES.METHOD,
-    element: /*#__PURE__*/React.createElement(MethodPage, null)
-  }), /*#__PURE__*/React.createElement(Route, {
-    path: "/articles/:id",
-    element: /*#__PURE__*/React.createElement(ArticleDetailPage, null)
-  }), /*#__PURE__*/React.createElement(Route, {
-    path: ROUTES.ARTICLES,
-    element: /*#__PURE__*/React.createElement(ArticlesPage, null)
-  }), /*#__PURE__*/React.createElement(Route, {
-    path: ROUTES.CONTACT,
-    element: /*#__PURE__*/React.createElement(ContactPage, null)
-  }), /*#__PURE__*/React.createElement(Route, {
-    path: ROUTES.FAQ,
-    element: /*#__PURE__*/React.createElement(FAQPage, null)
-  }), /*#__PURE__*/React.createElement(Route, {
-    path: ROUTES.ACCESSIBILITY,
-    element: /*#__PURE__*/React.createElement(AccessibilityPage, null)
-  }), /*#__PURE__*/React.createElement(Route, {
-    path: ROUTES.TERMS,
-    element: /*#__PURE__*/React.createElement(TermsPage, null)
-  }), /*#__PURE__*/React.createElement(Route, {
-    path: ROUTES.PRIVACY,
-    element: /*#__PURE__*/React.createElement(PrivacyPage, null)
-  }), /*#__PURE__*/React.createElement(Route, {
-    path: "*",
-    element: /*#__PURE__*/React.createElement(NotFoundPage, null)
-  })));
+  }, announcement), page);
 };
 const App = () => {
-  return /*#__PURE__*/React.createElement(HashRouter, null, /*#__PURE__*/React.createElement(AppContent, null));
+  return /*#__PURE__*/React.createElement(HashRouter, null, /*#__PURE__*/React.createElement(Routes, null, /*#__PURE__*/React.createElement(Route, {
+    path: "*",
+    element: /*#__PURE__*/React.createElement(RouterShell, null)
+  })));
 };
 
 // Initialize React application
