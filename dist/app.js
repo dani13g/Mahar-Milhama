@@ -22,7 +22,8 @@
 
 const {
   useState,
-  useEffect
+  useEffect,
+  useRef
 } = React;
 const {
   createRoot
@@ -49,9 +50,9 @@ if (typeof window !== 'undefined') {
       ARTICLE_DETAIL: '/articles/:id',
       CONTACT: '/contact',
       FAQ: '/faq',
+      ACCESSIBILITY: '/accessibility',
       TERMS: '/terms',
-      PRIVACY: '/privacy',
-      ACCESSIBILITY: '/accessibility'
+      PRIVACY: '/privacy'
     };
   }
   if (typeof window.IMAGE_URLS === 'undefined') {
@@ -112,6 +113,8 @@ if (typeof window !== 'undefined') {
 const Navbar = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const mobileMenuRef = useRef(null);
+  const mobileToggleRef = useRef(null);
 
   // Use utility function for route checking (if available, fallback to inline)
   const isActive = path => {
@@ -138,17 +141,32 @@ const Navbar = () => {
       return () => document.removeEventListener('click', handleClickOutside);
     }
   }, [isMobileMenuOpen]);
-  const menuToggleRef = React.useRef(null);
+
+  // Keyboard accessibility for mobile menu: Escape to close + focus trap
   useEffect(() => {
     if (!isMobileMenuOpen) return;
-    const handleEscape = e => {
-      if (e.key === 'Escape') {
+    const handleKeydown = event => {
+      if (event.key === 'Escape') {
         setIsMobileMenuOpen(false);
-        menuToggleRef.current && menuToggleRef.current.focus();
+        mobileToggleRef.current?.focus();
+        return;
+      }
+      if (event.key !== 'Tab' || !mobileMenuRef.current) return;
+      const focusable = mobileMenuRef.current.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const isShift = event.shiftKey;
+      if (document.activeElement === last && !isShift) {
+        event.preventDefault();
+        first.focus();
+      } else if (document.activeElement === first && isShift) {
+        event.preventDefault();
+        last.focus();
       }
     };
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleKeydown);
+    return () => document.removeEventListener('keydown', handleKeydown);
   }, [isMobileMenuOpen]);
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -190,7 +208,7 @@ const Navbar = () => {
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center flex-shrink-0"
   }, /*#__PURE__*/React.createElement("button", {
-    ref: menuToggleRef,
+    ref: mobileToggleRef,
     className: "md:hidden text-white hover:text-primary transition-colors",
     "aria-label": isMobileMenuOpen ? "סגור תפריט" : "פתח תפריט",
     "aria-expanded": isMobileMenuOpen,
@@ -238,6 +256,7 @@ const Navbar = () => {
   }), /*#__PURE__*/React.createElement("span", {
     className: "relative text-white text-sm font-black tracking-normal uppercase group-hover:text-white"
   }, "\u05D4\u05E6\u05D8\u05E8\u05E3 \u05E2\u05DB\u05E9\u05D9\u05D5")))), /*#__PURE__*/React.createElement("div", {
+    ref: mobileMenuRef,
     className: `md:hidden absolute top-full left-0 right-0 bg-background-dark backdrop-blur-md border-t border-white/10 transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-4 pointer-events-none'}`,
     role: "navigation",
     "aria-label": "\u05EA\u05E4\u05E8\u05D9\u05D8 \u05E0\u05D9\u05D5\u05D5\u05D8 \u05E0\u05D9\u05D9\u05D3"
@@ -354,18 +373,18 @@ const Footer = () => {
     className: "flex flex-col gap-2",
     onSubmit: e => e.preventDefault()
   }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "footer-email",
-    className: "sr-only"
-  }, "\u05DB\u05EA\u05D5\u05D1\u05EA \u05D0\u05D9\u05DE\u05D9\u05D9\u05DC"), /*#__PURE__*/React.createElement("input", {
-    id: "footer-email",
-    className: "bg-white/5 border border-white/10 rounded-none h-12 px-4 text-sm text-white focus:border-primary focus:bg-black outline-none focus-visible:ring-2 focus-visible:ring-primary placeholder:text-gray-500 transition-all",
+    className: "sr-only",
+    htmlFor: "footer-newsletter-email"
+  }, "\u05D0\u05D9\u05DE\u05D9\u05D9\u05DC \u05DC\u05E8\u05E9\u05D9\u05DE\u05EA \u05EA\u05E4\u05D5\u05E6\u05D4"), /*#__PURE__*/React.createElement("input", {
+    id: "footer-newsletter-email",
+    className: "bg-white/5 border border-white/10 rounded-none h-12 px-4 text-sm text-white focus:border-primary focus:bg-black outline-none placeholder:text-gray-600 transition-all",
     placeholder: "\u05D4\u05DB\u05E0\u05E1 \u05D0\u05D9\u05DE\u05D9\u05D9\u05DC",
     type: "email"
   }), /*#__PURE__*/React.createElement("button", {
     className: "bg-white/10 hover:bg-primary text-white font-black uppercase tracking-wider text-sm h-12 rounded-none transition-colors border border-white/10 hover:border-primary",
     "aria-label": "\u05D4\u05E8\u05E9\u05DD \u05E2\u05DB\u05E9\u05D9\u05D5"
   }, "\u05D4\u05E8\u05E9\u05DD \u05E2\u05DB\u05E9\u05D9\u05D5")))), /*#__PURE__*/React.createElement("div", {
-    className: "border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono uppercase tracking-wider text-gray-500"
+    className: "border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono uppercase tracking-wider text-gray-600"
   }, /*#__PURE__*/React.createElement("div", null, "\xA9 2026 .\u05DE\u05D7\u05E8 \u05DE\u05DC\u05D7\u05DE\u05D4. \u05E0\u05D1\u05E0\u05D4 \u05D1\u05D3\u05DD, \u05D9\u05D6\u05E2 \u05D5\u05D3\u05DE\u05E2\u05D5\u05EA."), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-6"
   }, /*#__PURE__*/React.createElement(Link, {
@@ -377,7 +396,7 @@ const Footer = () => {
   }, "\u05E4\u05E8\u05D8\u05D9\u05D5\u05EA"), /*#__PURE__*/React.createElement(Link, {
     className: "hover:text-white transition-colors",
     to: ROUTES.ACCESSIBILITY
-  }, "\u05E0\u05D2\u05D9\u05E9\u05D5\u05EA")))));
+  }, "\u05D4\u05E6\u05D4\u05E8\u05EA \u05E0\u05D2\u05D9\u05E9\u05D5\u05EA")))));
 };
 
 /**
@@ -416,22 +435,20 @@ const ImageGallery = () => {
     setIsPaused(true);
     setTimeout(() => setIsPaused(false), 3000);
   };
-  const handleGalleryKeyDown = e => {
-    if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      goToNext();
-    } else if (e.key === 'ArrowRight') {
-      e.preventDefault();
+  const handleGalleryKeydown = event => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
       goToPrevious();
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      goToNext();
     }
   };
   if (galleryImages.length === 0) return null;
   const currentSrc = galleryImages[currentIndex];
   const total = galleryImages.length;
   return /*#__PURE__*/React.createElement("section", {
-    className: "bg-background-dark pt-[84px] pb-16 sm:pb-20 md:pb-24 border-t border-white/10",
-    role: "region",
-    "aria-label": "\u05D2\u05DC\u05E8\u05D9\u05D9\u05EA \u05EA\u05DE\u05D5\u05E0\u05D5\u05EA"
+    className: "bg-background-dark pt-[84px] pb-16 sm:pb-20 md:pb-24 border-t border-white/10"
   }, /*#__PURE__*/React.createElement("div", {
     className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
   }, /*#__PURE__*/React.createElement("div", {
@@ -447,13 +464,11 @@ const ImageGallery = () => {
   }, "\u05D4\u05E6\u05E6\u05D4 \u05DC\u05D0\u05D9\u05DE\u05D5\u05E0\u05D9\u05DD, \u05DC\u05D0\u05EA\u05D2\u05E8\u05D9\u05DD \u05D5\u05DC\u05E8\u05D2\u05E2\u05D9\u05DD \u05D4\u05D1\u05DC\u05EA\u05D9 \u05E0\u05E9\u05DB\u05D7\u05D9\u05DD")), /*#__PURE__*/React.createElement("div", {
     className: "relative max-w-6xl mx-auto",
     dir: "ltr",
-    tabIndex: 0,
-    onKeyDown: handleGalleryKeyDown,
-    "aria-label": `גלריית תמונות - תמונה ${currentIndex + 1} מתוך ${total}`
+    role: "region",
+    tabIndex: "0",
+    "aria-label": "\u05D2\u05DC\u05E8\u05D9\u05D9\u05EA \u05EA\u05DE\u05D5\u05E0\u05D5\u05EA",
+    onKeyDown: handleGalleryKeydown
   }, /*#__PURE__*/React.createElement("div", {
-    className: "sr-only",
-    "aria-live": "polite"
-  }, `תמונה ${currentIndex + 1} מתוך ${total}`), /*#__PURE__*/React.createElement("div", {
     className: "relative w-full overflow-hidden bg-black border border-white/10 shadow-2xl",
     style: {
       aspectRatio: '16/9'
@@ -461,7 +476,7 @@ const ImageGallery = () => {
   }, /*#__PURE__*/React.createElement("img", {
     key: currentIndex,
     src: currentSrc,
-    alt: `תמונה מאימון ${currentIndex + 1} מתוך ${total}`,
+    alt: `Gallery image ${currentIndex + 1} of ${total}`,
     className: "absolute inset-0 w-full h-full object-cover",
     loading: "eager",
     decoding: "async",
@@ -495,7 +510,10 @@ const ImageGallery = () => {
     className: `h-[8px] w-[8px] min-h-0 min-w-0 p-0 transition-all rounded-full flex-shrink-0 ${index === currentIndex ? 'bg-primary' : 'bg-white/30 hover:bg-white/50'}`,
     "aria-label": `Go to image ${index + 1}`,
     "aria-current": index === currentIndex ? 'true' : undefined
-  })))))));
+  })))), /*#__PURE__*/React.createElement("p", {
+    className: "sr-only",
+    "aria-live": "polite"
+  }, "\u05EA\u05DE\u05D5\u05E0\u05D4 ", currentIndex + 1, " \u05DE\u05EA\u05D5\u05DA ", total))));
 };
 
 /**
@@ -525,12 +543,23 @@ const HomePage = () => {
   useEffect(() => {
     setTestimonialPage(p => Math.min(p, testimonialTotalPages));
   }, [testimonialPerPage]);
+  const handleTestimonialsKeydown = event => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      setTestimonialPage(p => Math.max(p - 1, 0));
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      setTestimonialPage(p => Math.min(p + 1, testimonialTotalPages));
+    }
+  };
   const homeBlogArticles = typeof window !== 'undefined' && window.HOME_BLOG_ARTICLES ? window.HOME_BLOG_ARTICLES : [];
   const SHOW_HOME_BLOG_SECTION = true;
   return /*#__PURE__*/React.createElement("div", {
     className: "relative flex h-auto min-h-screen w-full flex-col bg-background-dark text-white font-display overflow-x-hidden"
   }, /*#__PURE__*/React.createElement(Navbar, null), /*#__PURE__*/React.createElement("main", {
-    id: "main-content"
+    id: "main-content",
+    role: "main",
+    tabIndex: "-1"
   }, /*#__PURE__*/React.createElement("div", {
     className: "relative w-full bg-background-dark h-screen flex flex-col"
   }, /*#__PURE__*/React.createElement("div", {
@@ -583,28 +612,28 @@ const HomePage = () => {
   }), /*#__PURE__*/React.createElement("div", {
     className: "relative flex-1"
   }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "hero-name",
-    className: "sr-only"
+    className: "sr-only",
+    htmlFor: "hero-name"
   }, "\u05E9\u05DD \u05DE\u05DC\u05D0"), /*#__PURE__*/React.createElement("input", {
+    id: "hero-name",
     name: "name",
-    className: "w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary",
+    className: "w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none",
     placeholder: "\u05E9\u05DD \u05DE\u05DC\u05D0",
     required: true,
-    type: "text",
-    id: "hero-name"
+    type: "text"
   })), /*#__PURE__*/React.createElement("div", {
     className: "relative flex-1"
   }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "hero-phone",
-    className: "sr-only"
+    className: "sr-only",
+    htmlFor: "hero-phone"
   }, "\u05D8\u05DC\u05E4\u05D5\u05DF \u05E0\u05D9\u05D9\u05D3"), /*#__PURE__*/React.createElement("input", {
+    id: "hero-phone",
     name: "phone",
-    className: "w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary text-right",
+    className: "w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none text-right",
     placeholder: "\u05D8\u05DC\u05E4\u05D5\u05DF \u05E0\u05D9\u05D9\u05D3",
     required: true,
     type: "tel",
-    inputMode: "numeric",
-    id: "hero-phone"
+    inputMode: "numeric"
   })), /*#__PURE__*/React.createElement("button", {
     type: "submit",
     className: "flex-none h-12 sm:h-14 px-6 sm:px-10 bg-primary hover:bg-primary-hover active:scale-[0.98] transition-all rounded-none text-white text-base sm:text-xl font-black tracking-wider shadow-[0_0_30px_rgba(230,26,26,0.3)] flex items-center justify-center gap-2 sm:gap-3 uppercase min-h-[2.75rem]",
@@ -652,16 +681,9 @@ const HomePage = () => {
   }, feature.desc)))))), /*#__PURE__*/React.createElement("div", {
     className: "bg-background-dark pt-[84px] pb-12 sm:pb-16 md:pb-20 lg:pb-32 bg-texture relative overflow-hidden",
     role: "region",
-    "aria-label": "\u05E2\u05D3\u05D5\u05D9\u05D5\u05EA \u05D1\u05D5\u05D2\u05E8\u05D9\u05DD",
-    onKeyDown: e => {
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        setTestimonialPage(p => Math.min(p + 1, testimonialTotalPages));
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        setTestimonialPage(p => Math.max(p - 1, 0));
-      }
-    }
+    tabIndex: "0",
+    "aria-label": "\u05D1\u05D5\u05D2\u05E8\u05D9\u05DD \u05DE\u05E1\u05E4\u05E8\u05D9\u05DD",
+    onKeyDown: handleTestimonialsKeydown
   }, /*#__PURE__*/React.createElement("div", {
     className: "absolute inset-0 bg-black/90"
   }), /*#__PURE__*/React.createElement("div", {
@@ -695,9 +717,6 @@ const HomePage = () => {
     className: "material-symbols-outlined",
     "aria-hidden": "true"
   }, "arrow_back")))), /*#__PURE__*/React.createElement("div", {
-    className: "sr-only",
-    "aria-live": "polite"
-  }, `עדויות: עמוד ${testimonialPage + 1}`), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
   }, Array.from({
     length: testimonialPerPage
@@ -717,11 +736,14 @@ const HomePage = () => {
       className: "w-full overflow-hidden"
     }, /*#__PURE__*/React.createElement("img", {
       src: src,
-      alt: `עדות בוגר מספר ${idx + 1}`,
+      alt: `עדות בוגר ${idx + 1}`,
       className: "w-full h-auto block align-top",
       loading: testimonialPage === 0 && slot === 0 ? 'eager' : 'lazy'
     })));
-  })))), SHOW_HOME_BLOG_SECTION && /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("p", {
+    className: "sr-only",
+    "aria-live": "polite"
+  }, "\u05E2\u05DE\u05D5\u05D3 \u05E2\u05D3\u05D5\u05D9\u05D5\u05EA ", testimonialPage + 1, " \u05DE\u05EA\u05D5\u05DA ", testimonialTotalPages + 1))), SHOW_HOME_BLOG_SECTION && /*#__PURE__*/React.createElement("div", {
     className: "bg-[#080808] pt-[84px] pb-12 sm:pb-16 md:pb-20 lg:pb-24 border-t border-white/5"
   }, /*#__PURE__*/React.createElement("div", {
     className: "max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10"
@@ -740,37 +762,35 @@ const HomePage = () => {
     className: "material-symbols-outlined font-bold"
   }, "arrow_back"))), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 md:grid-cols-3 gap-8"
-  }, homeBlogArticles.map((article, i) => /*#__PURE__*/React.createElement(Link, {
-    key: i,
-    to: `/articles/${article.id}`,
-    className: "flex flex-col group cursor-pointer",
-    "aria-label": `קרא עוד על: ${article.title}`
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "relative h-64 border border-white/10 overflow-hidden mb-5"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 z-10 transition-opacity duration-300",
-    "aria-hidden": "true"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0",
-    style: {
-      backgroundImage: `url('${article.img}')`
-    },
-    role: "img",
-    "aria-label": article.title
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute top-0 right-0 bg-primary text-white text-xs font-black uppercase tracking-wider px-4 py-2 z-20"
-  }, article.category)), /*#__PURE__*/React.createElement("div", {
-    className: "flex flex-col gap-3 px-2"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "text-gray-500 text-xs font-mono uppercase tracking-wider"
-  }, article.date), /*#__PURE__*/React.createElement("h4", {
-    className: "text-white text-xl font-black group-hover:text-primary transition-colors leading-tight uppercase"
-  }, article.title), /*#__PURE__*/React.createElement("span", {
-    className: "text-gray-400 group-hover:text-white text-xs font-bold mt-2 flex items-center gap-2 uppercase tracking-wider transition-colors"
-  }, "\u05E7\u05E8\u05D0 \u05E2\u05D5\u05D3", /*#__PURE__*/React.createElement("span", {
-    className: "w-8 h-[1px] bg-gray-500 group-hover:bg-white",
-    "aria-hidden": "true"
-  })))))))), /*#__PURE__*/React.createElement(ImageGallery, null), /*#__PURE__*/React.createElement("div", {
+  }, homeBlogArticles.map((article, i) => {
+    const articleHref = article && article.id ? `/articles/${article.id}` : '/articles';
+    return /*#__PURE__*/React.createElement(Link, {
+      key: article.id || i,
+      to: articleHref,
+      className: "flex flex-col group cursor-pointer"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "relative h-64 border border-white/10 overflow-hidden mb-5"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 z-10 transition-opacity duration-300"
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0",
+      style: {
+        backgroundImage: `url('${article.img}')`
+      }
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "absolute top-0 right-0 bg-primary text-white text-xs font-black uppercase tracking-wider px-4 py-2 z-20"
+    }, article.category)), /*#__PURE__*/React.createElement("div", {
+      className: "flex flex-col gap-3 px-2"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-500 text-xs font-mono uppercase tracking-wider"
+    }, article.date), /*#__PURE__*/React.createElement("h4", {
+      className: "text-white text-xl font-black group-hover:text-primary transition-colors leading-tight uppercase"
+    }, article.title), /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-400 group-hover:text-white text-xs font-bold mt-2 flex items-center gap-2 uppercase tracking-wider transition-colors"
+    }, "\u05E7\u05E8\u05D0 \u05E2\u05D5\u05D3", /*#__PURE__*/React.createElement("span", {
+      className: "w-8 h-[1px] bg-gray-600 group-hover:bg-white"
+    }))));
+  })))), /*#__PURE__*/React.createElement(ImageGallery, null), /*#__PURE__*/React.createElement("div", {
     className: "bg-primary relative overflow-hidden py-24"
   }, /*#__PURE__*/React.createElement("div", {
     className: "absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 mix-blend-multiply"
@@ -856,6 +876,8 @@ const TeamPage = () => {
     "aria-label": "\u05DC\u05DE\u05D3 \u05D0\u05D9\u05DA \u05D6\u05D4 \u05E2\u05D5\u05D1\u05D3"
   }, /*#__PURE__*/React.createElement("span", null, "\u05D0\u05D9\u05DA \u05D6\u05D4 \u05E2\u05D5\u05D1\u05D3?"))))), /*#__PURE__*/React.createElement("main", {
     id: "main-content",
+    role: "main",
+    tabIndex: "-1",
     className: "flex-1 bg-background-dark pt-[84px] pb-12 sm:pb-16 md:pb-20 lg:pb-24 px-4 sm:px-6 relative"
   }, /*#__PURE__*/React.createElement("div", {
     className: "tactical-grid absolute inset-0 pointer-events-none opacity-20"
@@ -882,9 +904,7 @@ const TeamPage = () => {
     className: "absolute inset-0 bg-cover bg-center filter-grayscale transition-all duration-500 group-hover:filter-none scale-100 group-hover:scale-105",
     style: {
       backgroundImage: `url('${member.img}')`
-    },
-    role: "img",
-    "aria-label": `תמונה של ${member.name}`
+    }
   }), /*#__PURE__*/React.createElement("div", {
     className: "absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"
   }), member.role && /*#__PURE__*/React.createElement("div", {
@@ -972,6 +992,8 @@ const MethodPage = () => {
     className: "relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden bg-background-dark text-white antialiased selection:bg-primary selection:text-white"
   }, /*#__PURE__*/React.createElement(Navbar, null), /*#__PURE__*/React.createElement("main", {
     id: "main-content",
+    role: "main",
+    tabIndex: "-1",
     className: "flex flex-col flex-1"
   }, /*#__PURE__*/React.createElement("section", {
     className: "relative flex h-screen flex-col items-center justify-start md:justify-center overflow-hidden bg-background-dark border-b border-white/10"
@@ -1189,6 +1211,8 @@ const ArticlesPage = () => {
     className: "relative flex min-h-screen w-full flex-col overflow-hidden bg-background-dark text-white font-body antialiased overflow-x-hidden selection:bg-primary selection:text-white"
   }, /*#__PURE__*/React.createElement(Navbar, null), /*#__PURE__*/React.createElement("main", {
     id: "main-content",
+    role: "main",
+    tabIndex: "-1",
     className: "flex-1 bg-background-dark relative"
   }, /*#__PURE__*/React.createElement("section", {
     className: "relative px-4 pt-[84px] pb-20 sm:px-6 lg:px-8 flex justify-center border-b border-border-dark bg-[#0a0a0a]"
@@ -1260,9 +1284,7 @@ const ArticlesPage = () => {
     className: "aspect-[16/9] md:aspect-video w-full bg-cover bg-center transition-all duration-700 grayscale group-hover:grayscale-0 flex-shrink-0 relative",
     style: {
       backgroundImage: `url('${featuredArticle.img}')`
-    },
-    role: "img",
-    "aria-label": featuredArticle.title
+    }
   }, /*#__PURE__*/React.createElement("div", {
     className: "absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90 group-hover:opacity-80 transition-opacity md:block hidden"
   })), /*#__PURE__*/React.createElement("div", {
@@ -1279,8 +1301,7 @@ const ArticlesPage = () => {
     className: "text-gray-300 text-sm md:text-lg mb-6 md:mb-8 max-w-2xl border-r-4 border-primary pr-4 bg-black/30 p-2 backdrop-blur-sm line-clamp-3 md:line-clamp-none"
   }, featuredArticle.desc), /*#__PURE__*/React.createElement(Link, {
     to: `/articles/${featuredArticle.id}`,
-    className: "inline-flex items-center gap-3 text-sm font-bold text-white bg-white/10 hover:bg-primary border border-white/20 hover:border-primary px-6 py-3 uppercase tracking-wider transition-all duration-300",
-    "aria-label": `קרא את המאמר המלא: ${featuredArticle.title}`
+    className: "inline-flex items-center gap-3 text-sm font-bold text-white bg-white/10 hover:bg-primary border border-white/20 hover:border-primary px-6 py-3 uppercase tracking-wider transition-all duration-300"
   }, "\u05E7\u05E8\u05D0 \u05D0\u05EA \u05D4\u05DE\u05D0\u05DE\u05E8 \u05D4\u05DE\u05DC\u05D0", /*#__PURE__*/React.createElement("span", {
     className: "material-symbols-outlined text-lg rotate-180"
   }, "arrow_back"))), /*#__PURE__*/React.createElement("div", {
@@ -1297,9 +1318,7 @@ const ArticlesPage = () => {
     className: "h-48 w-full bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-500 relative",
     style: {
       backgroundImage: `url('${article.img}')`
-    },
-    role: "img",
-    "aria-label": article.title
+    }
   }, /*#__PURE__*/React.createElement("div", {
     className: "absolute inset-0 bg-black/50 group-hover:bg-transparent transition-all"
   }), /*#__PURE__*/React.createElement("div", {
@@ -1313,7 +1332,7 @@ const ArticlesPage = () => {
   }, article.desc)), /*#__PURE__*/React.createElement("div", {
     className: "mt-4 flex justify-between items-center border-t border-gray-800 pt-3"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "text-xs font-mono text-gray-500"
+    className: "text-xs font-mono text-gray-600"
   }, article.readTime || article.date), /*#__PURE__*/React.createElement("span", {
     className: "material-symbols-outlined text-accent text-sm rotate-180 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"
   }, "arrow_right_alt"))))))))), /*#__PURE__*/React.createElement("section", {
@@ -1358,17 +1377,14 @@ const ArticlesPage = () => {
   }, paginatedGridArticles.map(article => /*#__PURE__*/React.createElement(Link, {
     key: article.id,
     to: `/articles/${article.id}`,
-    className: "group flex flex-col bg-surface-dark border border-border-dark hover:border-gray-500 transition-all duration-200 hover:-translate-y-1",
-    "aria-label": `קרא עוד על: ${article.title}`
+    className: "group flex flex-col bg-surface-dark border border-border-dark hover:border-gray-500 transition-all duration-200 hover:-translate-y-1"
   }, /*#__PURE__*/React.createElement("div", {
     className: "relative h-52 sm:h-60 overflow-hidden border-b border-border-dark"
   }, /*#__PURE__*/React.createElement("div", {
     className: "h-full w-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0",
     style: {
       backgroundImage: `url('${article.img}')`
-    },
-    role: "img",
-    "aria-label": article.title
+    }
   }), /*#__PURE__*/React.createElement("div", {
     className: `absolute top-0 right-0 px-3 py-1 text-xs font-bold text-white shadow-md z-10 ${article.category === "כושר קרבי" || article.category === "אימונים" ? "bg-primary" : "bg-black border border-gray-700"}`
   }, article.category), /*#__PURE__*/React.createElement("div", {
@@ -1384,8 +1400,7 @@ const ArticlesPage = () => {
   }, /*#__PURE__*/React.createElement("span", {
     className: "text-xs font-mono text-gray-500"
   }, article.date), /*#__PURE__*/React.createElement("span", {
-    className: "text-xs font-bold text-primary uppercase tracking-widest group-hover:underline",
-    "aria-hidden": "true"
+    className: "text-xs font-bold text-primary uppercase tracking-widest group-hover:underline"
   }, "\u05E7\u05E8\u05D0 \u05E2\u05D5\u05D3")))))), totalPages > 1 && /*#__PURE__*/React.createElement("div", {
     className: "flex justify-center mt-10 sm:mt-12"
   }, /*#__PURE__*/React.createElement("nav", {
@@ -1433,17 +1448,17 @@ const ArticlesPage = () => {
     className: "flex flex-col sm:flex-row gap-0 max-w-xl mx-auto border border-white/20 p-1 bg-surface-dark",
     onSubmit: e => e.preventDefault()
   }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "newsletter-email",
-    className: "sr-only"
-  }, "\u05DB\u05EA\u05D5\u05D1\u05EA \u05D0\u05D9\u05DE\u05D9\u05D9\u05DC"), /*#__PURE__*/React.createElement("input", {
-    className: "flex-1 bg-transparent px-6 py-4 text-white placeholder-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-lg font-medium",
+    className: "sr-only",
+    htmlFor: "articles-newsletter-email"
+  }, "\u05D4\u05DB\u05E0\u05E1 \u05D0\u05EA \u05D4\u05DE\u05D9\u05D9\u05DC \u05E9\u05DC\u05DA"), /*#__PURE__*/React.createElement("input", {
+    id: "articles-newsletter-email",
+    className: "flex-1 bg-transparent px-6 py-4 text-white placeholder-gray-600 focus:outline-none text-lg font-medium",
     placeholder: "\u05D4\u05DB\u05E0\u05E1 \u05D0\u05EA \u05D4\u05DE\u05D9\u05D9\u05DC \u05E9\u05DC\u05DA...",
-    type: "email",
-    id: "newsletter-email"
+    type: "email"
   }), /*#__PURE__*/React.createElement("button", {
     className: "bg-primary hover:bg-white hover:text-black text-white font-black py-4 px-10 uppercase tracking-widest transition-colors whitespace-nowrap my-1 mx-1 sm:my-0 sm:mx-0"
   }, "\u05D0\u05E0\u05D9 \u05D1\u05E4\u05E0\u05D9\u05DD")), /*#__PURE__*/React.createElement("p", {
-    className: "text-gray-500 text-xs mt-6 uppercase tracking-widest font-mono"
+    className: "text-gray-600 text-xs mt-6 uppercase tracking-widest font-mono"
   }, "\u05DE\u05D1\u05D8\u05D9\u05D7\u05D9\u05DD \u05DC\u05D0 \u05DC\u05D4\u05E1\u05E4\u05D9\u05DD. \u05E8\u05E7 \u05EA\u05D5\u05DB\u05DF \u05D0\u05D9\u05DB\u05D5\u05EA\u05D9.")))), /*#__PURE__*/React.createElement(Footer, null));
 };
 
@@ -1462,6 +1477,8 @@ const ArticleDetailPage = () => {
       className: "bg-background-dark text-white min-h-screen flex flex-col"
     }, /*#__PURE__*/React.createElement(Navbar, null), /*#__PURE__*/React.createElement("main", {
       id: "main-content",
+      role: "main",
+      tabIndex: "-1",
       className: "flex-1 flex items-center justify-center px-4"
     }, /*#__PURE__*/React.createElement("div", {
       className: "text-center"
@@ -1476,6 +1493,8 @@ const ArticleDetailPage = () => {
     className: "bg-background-dark text-white font-body min-h-screen flex flex-col overflow-x-hidden selection:bg-primary selection:text-white"
   }, /*#__PURE__*/React.createElement(Navbar, null), /*#__PURE__*/React.createElement("main", {
     id: "main-content",
+    role: "main",
+    tabIndex: "-1",
     className: "flex-1"
   }, /*#__PURE__*/React.createElement("article", {
     className: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20"
@@ -1503,9 +1522,7 @@ const ArticleDetailPage = () => {
       backgroundImage: `url('${article.img}')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center'
-    },
-    role: "img",
-    "aria-label": article.title
+    }
   }), /*#__PURE__*/React.createElement("div", {
     className: "prose prose-invert max-w-none"
   }, article.body ? /*#__PURE__*/React.createElement("div", {
@@ -1540,6 +1557,8 @@ const ContactPage = () => {
     className: "bg-background-dark text-white font-display min-h-screen flex flex-col overflow-x-hidden selection:bg-accent selection:text-black"
   }, /*#__PURE__*/React.createElement(Navbar, null), /*#__PURE__*/React.createElement("main", {
     id: "main-content",
+    role: "main",
+    tabIndex: "-1",
     className: "flex-grow relative z-10"
   }, /*#__PURE__*/React.createElement("div", {
     className: "relative w-full"
@@ -1549,8 +1568,7 @@ const ContactPage = () => {
     className: "absolute inset-0 bg-gradient-to-b from-[#080808] via-[#080808]/90 to-[#080808] lg:bg-gradient-to-r lg:from-[#080808] lg:via-[#080808]/95 lg:to-transparent z-10"
   }), /*#__PURE__*/React.createElement("img", {
     loading: "lazy",
-    alt: "",
-    role: "presentation",
+    alt: "Soldiers silhouette training",
     className: "h-full w-full object-cover object-center grayscale contrast-125 brightness-50",
     src: "https://lh3.googleusercontent.com/aida-public/AB6AXuCL7Whoyd_df4TMczDa9-X3GpviE5Kbc0USVxdiLU-MAkgQ9eL37mZqMINILoa8gdPrJdN4wLxsktihZ65niH1aim4BA3YRC9SJ-tywrRn4CKZ3m2BOC1MBZtT76lJgErlmpWwE3mUj-2f-Zh4ycInVRT1z5t4tmI48Regn_AuPuYdqeDV9-2Us8MG0K3Rd09lx7ukQG9qfU3qdoXBFFuLSy1bjKQbAOONq5gwC2ypIceieSd_XE04WiAtcD7-pt7doovlKqpDHdzUR"
   })), /*#__PURE__*/React.createElement("div", {
@@ -1594,7 +1612,7 @@ const ContactPage = () => {
     htmlFor: "name"
   }, "\u05E9\u05DD \u05DE\u05DC\u05D0"), /*#__PURE__*/React.createElement("input", {
     name: "name",
-    className: "w-full bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all placeholder-gray-500 rounded-none",
+    className: "w-full bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus:ring-0 transition-all placeholder-gray-700 rounded-none",
     id: "name",
     placeholder: "\u05D9\u05E9\u05E8\u05D0\u05DC \u05D9\u05E9\u05E8\u05D0\u05DC\u05D9",
     type: "text",
@@ -1606,7 +1624,7 @@ const ContactPage = () => {
     htmlFor: "phone"
   }, "\u05D8\u05DC\u05E4\u05D5\u05DF \u05E0\u05D9\u05D9\u05D3"), /*#__PURE__*/React.createElement("input", {
     name: "phone",
-    className: "w-full bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all placeholder-gray-500 rounded-none",
+    className: "w-full bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus:ring-0 transition-all placeholder-gray-700 rounded-none",
     id: "phone",
     placeholder: "05X-XXXXXXX",
     type: "tel",
@@ -1618,7 +1636,7 @@ const ContactPage = () => {
     htmlFor: "email"
   }, "\u05D3\u05D5\u05D0\u05E8 \u05D0\u05DC\u05E7\u05D8\u05E8\u05D5\u05E0\u05D9"), /*#__PURE__*/React.createElement("input", {
     name: "email",
-    className: "w-full bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all placeholder-gray-500 rounded-none",
+    className: "w-full bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus:ring-0 transition-all placeholder-gray-700 rounded-none",
     id: "email",
     placeholder: "your@email.com",
     type: "email",
@@ -1630,7 +1648,7 @@ const ContactPage = () => {
     htmlFor: "message"
   }, "\u05DE\u05D8\u05E8\u05D4 / \u05D9\u05D7\u05D9\u05D3\u05D4 \u05DE\u05D5\u05E2\u05D3\u05E4\u05EA"), /*#__PURE__*/React.createElement("textarea", {
     name: "message",
-    className: "w-full resize-none bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all placeholder-gray-500 rounded-none h-32",
+    className: "w-full resize-none bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus:ring-0 transition-all placeholder-gray-700 rounded-none h-32",
     id: "message",
     placeholder: "\u05DE\u05D8\u05DB\u05F4\u05DC, \u05E9\u05D9\u05D9\u05D8\u05EA, \u05E9\u05DC\u05D3\u05D2..."
   })), /*#__PURE__*/React.createElement("button", {
@@ -1672,7 +1690,7 @@ const ContactPage = () => {
   }, contact.title), /*#__PURE__*/React.createElement("p", {
     className: "text-2xl font-black text-white dir-ltr tracking-tight hover:text-primary transition-colors cursor-pointer break-all sm:break-normal"
   }, contact.value), /*#__PURE__*/React.createElement("p", {
-    className: "text-xs text-gray-500 mt-1"
+    className: "text-xs text-gray-600 mt-1"
   }, contact.desc)))))), /*#__PURE__*/React.createElement("div", {
     className: "bg-surface-dark border border-white/10 p-8 text-center relative overflow-hidden"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1734,6 +1752,8 @@ const FAQPage = () => {
     className: "text-white font-bold"
   }, "\u05D1\u05DC\u05D9 \u05E1\u05D9\u05E4\u05D5\u05E8\u05D9\u05DD, \u05D1\u05DC\u05D9 \u05EA\u05D9\u05E8\u05D5\u05E6\u05D9\u05DD."))))), /*#__PURE__*/React.createElement("main", {
     id: "main-content",
+    role: "main",
+    tabIndex: "-1",
     className: "flex-1 pb-20 pt-[84px] relative"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
@@ -1749,7 +1769,7 @@ const FAQPage = () => {
     onClick: () => toggleItem(i),
     "aria-expanded": openIndex === i,
     "aria-controls": `faq-panel-${i}`,
-    id: `faq-button-${i}`
+    id: `faq-trigger-${i}`
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-4 flex-1"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1757,12 +1777,11 @@ const FAQPage = () => {
   }, String(i + 1).padStart(2, '0')), /*#__PURE__*/React.createElement("h3", {
     className: "text-lg font-bold text-white transition-colors font-display"
   }, faq.q)), /*#__PURE__*/React.createElement("span", {
-    className: `material-symbols-outlined text-gray-500 transition-transform duration-300 flex-shrink-0 ${openIndex === i ? 'rotate-180 text-primary' : ''}`,
-    "aria-hidden": "true"
+    className: `material-symbols-outlined text-gray-500 transition-transform duration-300 flex-shrink-0 ${openIndex === i ? 'rotate-180 text-primary' : ''}`
   }, "expand_more")), openIndex === i && /*#__PURE__*/React.createElement("div", {
     id: `faq-panel-${i}`,
     role: "region",
-    "aria-labelledby": `faq-button-${i}`,
+    "aria-labelledby": `faq-trigger-${i}`,
     className: "px-6 pb-6 pr-12 border-t border-white/5 pt-4 text-right"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-gray-300 leading-relaxed font-body text-right"
@@ -1800,6 +1819,8 @@ const TermsPage = () => {
     className: "bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white"
   }, /*#__PURE__*/React.createElement(Navbar, null), /*#__PURE__*/React.createElement("main", {
     id: "main-content",
+    role: "main",
+    tabIndex: "-1",
     className: "flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "max-w-3xl mx-auto"
@@ -1854,6 +1875,8 @@ const PrivacyPage = () => {
     className: "bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white"
   }, /*#__PURE__*/React.createElement(Navbar, null), /*#__PURE__*/React.createElement("main", {
     id: "main-content",
+    role: "main",
+    tabIndex: "-1",
     className: "flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "max-w-3xl mx-auto"
@@ -1924,11 +1947,6 @@ const PrivacyPage = () => {
     className: "text-primary hover:underline"
   }, SITE_CONFIG.contact.phone))))))), /*#__PURE__*/React.createElement(Footer, null));
 };
-
-/**
- * AccessibilityPage Component
- * הצהרת נגישות בהתאם לתקן הישראלי ת"י 5568
- */
 const AccessibilityPage = () => {
   React.useEffect(() => {
     window.scrollTo(0, 0);
@@ -1937,38 +1955,26 @@ const AccessibilityPage = () => {
     className: "bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white"
   }, /*#__PURE__*/React.createElement(Navbar, null), /*#__PURE__*/React.createElement("main", {
     id: "main-content",
+    role: "main",
+    tabIndex: "-1",
     className: "flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "max-w-3xl mx-auto"
   }, /*#__PURE__*/React.createElement("h1", {
     className: "font-display text-white text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-8 pt-8"
   }, "\u05D4\u05E6\u05D4\u05E8\u05EA \u05E0\u05D2\u05D9\u05E9\u05D5\u05EA"), /*#__PURE__*/React.createElement("p", {
-    className: "text-gray-400 text-sm mb-10"
-  }, "\u05E2\u05D3\u05DB\u05D5\u05DF \u05D0\u05D7\u05E8\u05D5\u05DF: \u05D9\u05E0\u05D5\u05D0\u05E8 2026"), /*#__PURE__*/React.createElement("div", {
-    className: "prose-dark space-y-8 text-gray-300 text-base leading-relaxed"
-  }, /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", {
-    className: "text-white text-xl font-bold mb-3"
-  }, "1. \u05DE\u05D7\u05D5\u05D9\u05D1\u05D5\u05EA \u05DC\u05E0\u05D2\u05D9\u05E9\u05D5\u05EA"), /*#__PURE__*/React.createElement("p", null, "\"\u05DE\u05D7\u05E8 \u05DE\u05DC\u05D7\u05DE\u05D4\" \u05DE\u05D7\u05D5\u05D9\u05D1\u05EA \u05DC\u05D4\u05E0\u05D2\u05D9\u05E9 \u05D0\u05EA \u05D4\u05D0\u05EA\u05E8 \u05DC\u05DB\u05DC\u05DC \u05D4\u05D0\u05D5\u05DB\u05DC\u05D5\u05E1\u05D9\u05D9\u05D4, \u05DC\u05E8\u05D1\u05D5\u05EA \u05D0\u05E0\u05E9\u05D9\u05DD \u05E2\u05DD \u05DE\u05D5\u05D2\u05D1\u05DC\u05D5\u05D9\u05D5\u05EA. \u05D0\u05E0\u05D5 \u05E9\u05D5\u05D0\u05E4\u05D9\u05DD \u05DC\u05E2\u05DE\u05D5\u05D3 \u05D1\u05D3\u05E8\u05D9\u05E9\u05D5\u05EA \u05EA\u05E7\u05DF \u05D4\u05E0\u05D2\u05D9\u05E9\u05D5\u05EA \u05D4\u05D9\u05E9\u05E8\u05D0\u05DC\u05D9 \u05EA\"\u05D9 5568 \u05D5\u05D1\u05D4\u05E0\u05D7\u05D9\u05D5\u05EA WCAG 2.1 \u05D1\u05E8\u05DE\u05D4 AA.")), /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", {
-    className: "text-white text-xl font-bold mb-3"
-  }, "2. \u05D0\u05DE\u05E6\u05E2\u05D9 \u05E0\u05D2\u05D9\u05E9\u05D5\u05EA \u05D1\u05D0\u05EA\u05E8"), /*#__PURE__*/React.createElement("p", null, "\u05D4\u05D0\u05EA\u05E8 \u05DB\u05D5\u05DC\u05DC \u05D0\u05EA \u05D0\u05DE\u05E6\u05E2\u05D9 \u05D4\u05E0\u05D2\u05D9\u05E9\u05D5\u05EA \u05D4\u05D1\u05D0\u05D9\u05DD:"), /*#__PURE__*/React.createElement("ul", {
-    className: "list-disc pr-5 space-y-2 mt-2"
-  }, /*#__PURE__*/React.createElement("li", null, "\u05EA\u05DE\u05D9\u05DB\u05D4 \u05DE\u05DC\u05D0\u05D4 \u05D1\u05E0\u05D9\u05D5\u05D5\u05D8 \u05D1\u05D0\u05DE\u05E6\u05E2\u05D5\u05EA \u05DE\u05E7\u05DC\u05D3\u05EA"), /*#__PURE__*/React.createElement("li", null, "\u05E7\u05D9\u05E9\u05D5\u05E8 \"\u05D3\u05DC\u05D2 \u05DC\u05EA\u05D5\u05DB\u05DF \u05D4\u05E8\u05D0\u05E9\u05D9\" \u05DC\u05E0\u05D9\u05D5\u05D5\u05D8 \u05DE\u05D4\u05D9\u05E8"), /*#__PURE__*/React.createElement("li", null, "\u05EA\u05D9\u05D0\u05D5\u05E8\u05D9 \u05EA\u05DE\u05D5\u05E0\u05D5\u05EA (alt text) \u05E2\u05D1\u05D5\u05E8 \u05EA\u05DE\u05D5\u05E0\u05D5\u05EA \u05D1\u05D0\u05EA\u05E8"), /*#__PURE__*/React.createElement("li", null, "\u05DE\u05D1\u05E0\u05D4 \u05DB\u05D5\u05EA\u05E8\u05D5\u05EA \u05D4\u05D9\u05E8\u05E8\u05DB\u05D9 (h1-h6) \u05DC\u05E0\u05D9\u05D5\u05D5\u05D8 \u05E7\u05DC"), /*#__PURE__*/React.createElement("li", null, "\u05EA\u05DE\u05D9\u05DB\u05D4 \u05D1\u05D8\u05DB\u05E0\u05D5\u05DC\u05D5\u05D2\u05D9\u05D5\u05EA \u05DE\u05E1\u05D9\u05D9\u05E2\u05D5\u05EA \u05D5\u05E7\u05D5\u05E8\u05D0\u05D9 \u05DE\u05E1\u05DA"), /*#__PURE__*/React.createElement("li", null, "\u05E0\u05D9\u05D2\u05D5\u05D3\u05D9\u05D5\u05EA \u05E6\u05D1\u05E2\u05D9\u05DD \u05D1\u05D4\u05EA\u05D0\u05DD \u05DC\u05D3\u05E8\u05D9\u05E9\u05D5\u05EA WCAG AA"), /*#__PURE__*/React.createElement("li", null, "\u05EA\u05DE\u05D9\u05DB\u05D4 \u05D1\u05D4\u05D2\u05D3\u05DC\u05EA \u05D8\u05E7\u05E1\u05D8 \u05E2\u05D3 200% \u05DC\u05DC\u05D0 \u05D0\u05D5\u05D1\u05D3\u05DF \u05EA\u05D5\u05DB\u05DF"), /*#__PURE__*/React.createElement("li", null, "\u05EA\u05DE\u05D9\u05DB\u05D4 \u05D1\u05D4\u05E2\u05D3\u05E4\u05D5\u05EA \u05EA\u05E0\u05D5\u05E2\u05D4 \u05DE\u05D5\u05E4\u05D7\u05EA\u05EA (prefers-reduced-motion)"), /*#__PURE__*/React.createElement("li", null, "\u05D8\u05E4\u05E1\u05D9\u05DD \u05E2\u05DD \u05EA\u05D5\u05D5\u05D9\u05D5\u05EA \u05E0\u05D2\u05D9\u05E9\u05D5\u05EA \u05DC\u05E7\u05D5\u05E8\u05D0\u05D9 \u05DE\u05E1\u05DA"), /*#__PURE__*/React.createElement("li", null, "\u05D4\u05D0\u05EA\u05E8 \u05D1\u05E0\u05D5\u05D9 \u05D1\u05E9\u05E4\u05D4 \u05D4\u05E2\u05D1\u05E8\u05D9\u05EA \u05E2\u05DD \u05EA\u05DE\u05D9\u05DB\u05D4 \u05DE\u05DC\u05D0\u05D4 \u05D1\u05DB\u05D9\u05D5\u05D5\u05DF RTL"))), /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", {
-    className: "text-white text-xl font-bold mb-3"
-  }, "3. \u05DE\u05D2\u05D1\u05DC\u05D5\u05EA \u05D9\u05D3\u05D5\u05E2\u05D5\u05EA"), /*#__PURE__*/React.createElement("p", null, "\u05DC\u05DE\u05E8\u05D5\u05EA \u05DE\u05D0\u05DE\u05E6\u05D9\u05E0\u05D5 \u05DC\u05D4\u05E0\u05D2\u05D9\u05E9 \u05D0\u05EA \u05D4\u05D0\u05EA\u05E8, \u05D9\u05D9\u05EA\u05DB\u05E0\u05D5 \u05E8\u05DB\u05D9\u05D1\u05D9\u05DD \u05E9\u05D8\u05E8\u05DD \u05D4\u05D5\u05E0\u05D2\u05E9\u05D5 \u05D1\u05D0\u05D5\u05E4\u05DF \u05DE\u05DC\u05D0. \u05D0\u05E0\u05D5 \u05E2\u05D5\u05D1\u05D3\u05D9\u05DD \u05D1\u05D0\u05D5\u05E4\u05DF \u05E9\u05D5\u05D8\u05E3 \u05DC\u05E9\u05E4\u05E8 \u05D0\u05EA \u05D4\u05E0\u05D2\u05D9\u05E9\u05D5\u05EA \u05D1\u05D0\u05EA\u05E8.")), /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", {
-    className: "text-white text-xl font-bold mb-3"
-  }, "4. \u05D3\u05D9\u05D5\u05D5\u05D7 \u05E2\u05DC \u05D1\u05E2\u05D9\u05D5\u05EA \u05E0\u05D2\u05D9\u05E9\u05D5\u05EA"), /*#__PURE__*/React.createElement("p", null, "\u05E0\u05EA\u05E7\u05DC\u05EA\u05DD \u05D1\u05D1\u05E2\u05D9\u05D9\u05EA \u05E0\u05D2\u05D9\u05E9\u05D5\u05EA \u05D1\u05D0\u05EA\u05E8? \u05E0\u05E9\u05DE\u05D7 \u05DC\u05E9\u05DE\u05D5\u05E2 \u05D5\u05DC\u05D8\u05E4\u05DC \u05D1\u05DB\u05DA. \u05E0\u05D9\u05EA\u05DF \u05DC\u05E4\u05E0\u05D5\u05EA \u05D0\u05DC\u05D9\u05E0\u05D5:"), /*#__PURE__*/React.createElement("ul", {
-    className: "list-disc pr-5 space-y-1 mt-2"
+    className: "text-gray-300 text-base leading-relaxed mb-6"
+  }, "\u05D0\u05E0\u05D7\u05E0\u05D5 \u05E4\u05D5\u05E2\u05DC\u05D9\u05DD \u05DC\u05D4\u05E0\u05D2\u05D9\u05E9 \u05D0\u05EA \u05D4\u05D0\u05EA\u05E8 \u05DC\u05DB\u05DC\u05DC \u05D4\u05DE\u05E9\u05EA\u05DE\u05E9\u05D9\u05DD, \u05DB\u05D5\u05DC\u05DC \u05D0\u05E0\u05E9\u05D9\u05DD \u05E2\u05DD \u05DE\u05D5\u05D2\u05D1\u05DC\u05D5\u05EA, \u05D1\u05D4\u05EA\u05D0\u05DD \u05DC\u05EA\u05E7\u05DF \u05D4\u05D9\u05E9\u05E8\u05D0\u05DC\u05D9 5568 \u05D5\u05DC\u05E8\u05D5\u05D7 \u05D4\u05E0\u05D7\u05D9\u05D5\u05EA WCAG 2.1 \u05D1\u05E8\u05DE\u05D4 AA."), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-5 text-gray-300 text-base leading-relaxed"
+  }, /*#__PURE__*/React.createElement("p", null, "\u05D1\u05D0\u05EA\u05E8 \u05D4\u05D5\u05D8\u05DE\u05E2\u05D5 \u05D4\u05EA\u05D0\u05DE\u05D5\u05EA \u05DB\u05DE\u05D5 \u05EA\u05DE\u05D9\u05DB\u05D4 \u05D1\u05E0\u05D9\u05D5\u05D5\u05D8 \u05DE\u05E7\u05DC\u05D3\u05EA, \u05E1\u05D9\u05DE\u05D5\u05DF \u05E4\u05D5\u05E7\u05D5\u05E1 \u05D1\u05E8\u05D5\u05E8, \u05DE\u05D1\u05E0\u05D4 \u05E1\u05DE\u05E0\u05D8\u05D9 \u05DE\u05E9\u05D5\u05E4\u05E8, \u05D8\u05E7\u05E1\u05D8\u05D9\u05DD \u05D7\u05DC\u05D5\u05E4\u05D9\u05D9\u05DD \u05DC\u05EA\u05DE\u05D5\u05E0\u05D5\u05EA \u05D5\u05D4\u05E6\u05D4\u05E8\u05D5\u05EA ARIA \u05D1\u05D0\u05D6\u05D5\u05E8\u05D9\u05DD \u05D3\u05D9\u05E0\u05DE\u05D9\u05D9\u05DD."), /*#__PURE__*/React.createElement("p", null, "\u05D0\u05DD \u05E0\u05EA\u05E7\u05DC\u05EA\u05DD \u05D1\u05E7\u05D5\u05E9\u05D9 \u05D1\u05E0\u05D2\u05D9\u05E9\u05D5\u05EA, \u05E0\u05E9\u05DE\u05D7 \u05E9\u05EA\u05E2\u05D3\u05DB\u05E0\u05D5 \u05D0\u05D5\u05EA\u05E0\u05D5 \u05DB\u05D3\u05D9 \u05E9\u05E0\u05D5\u05DB\u05DC \u05DC\u05EA\u05E7\u05DF \u05D1\u05DE\u05D4\u05D9\u05E8\u05D5\u05EA:"), /*#__PURE__*/React.createElement("ul", {
+    className: "list-disc pr-5 space-y-1"
   }, /*#__PURE__*/React.createElement("li", null, "\u05D3\u05D5\u05D0\"\u05DC: ", /*#__PURE__*/React.createElement("a", {
     href: 'mailto:' + SITE_CONFIG.contact.email,
     className: "text-primary hover:underline"
   }, SITE_CONFIG.contact.email)), /*#__PURE__*/React.createElement("li", null, "\u05D8\u05DC\u05E4\u05D5\u05DF: ", /*#__PURE__*/React.createElement("a", {
     href: 'tel:' + SITE_CONFIG.contact.phone,
     className: "text-primary hover:underline"
-  }, SITE_CONFIG.contact.phone))), /*#__PURE__*/React.createElement("p", {
-    className: "mt-2"
-  }, "\u05D0\u05E0\u05D5 \u05DE\u05EA\u05D7\u05D9\u05D9\u05D1\u05D9\u05DD \u05DC\u05D8\u05E4\u05DC \u05D1\u05E4\u05E0\u05D9\u05D5\u05EA \u05E0\u05D2\u05D9\u05E9\u05D5\u05EA \u05EA\u05D5\u05DA 5 \u05D9\u05DE\u05D9 \u05E2\u05E1\u05E7\u05D9\u05DD.")), /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", {
-    className: "text-white text-xl font-bold mb-3"
-  }, "5. \u05EA\u05D0\u05E8\u05D9\u05DA \u05E1\u05E7\u05D9\u05E8\u05EA \u05E0\u05D2\u05D9\u05E9\u05D5\u05EA \u05D0\u05D7\u05E8\u05D5\u05E0\u05D4"), /*#__PURE__*/React.createElement("p", null, "\u05E1\u05E7\u05D9\u05E8\u05EA \u05D4\u05E0\u05D2\u05D9\u05E9\u05D5\u05EA \u05D4\u05D0\u05D7\u05E8\u05D5\u05E0\u05D4 \u05E9\u05DC \u05D4\u05D0\u05EA\u05E8 \u05D1\u05D5\u05E6\u05E2\u05D4 \u05D1\u05D9\u05E0\u05D5\u05D0\u05E8 2026."))))), /*#__PURE__*/React.createElement(Footer, null));
+  }, SITE_CONFIG.contact.phone)))))), /*#__PURE__*/React.createElement(Footer, null));
 };
 
 /**
@@ -1980,6 +1986,8 @@ const NotFoundPage = () => {
     className: "bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white"
   }, /*#__PURE__*/React.createElement(Navbar, null), /*#__PURE__*/React.createElement("main", {
     id: "main-content",
+    role: "main",
+    tabIndex: "-1",
     className: "flex-1 flex flex-col items-center justify-center px-4 py-20 text-center"
   }, /*#__PURE__*/React.createElement("h1", {
     className: "text-4xl sm:text-5xl font-black text-white mb-4 uppercase font-display"
@@ -2009,22 +2017,25 @@ const NotFoundPage = () => {
  * 
  * Note: All routes use HashRouter, so URLs will be: /#/team, /#/method, etc.
  */
-const ScrollToTopAndFocus = () => {
-  const location = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    const main = document.getElementById('main-content');
-    if (main) {
-      main.setAttribute('tabindex', '-1');
-      main.focus({
-        preventScroll: true
-      });
-    }
-  }, [location.pathname]);
-  return null;
-};
 const App = () => {
-  return /*#__PURE__*/React.createElement(HashRouter, null, /*#__PURE__*/React.createElement(ScrollToTopAndFocus, null), /*#__PURE__*/React.createElement(Routes, null, /*#__PURE__*/React.createElement(Route, {
+  const RouteA11yHandler = () => {
+    const location = useLocation();
+    const [announcement, setAnnouncement] = useState('');
+    useEffect(() => {
+      window.scrollTo(0, 0);
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) {
+        mainContent.focus();
+      }
+      setAnnouncement(document.title || `ניווט לעמוד ${location.pathname}`);
+    }, [location.pathname]);
+    return /*#__PURE__*/React.createElement("div", {
+      className: "sr-only",
+      "aria-live": "polite",
+      "aria-atomic": "true"
+    }, announcement);
+  };
+  return /*#__PURE__*/React.createElement(HashRouter, null, /*#__PURE__*/React.createElement(RouteA11yHandler, null), /*#__PURE__*/React.createElement(Routes, null, /*#__PURE__*/React.createElement(Route, {
     path: ROUTES.HOME,
     element: /*#__PURE__*/React.createElement(HomePage, null)
   }), /*#__PURE__*/React.createElement(Route, {
@@ -2046,28 +2057,21 @@ const App = () => {
     path: ROUTES.FAQ,
     element: /*#__PURE__*/React.createElement(FAQPage, null)
   }), /*#__PURE__*/React.createElement(Route, {
+    path: ROUTES.ACCESSIBILITY,
+    element: /*#__PURE__*/React.createElement(AccessibilityPage, null)
+  }), /*#__PURE__*/React.createElement(Route, {
     path: ROUTES.TERMS,
     element: /*#__PURE__*/React.createElement(TermsPage, null)
   }), /*#__PURE__*/React.createElement(Route, {
     path: ROUTES.PRIVACY,
     element: /*#__PURE__*/React.createElement(PrivacyPage, null)
   }), /*#__PURE__*/React.createElement(Route, {
-    path: ROUTES.ACCESSIBILITY,
-    element: /*#__PURE__*/React.createElement(AccessibilityPage, null)
-  }), /*#__PURE__*/React.createElement(Route, {
     path: "*",
     element: /*#__PURE__*/React.createElement(NotFoundPage, null)
   })));
 };
 
-// Initialize React application (defer mount to avoid router context race with extensions/back-forward cache)
-const rootEl = document.getElementById('root');
-const root = rootEl ? createRoot(rootEl) : null;
-function mount() {
-  if (root) root.render(/*#__PURE__*/React.createElement(App, null));
-}
-if (typeof requestAnimationFrame !== 'undefined') {
-  requestAnimationFrame(mount);
-} else {
-  setTimeout(mount, 0);
-}
+// Initialize React application
+// Creates root and renders the App component into the #root div
+const root = createRoot(document.getElementById('root'));
+root.render(/*#__PURE__*/React.createElement(App, null));

@@ -1087,8 +1087,12 @@ const FEATURED_ARTICLE = ARTICLES[0];
 const SIDEBAR_ARTICLES = ARTICLES.slice(1, 3);
 const ALL_ARTICLES = ARTICLES.slice(3); // 6 articles in grid (כל המאמרים)
 
-// Home page blog preview: יום סיירות, חוסן מנטלי, תזונה
-const HOME_BLOG_ARTICLES = ARTICLES.filter(a => ["4", "3", "2"].includes(a.id));
+// Home page blog preview (subset)
+const HOME_BLOG_ARTICLES = [
+  { id: "15", title: "איך לשפר את ריצת ה-2 קילומטר", date: "12 SEP, 2023 // 14:00", category: "אימונים", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD60L04AL19-HTUN-l_f5KRuFjYxUcMQ57IFI1UIdnSbGz4uWKoRkvxOYJD_rnr7QOOz-8aw8QMfCi9MLC0sEE4AfS7rDny1TgG0YNgHoSKSnQO9gMA0yD4DPWKI9aT8SCwgPzngogy5dyYv6Ep8y-rbidq6iue7TAXBHZMA9b9wpMlzegYeMNTc0NrWfDOsWhOZjjXUXasIS6tZW6rBj_uT3zBzwnpxmQYbA3_kpgFsvkg4cKJkkSjY8rBBmWIebzcXu_5kd0L1NjT" },
+  { id: "4", title: "יום סיירות (יום שדה): המדריך המלא למלש\"ב", date: "05 SEP, 2023 // 09:30", category: "כושר קרבי", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuApfpkRp9Dgy1z0eKChGSscLyEXHsmtF11-DQ1ZrgLofvMAw2BRa5IDtSLJk0LSOAo388xgozuhYHnRi3xIYM9SNuIJldaRHxakwe3RCV7YOI94sc6aGw9U_NfiHSng5H6d85CC0l9rKCOora6lvRnrfL7OWizycS02YMd-Iq7GGpmCNJUvM7tvuYAUZ98vrx3GVQwdn2spV_ng_62JgEZTSHqE7DFvo7G2Q8VvnLZKHJLUwhkngTn52GR5Ayq9CbD4z-KCRiGjY99d" },
+  { id: "2", title: "מדריך לתזונה נכונה לפני גיבוש", date: "28 AUG, 2023 // 18:45", category: "תזונה", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuADhMGx-tvGi_T_-YD3POECAz4v6VllY_85Y8Q2NN0Ql6iDQo3xyBpSq6hVG5vFkxXNYIvksh-GaXPbNkZPKRlFtl5aDNnOtBE45LQS-iLt3bhc2g25o5xcMMyjf3Vr5wX1uzfSdOaOScjrr4Y89Foc4BvQiTTEQ0SliEa2_jygsnyGzwnLmRTottRT0qDyO3mrrVso6PZketX-9EbdDlzbrMfTN0X3-UcbbK2Guli9uO1iPtnuK0lo0IzDD1q73YpqXncp0s1tOIAP" },
+];
 
 if (typeof window !== 'undefined') {
   window.ARTICLES = ARTICLES;

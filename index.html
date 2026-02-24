@@ -100,6 +100,9 @@
 
 <body
     class="relative flex h-auto min-h-screen w-full flex-col bg-background-dark text-white font-display overflow-x-hidden selection:bg-primary selection:text-white">
+    <button type="button" class="skip-link" aria-label="דלג לתוכן הראשי" onclick="document.getElementById('main-content') && document.getElementById('main-content').focus();">
+        דלג לתוכן הראשי
+    </button>
     <div id="root"></div>
 
         <script src="dist/app.js"></script>

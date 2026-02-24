@@ -81,6 +81,31 @@ body.font-display h6 {
     color: white;
 }
 
+/* Accessible keyboard focus indicator across the site */
+*:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Skip link visible only on keyboard focus */
+.skip-link {
+    position: fixed;
+    top: -100%;
+    right: 1rem;
+    z-index: 9999;
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 700;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid #fff;
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+    top: 1rem;
+}
+
 /* ==========================================================================
    3. UTILITY CLASSES (@layer utilities for Tailwind integration)
    ========================================================================== */
@@ -265,5 +290,17 @@ body.font-display h6 {
     .px-6 {
         padding-left: 1rem;
         padding-right: 1rem;
+    }
+}
+
+/* Respect user's reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

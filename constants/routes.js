@@ -13,6 +13,7 @@ const ROUTES = {
     ARTICLE_DETAIL: '/articles/:id',
     CONTACT: '/contact',
     FAQ: '/faq',
+    ACCESSIBILITY: '/accessibility',
     TERMS: '/terms',
     PRIVACY: '/privacy'
 };

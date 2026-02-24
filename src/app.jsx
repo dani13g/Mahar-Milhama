@@ -20,7 +20,7 @@
  * source repository and rebuild. Small content edits can be made here directly.
  */
 
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 const { createRoot } = ReactDOM;
 const { HashRouter, Routes, Route, Link, useNavigate, useLocation, useParams } = ReactRouterDOM;
 
@@ -28,7 +28,7 @@ const { HashRouter, Routes, Route, Link, useNavigate, useLocation, useParams } =
 // Do not redeclare ROUTES/IMAGE_URLS (they may already be declared by constants/*.js)
 if (typeof window !== 'undefined') {
     if (typeof window.ROUTES === 'undefined') {
-        window.ROUTES = { HOME: '/', TEAM: '/team', METHOD: '/method', ARTICLES: '/articles', ARTICLE_DETAIL: '/articles/:id', CONTACT: '/contact', FAQ: '/faq', TERMS: '/terms', PRIVACY: '/privacy' };
+        window.ROUTES = { HOME: '/', TEAM: '/team', METHOD: '/method', ARTICLES: '/articles', ARTICLE_DETAIL: '/articles/:id', CONTACT: '/contact', FAQ: '/faq', ACCESSIBILITY: '/accessibility', TERMS: '/terms', PRIVACY: '/privacy' };
     }
     if (typeof window.IMAGE_URLS === 'undefined') {
         window.IMAGE_URLS = { logo: 'images/minimal-black-logo.png', ctaBackground: '', heroTeam: '', heroMethodBackground: '', galleryImages: [] };
@@ -62,6 +62,8 @@ if (typeof window !== 'undefined') {
 const Navbar = () => {
     const location = useLocation();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const mobileMenuRef = useRef(null);
+    const mobileToggleRef = useRef(null);
     
     // Use utility function for route checking (if available, fallback to inline)
     const isActive = (path) => {
@@ -89,6 +91,38 @@ const Navbar = () => {
         }
     }, [isMobileMenuOpen]);
 
+    // Keyboard accessibility for mobile menu: Escape to close + focus trap
+    useEffect(() => {
+        if (!isMobileMenuOpen) return;
+        const handleKeydown = (event) => {
+            if (event.key === 'Escape') {
+                setIsMobileMenuOpen(false);
+                mobileToggleRef.current?.focus();
+                return;
+            }
+            if (event.key !== 'Tab' || !mobileMenuRef.current) return;
+
+            const focusable = mobileMenuRef.current.querySelectorAll(
+                'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            );
+            if (!focusable.length) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            const isShift = event.shiftKey;
+
+            if (document.activeElement === last && !isShift) {
+                event.preventDefault();
+                first.focus();
+            } else if (document.activeElement === first && isShift) {
+                event.preventDefault();
+                last.focus();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeydown);
+        return () => document.removeEventListener('keydown', handleKeydown);
+    }, [isMobileMenuOpen]);
+
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
     };
@@ -111,6 +145,7 @@ const Navbar = () => {
                         <div className="flex items-center flex-shrink-0">
                             {/* Mobile: Menu toggle button - Left side */}
                             <button 
+                                ref={mobileToggleRef}
                                 className="md:hidden text-white hover:text-primary transition-colors" 
                                 aria-label={isMobileMenuOpen ? "סגור תפריט" : "פתח תפריט"} 
                                 aria-expanded={isMobileMenuOpen}
@@ -158,6 +193,7 @@ const Navbar = () => {
                     
                     {/* Mobile Menu - Overlay animation */}
                     <div 
+                        ref={mobileMenuRef}
                         className={`md:hidden absolute top-full left-0 right-0 bg-background-dark backdrop-blur-md border-t border-white/10 transition-all duration-300 ease-in-out ${
                             isMobileMenuOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-4 pointer-events-none'
                         }`}
@@ -253,7 +289,8 @@ const Footer = () => {
                         <h4 className="text-white font-black mb-6 uppercase tracking-wider">הישאר מעודכן</h4>
                         <p className="text-sm mb-4">טיפים שבועיים לשיפור הכושר.</p>
                         <form className="flex flex-col gap-2" onSubmit={e => e.preventDefault()}>
-                            <input className="bg-white/5 border border-white/10 rounded-none h-12 px-4 text-sm text-white focus:border-primary focus:bg-black outline-none placeholder:text-gray-600 transition-all" placeholder="הכנס אימייל" type="email" />
+                            <label className="sr-only" htmlFor="footer-newsletter-email">אימייל לרשימת תפוצה</label>
+                            <input id="footer-newsletter-email" className="bg-white/5 border border-white/10 rounded-none h-12 px-4 text-sm text-white focus:border-primary focus:bg-black outline-none placeholder:text-gray-600 transition-all" placeholder="הכנס אימייל" type="email" />
                             <button className="bg-white/10 hover:bg-primary text-white font-black uppercase tracking-wider text-sm h-12 rounded-none transition-colors border border-white/10 hover:border-primary" aria-label="הרשם עכשיו">הרשם עכשיו</button>
                         </form>
                     </div>
@@ -265,6 +302,7 @@ const Footer = () => {
                     <div className="flex gap-6">
                         <Link className="hover:text-white transition-colors" to={ROUTES.TERMS}>תקנון</Link>
                         <Link className="hover:text-white transition-colors" to={ROUTES.PRIVACY}>פרטיות</Link>
+                        <Link className="hover:text-white transition-colors" to={ROUTES.ACCESSIBILITY}>הצהרת נגישות</Link>
                     </div>
                 </div>
             </div>
@@ -314,6 +352,16 @@ const ImageGallery = () => {
         setTimeout(() => setIsPaused(false), 3000);
     };
 
+    const handleGalleryKeydown = (event) => {
+        if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            goToPrevious();
+        } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            goToNext();
+        }
+    };
+
     if (galleryImages.length === 0) return null;
 
     const currentSrc = galleryImages[currentIndex];
@@ -335,7 +383,7 @@ const ImageGallery = () => {
                     </p>
                 </div>
 
-                <div className="relative max-w-6xl mx-auto" dir="ltr">
+                <div className="relative max-w-6xl mx-auto" dir="ltr" role="region" tabIndex="0" aria-label="גלריית תמונות" onKeyDown={handleGalleryKeydown}>
                     {/* Single visible image - one at a time for reliable display */}
                     <div className="relative w-full overflow-hidden bg-black border border-white/10 shadow-2xl" style={{ aspectRatio: '16/9' }}>
                         <img
@@ -381,6 +429,7 @@ const ImageGallery = () => {
                             ))}
                         </div>
                     </div>
+                    <p className="sr-only" aria-live="polite">תמונה {currentIndex + 1} מתוך {total}</p>
                 </div>
             </div>
         </section>
@@ -414,12 +463,21 @@ const HomePage = () => {
     useEffect(() => {
         setTestimonialPage(p => Math.min(p, testimonialTotalPages));
     }, [testimonialPerPage]);
+    const handleTestimonialsKeydown = (event) => {
+        if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            setTestimonialPage((p) => Math.max(p - 1, 0));
+        } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            setTestimonialPage((p) => Math.min(p + 1, testimonialTotalPages));
+        }
+    };
     const homeBlogArticles = (typeof window !== 'undefined' && window.HOME_BLOG_ARTICLES) ? window.HOME_BLOG_ARTICLES : [];
     const SHOW_HOME_BLOG_SECTION = true;
     return (
         <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-dark text-white font-display overflow-x-hidden">
             <Navbar />
-            <main>
+            <main id="main-content" role="main" tabIndex="-1">
 
             {/* Hero Section */}
             <div className="relative w-full bg-background-dark h-screen flex flex-col">
@@ -447,10 +505,12 @@ const HomePage = () => {
                             <form action="https://formspree.io/f/mbdakgkv" method="POST" className="flex flex-col lg:flex-row gap-2 sm:gap-3 w-full">
                                 <input type="hidden" name="_subject" value="[מחר מלחמה - Hero] בקשת יצירת קשר" />
                                 <div className="relative flex-1">
-                                    <input name="name" className="w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none" placeholder="שם מלא" required type="text" />
+                                    <label className="sr-only" htmlFor="hero-name">שם מלא</label>
+                                    <input id="hero-name" name="name" className="w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none" placeholder="שם מלא" required type="text" />
                                 </div>
                                 <div className="relative flex-1">
-                                    <input name="phone" className="w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none text-right" placeholder="טלפון נייד" required type="tel" inputMode="numeric" />
+                                    <label className="sr-only" htmlFor="hero-phone">טלפון נייד</label>
+                                    <input id="hero-phone" name="phone" className="w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none text-right" placeholder="טלפון נייד" required type="tel" inputMode="numeric" />
                                 </div>
                                 <button type="submit" className="flex-none h-12 sm:h-14 px-6 sm:px-10 bg-primary hover:bg-primary-hover active:scale-[0.98] transition-all rounded-none text-white text-base sm:text-xl font-black tracking-wider shadow-[0_0_30px_rgba(230,26,26,0.3)] flex items-center justify-center gap-2 sm:gap-3 uppercase min-h-[2.75rem]" aria-label="צרו איתי קשר">
                                     <span className="text-sm sm:text-lg">צרו איתי קשר</span>
@@ -495,7 +555,7 @@ const HomePage = () => {
                 </div>
 
             {/* Testimonials Section - Image gallery, 3 per page */}
-            <div className="bg-background-dark pt-[84px] pb-12 sm:pb-16 md:pb-20 lg:pb-32 bg-texture relative overflow-hidden">
+            <div className="bg-background-dark pt-[84px] pb-12 sm:pb-16 md:pb-20 lg:pb-32 bg-texture relative overflow-hidden" role="region" tabIndex="0" aria-label="בוגרים מספרים" onKeyDown={handleTestimonialsKeydown}>
                 <div className="absolute inset-0 bg-black/90"></div>
                 <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
                     <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 sm:mb-12 md:mb-16 gap-4 sm:gap-6">
@@ -524,12 +584,13 @@ const HomePage = () => {
                             return (
                                 <div key={idx} className="group bg-surface-card border border-white/5 overflow-hidden relative hover:border-primary/30 transition-all">
                                     <div className="w-full overflow-hidden">
-                                        <img src={src} alt="" className="w-full h-auto block align-top" loading={testimonialPage === 0 && slot === 0 ? 'eager' : 'lazy'} />
+                                        <img src={src} alt={`עדות בוגר ${idx + 1}`} className="w-full h-auto block align-top" loading={testimonialPage === 0 && slot === 0 ? 'eager' : 'lazy'} />
                                     </div>
                                 </div>
                             );
                         })}
                     </div>
+                    <p className="sr-only" aria-live="polite">עמוד עדויות {testimonialPage + 1} מתוך {testimonialTotalPages + 1}</p>
                 </div>
             </div>
 
@@ -551,8 +612,10 @@ const HomePage = () => {
                         </Link>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {homeBlogArticles.map((article, i) => (
-                            <article key={i} className="flex flex-col group cursor-pointer">
+                        {homeBlogArticles.map((article, i) => {
+                            const articleHref = article && article.id ? `/articles/${article.id}` : '/articles';
+                            return (
+                            <Link key={article.id || i} to={articleHref} className="flex flex-col group cursor-pointer">
                                 <div className="relative h-64 border border-white/10 overflow-hidden mb-5">
                                     <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 z-10 transition-opacity duration-300"></div>
                                     <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" style={{ backgroundImage: `url('${article.img}')` }}></div>
@@ -561,13 +624,14 @@ const HomePage = () => {
                                 <div className="flex flex-col gap-3 px-2">
                                     <span className="text-gray-500 text-xs font-mono uppercase tracking-wider">{article.date}</span>
                                     <h4 className="text-white text-xl font-black group-hover:text-primary transition-colors leading-tight uppercase">{article.title}</h4>
-                                    <Link to="/articles" className="text-gray-400 group-hover:text-white text-xs font-bold mt-2 flex items-center gap-2 uppercase tracking-wider transition-colors">
+                                    <span className="text-gray-400 group-hover:text-white text-xs font-bold mt-2 flex items-center gap-2 uppercase tracking-wider transition-colors">
                                         קרא עוד
                                         <span className="w-8 h-[1px] bg-gray-600 group-hover:bg-white"></span>
-                                    </Link>
+                                    </span>
                                 </div>
-                            </article>
-                        ))}
+                            </Link>
+                        );
+                        })}
                     </div>
                 </div>
             </div>
@@ -647,7 +711,7 @@ const TeamPage = () => {
             </section>
 
             {/* Team Members Grid */}
-            <main className="flex-1 bg-background-dark pt-[84px] pb-12 sm:pb-16 md:pb-20 lg:pb-24 px-4 sm:px-6 relative">
+            <main id="main-content" role="main" tabIndex="-1" className="flex-1 bg-background-dark pt-[84px] pb-12 sm:pb-16 md:pb-20 lg:pb-24 px-4 sm:px-6 relative">
                 <div className="tactical-grid absolute inset-0 pointer-events-none opacity-20"></div>
                 <div className="absolute top-20 left-0 w-[37.5rem] h-[37.5rem] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
                 <div className="max-w-[1400px] mx-auto relative z-10">
@@ -753,7 +817,7 @@ const MethodPage = () => {
         <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden bg-background-dark text-white antialiased selection:bg-primary selection:text-white">
             <Navbar />
 
-            <main className="flex flex-col flex-1">
+            <main id="main-content" role="main" tabIndex="-1" className="flex flex-col flex-1">
                 {/* Hero Section */}
                 <section className="relative flex h-screen flex-col items-center justify-start md:justify-center overflow-hidden bg-background-dark border-b border-white/10">
                     <div className="absolute inset-0 z-0">
@@ -945,7 +1009,7 @@ const ArticlesPage = () => {
         <div className="relative flex min-h-screen w-full flex-col overflow-hidden bg-background-dark text-white font-body antialiased overflow-x-hidden selection:bg-primary selection:text-white">
             <Navbar />
             
-            <main className="flex-1 bg-background-dark relative">
+            <main id="main-content" role="main" tabIndex="-1" className="flex-1 bg-background-dark relative">
                 {/* Hero Section */}
                 <section className="relative px-4 pt-[84px] pb-20 sm:px-6 lg:px-8 flex justify-center border-b border-border-dark bg-[#0a0a0a]">
                     <div className="absolute inset-0 bg-grid-pattern opacity-10" style={{ backgroundSize: '40px 40px' }}></div>
@@ -1159,7 +1223,8 @@ const ArticlesPage = () => {
                         <h2 className="font-display text-4xl sm:text-6xl font-black text-white mb-6 uppercase tracking-tighter">הצטרף <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-red-500">לקהילה</span></h2>
                         <p className="text-gray-400 text-lg md:text-xl mb-12 max-w-xl mx-auto leading-relaxed">קבל את המאמרים החדשים ביותר, טיפים לגיבושים ועדכונים ישירות למייל שלך. בלי בולשיט.</p>
                         <form className="flex flex-col sm:flex-row gap-0 max-w-xl mx-auto border border-white/20 p-1 bg-surface-dark" onSubmit={(e) => e.preventDefault()}>
-                            <input className="flex-1 bg-transparent px-6 py-4 text-white placeholder-gray-600 focus:outline-none text-lg font-medium" placeholder="הכנס את המייל שלך..." type="email" />
+                            <label className="sr-only" htmlFor="articles-newsletter-email">הכנס את המייל שלך</label>
+                            <input id="articles-newsletter-email" className="flex-1 bg-transparent px-6 py-4 text-white placeholder-gray-600 focus:outline-none text-lg font-medium" placeholder="הכנס את המייל שלך..." type="email" />
                             <button className="bg-primary hover:bg-white hover:text-black text-white font-black py-4 px-10 uppercase tracking-widest transition-colors whitespace-nowrap my-1 mx-1 sm:my-0 sm:mx-0">
                                 אני בפנים
                             </button>
@@ -1187,7 +1252,7 @@ const ArticleDetailPage = () => {
         return (
             <div className="bg-background-dark text-white min-h-screen flex flex-col">
                 <Navbar />
-                <main className="flex-1 flex items-center justify-center px-4">
+                <main id="main-content" role="main" tabIndex="-1" className="flex-1 flex items-center justify-center px-4">
                     <div className="text-center">
                         <h1 className="text-2xl font-black mb-4">מאמר לא נמצא</h1>
                         <Link to="/articles" className="text-primary font-bold hover:underline">חזרה לבלוג</Link>
@@ -1201,7 +1266,7 @@ const ArticleDetailPage = () => {
     return (
         <div className="bg-background-dark text-white font-body min-h-screen flex flex-col overflow-x-hidden selection:bg-primary selection:text-white">
             <Navbar />
-            <main className="flex-1">
+            <main id="main-content" role="main" tabIndex="-1" className="flex-1">
                 <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
                     <Link to="/articles" className="inline-flex items-center gap-2 text-gray-400 hover:text-primary text-sm font-bold uppercase tracking-wider mb-8">
                         <span className="material-symbols-outlined text-lg rotate-180">arrow_back</span>
@@ -1257,7 +1322,7 @@ const ContactPage = () => {
     return (
         <div className="bg-background-dark text-white font-display min-h-screen flex flex-col overflow-x-hidden selection:bg-accent selection:text-black">
             <Navbar />
-            <main className="flex-grow relative z-10">
+            <main id="main-content" role="main" tabIndex="-1" className="flex-grow relative z-10">
                 <div className="relative w-full">
                     <div className="absolute inset-0 z-0 h-[40vh] lg:h-full w-full overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-b from-[#080808] via-[#080808]/90 to-[#080808] lg:bg-gradient-to-r lg:from-[#080808] lg:via-[#080808]/95 lg:to-transparent z-10"></div>
@@ -1392,7 +1457,7 @@ const FAQPage = () => {
                     </div>
                 </div>
             </div>
-            <main className="flex-1 pb-20 pt-[84px] relative">
+            <main id="main-content" role="main" tabIndex="-1" className="flex-1 pb-20 pt-[84px] relative">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                         <div className="lg:col-span-8 flex flex-col gap-4 text-right">
@@ -1402,6 +1467,8 @@ const FAQPage = () => {
                                         className="flex w-full cursor-pointer items-center justify-between gap-4 p-6 hover:bg-white/5 select-none text-right"
                                         onClick={() => toggleItem(i)}
                                         aria-expanded={openIndex === i}
+                                        aria-controls={`faq-panel-${i}`}
+                                        id={`faq-trigger-${i}`}
                                     >
                                         <div className="flex items-center gap-4 flex-1">
                                             <div className={`text-primary font-mono text-sm font-bold ${openIndex === i ? 'opacity-100' : 'opacity-50'}`}>{String(i + 1).padStart(2, '0')}</div>
@@ -1410,7 +1477,7 @@ const FAQPage = () => {
                                         <span className={`material-symbols-outlined text-gray-500 transition-transform duration-300 flex-shrink-0 ${openIndex === i ? 'rotate-180 text-primary' : ''}`}>expand_more</span>
                                     </button>
                                     {openIndex === i && (
-                                        <div className="px-6 pb-6 pr-12 border-t border-white/5 pt-4 text-right">
+                                        <div id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-trigger-${i}`} className="px-6 pb-6 pr-12 border-t border-white/5 pt-4 text-right">
                                             <p className="text-gray-300 leading-relaxed font-body text-right">{faq.a}</p>
                                         </div>
                                     )}
@@ -1449,7 +1516,7 @@ const TermsPage = () => {
     return (
         <div className="bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white">
             <Navbar />
-            <main className="flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6">
+            <main id="main-content" role="main" tabIndex="-1" className="flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6">
                 <div className="max-w-3xl mx-auto">
                     <h1 className="font-display text-white text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-8 pt-8">תקנון ותנאי שימוש</h1>
                     <p className="text-gray-400 text-sm mb-10">עדכון אחרון: ינואר 2026</p>
@@ -1533,7 +1600,7 @@ const PrivacyPage = () => {
     return (
         <div className="bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white">
             <Navbar />
-            <main className="flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6">
+            <main id="main-content" role="main" tabIndex="-1" className="flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6">
                 <div className="max-w-3xl mx-auto">
                     <h1 className="font-display text-white text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-8 pt-8">מדיניות פרטיות</h1>
                     <p className="text-gray-400 text-sm mb-10">עדכון אחרון: ינואר 2026</p>
@@ -1641,6 +1708,32 @@ const PrivacyPage = () => {
     );
 };
 
+const AccessibilityPage = () => {
+    React.useEffect(() => { window.scrollTo(0, 0); }, []);
+    return (
+        <div className="bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white">
+            <Navbar />
+            <main id="main-content" role="main" tabIndex="-1" className="flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6">
+                <div className="max-w-3xl mx-auto">
+                    <h1 className="font-display text-white text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-8 pt-8">הצהרת נגישות</h1>
+                    <p className="text-gray-300 text-base leading-relaxed mb-6">
+                        אנחנו פועלים להנגיש את האתר לכלל המשתמשים, כולל אנשים עם מוגבלות, בהתאם לתקן הישראלי 5568 ולרוח הנחיות WCAG 2.1 ברמה AA.
+                    </p>
+                    <div className="space-y-5 text-gray-300 text-base leading-relaxed">
+                        <p>באתר הוטמעו התאמות כמו תמיכה בניווט מקלדת, סימון פוקוס ברור, מבנה סמנטי משופר, טקסטים חלופיים לתמונות והצהרות ARIA באזורים דינמיים.</p>
+                        <p>אם נתקלתם בקושי בנגישות, נשמח שתעדכנו אותנו כדי שנוכל לתקן במהירות:</p>
+                        <ul className="list-disc pr-5 space-y-1">
+                            <li>דוא"ל: <a href={'mailto:' + SITE_CONFIG.contact.email} className="text-primary hover:underline">{SITE_CONFIG.contact.email}</a></li>
+                            <li>טלפון: <a href={'tel:' + SITE_CONFIG.contact.phone} className="text-primary hover:underline">{SITE_CONFIG.contact.phone}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </main>
+            <Footer />
+        </div>
+    );
+};
+
 /**
  * NotFoundPage Component
  * Shown when the user navigates to an unknown hash route (e.g. /#/typo).
@@ -1649,7 +1742,7 @@ const NotFoundPage = () => {
     return (
         <div className="bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white">
             <Navbar />
-            <main className="flex-1 flex flex-col items-center justify-center px-4 py-20 text-center">
+            <main id="main-content" role="main" tabIndex="-1" className="flex-1 flex flex-col items-center justify-center px-4 py-20 text-center">
                 <h1 className="text-4xl sm:text-5xl font-black text-white mb-4 uppercase font-display">הדף לא נמצא</h1>
                 <p className="text-gray-400 text-base sm:text-lg mb-8 max-w-md">הדף שחיפשת לא קיים או הוזז.</p>
                 <Link to={typeof ROUTES !== 'undefined' ? ROUTES.HOME : '/'} className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3 uppercase tracking-wider transition-colors">
@@ -1679,8 +1772,25 @@ const NotFoundPage = () => {
  * Note: All routes use HashRouter, so URLs will be: /#/team, /#/method, etc.
  */
 const App = () => {
+    const RouteA11yHandler = () => {
+        const location = useLocation();
+        const [announcement, setAnnouncement] = useState('');
+
+        useEffect(() => {
+            window.scrollTo(0, 0);
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+                mainContent.focus();
+            }
+            setAnnouncement(document.title || `ניווט לעמוד ${location.pathname}`);
+        }, [location.pathname]);
+
+        return <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>;
+    };
+
     return (
         <HashRouter>
+            <RouteA11yHandler />
             <Routes>
                 <Route path={ROUTES.HOME} element={<HomePage />} />
                 <Route path={ROUTES.TEAM} element={<TeamPage />} />
@@ -1689,6 +1799,7 @@ const App = () => {
                 <Route path={ROUTES.ARTICLES} element={<ArticlesPage />} />
                 <Route path={ROUTES.CONTACT} element={<ContactPage />} />
                 <Route path={ROUTES.FAQ} element={<FAQPage />} />
+                <Route path={ROUTES.ACCESSIBILITY} element={<AccessibilityPage />} />
                 <Route path={ROUTES.TERMS} element={<TermsPage />} />
                 <Route path={ROUTES.PRIVACY} element={<PrivacyPage />} />
                 <Route path="*" element={<NotFoundPage />} />
