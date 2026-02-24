@@ -740,9 +740,11 @@ const HomePage = () => {
     className: "material-symbols-outlined font-bold"
   }, "arrow_back"))), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 md:grid-cols-3 gap-8"
-  }, homeBlogArticles.map((article, i) => /*#__PURE__*/React.createElement("article", {
+  }, homeBlogArticles.map((article, i) => /*#__PURE__*/React.createElement(Link, {
     key: i,
-    className: "flex flex-col group cursor-pointer"
+    to: `/articles/${article.id}`,
+    className: "flex flex-col group cursor-pointer",
+    "aria-label": `קרא עוד על: ${article.title}`
   }, /*#__PURE__*/React.createElement("div", {
     className: "relative h-64 border border-white/10 overflow-hidden mb-5"
   }, /*#__PURE__*/React.createElement("div", {
@@ -763,10 +765,8 @@ const HomePage = () => {
     className: "text-gray-500 text-xs font-mono uppercase tracking-wider"
   }, article.date), /*#__PURE__*/React.createElement("h4", {
     className: "text-white text-xl font-black group-hover:text-primary transition-colors leading-tight uppercase"
-  }, article.title), /*#__PURE__*/React.createElement(Link, {
-    to: "/articles",
-    className: "text-gray-400 group-hover:text-white text-xs font-bold mt-2 flex items-center gap-2 uppercase tracking-wider transition-colors",
-    "aria-label": `קרא עוד על: ${article.title}`
+  }, article.title), /*#__PURE__*/React.createElement("span", {
+    className: "text-gray-400 group-hover:text-white text-xs font-bold mt-2 flex items-center gap-2 uppercase tracking-wider transition-colors"
   }, "\u05E7\u05E8\u05D0 \u05E2\u05D5\u05D3", /*#__PURE__*/React.createElement("span", {
     className: "w-8 h-[1px] bg-gray-500 group-hover:bg-white",
     "aria-hidden": "true"

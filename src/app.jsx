@@ -578,7 +578,7 @@ const HomePage = () => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {homeBlogArticles.map((article, i) => (
-                            <article key={i} className="flex flex-col group cursor-pointer">
+                            <Link key={i} to={`/articles/${article.id}`} className="flex flex-col group cursor-pointer" aria-label={`קרא עוד על: ${article.title}`}>
                                 <div className="relative h-64 border border-white/10 overflow-hidden mb-5">
                                     <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 z-10 transition-opacity duration-300" aria-hidden="true"></div>
                                     <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" style={{ backgroundImage: `url('${article.img}')` }} role="img" aria-label={article.title}></div>
@@ -587,12 +587,12 @@ const HomePage = () => {
                                 <div className="flex flex-col gap-3 px-2">
                                     <span className="text-gray-500 text-xs font-mono uppercase tracking-wider">{article.date}</span>
                                     <h4 className="text-white text-xl font-black group-hover:text-primary transition-colors leading-tight uppercase">{article.title}</h4>
-                                    <Link to="/articles" className="text-gray-400 group-hover:text-white text-xs font-bold mt-2 flex items-center gap-2 uppercase tracking-wider transition-colors" aria-label={`קרא עוד על: ${article.title}`}>
+                                    <span className="text-gray-400 group-hover:text-white text-xs font-bold mt-2 flex items-center gap-2 uppercase tracking-wider transition-colors">
                                         קרא עוד
                                         <span className="w-8 h-[1px] bg-gray-500 group-hover:bg-white" aria-hidden="true"></span>
-                                    </Link>
+                                    </span>
                                 </div>
-                            </article>
+                            </Link>
                         ))}
                     </div>
                 </div>
