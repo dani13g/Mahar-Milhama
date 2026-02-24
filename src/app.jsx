@@ -28,7 +28,7 @@ const { HashRouter, Routes, Route, Link, useNavigate, useLocation, useParams } =
 // Do not redeclare ROUTES/IMAGE_URLS (they may already be declared by constants/*.js)
 if (typeof window !== 'undefined') {
     if (typeof window.ROUTES === 'undefined') {
-        window.ROUTES = { HOME: '/', TEAM: '/team', METHOD: '/method', ARTICLES: '/articles', ARTICLE_DETAIL: '/articles/:id', CONTACT: '/contact', FAQ: '/faq', TERMS: '/terms', PRIVACY: '/privacy', ACCESSIBILITY: '/accessibility' };
+        window.ROUTES = { HOME: '/', TEAM: '/team', METHOD: '/method', ARTICLES: '/articles', ARTICLE_DETAIL: '/articles/:id', CONTACT: '/contact', FAQ: '/faq', TERMS: '/terms', PRIVACY: '/privacy' };
     }
     if (typeof window.IMAGE_URLS === 'undefined') {
         window.IMAGE_URLS = { logo: 'images/minimal-black-logo.png', ctaBackground: '', heroTeam: '', heroMethodBackground: '', galleryImages: [] };
@@ -89,20 +89,6 @@ const Navbar = () => {
         }
     }, [isMobileMenuOpen]);
 
-    const menuToggleRef = React.useRef(null);
-
-    useEffect(() => {
-        if (!isMobileMenuOpen) return;
-        const handleEscape = (e) => {
-            if (e.key === 'Escape') {
-                setIsMobileMenuOpen(false);
-                menuToggleRef.current && menuToggleRef.current.focus();
-            }
-        };
-        document.addEventListener('keydown', handleEscape);
-        return () => document.removeEventListener('keydown', handleEscape);
-    }, [isMobileMenuOpen]);
-
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
     };
@@ -125,7 +111,6 @@ const Navbar = () => {
                         <div className="flex items-center flex-shrink-0">
                             {/* Mobile: Menu toggle button - Left side */}
                             <button 
-                                ref={menuToggleRef}
                                 className="md:hidden text-white hover:text-primary transition-colors" 
                                 aria-label={isMobileMenuOpen ? "סגור תפריט" : "פתח תפריט"} 
                                 aria-expanded={isMobileMenuOpen}
@@ -268,20 +253,18 @@ const Footer = () => {
                         <h4 className="text-white font-black mb-6 uppercase tracking-wider">הישאר מעודכן</h4>
                         <p className="text-sm mb-4">טיפים שבועיים לשיפור הכושר.</p>
                         <form className="flex flex-col gap-2" onSubmit={e => e.preventDefault()}>
-                            <label htmlFor="footer-email" className="sr-only">כתובת אימייל</label>
-                            <input id="footer-email" className="bg-white/5 border border-white/10 rounded-none h-12 px-4 text-sm text-white focus:border-primary focus:bg-black outline-none focus-visible:ring-2 focus-visible:ring-primary placeholder:text-gray-500 transition-all" placeholder="הכנס אימייל" type="email" />
+                            <input className="bg-white/5 border border-white/10 rounded-none h-12 px-4 text-sm text-white focus:border-primary focus:bg-black outline-none placeholder:text-gray-600 transition-all" placeholder="הכנס אימייל" type="email" />
                             <button className="bg-white/10 hover:bg-primary text-white font-black uppercase tracking-wider text-sm h-12 rounded-none transition-colors border border-white/10 hover:border-primary" aria-label="הרשם עכשיו">הרשם עכשיו</button>
                         </form>
                     </div>
                 </div>
-                <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono uppercase tracking-wider text-gray-500">
+                <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono uppercase tracking-wider text-gray-600">
                     <div>
                         © 2026 .מחר מלחמה. נבנה בדם, יזע ודמעות.
                     </div>
                     <div className="flex gap-6">
                         <Link className="hover:text-white transition-colors" to={ROUTES.TERMS}>תקנון</Link>
                         <Link className="hover:text-white transition-colors" to={ROUTES.PRIVACY}>פרטיות</Link>
-                        <Link className="hover:text-white transition-colors" to={ROUTES.ACCESSIBILITY}>נגישות</Link>
                     </div>
                 </div>
             </div>
@@ -331,18 +314,13 @@ const ImageGallery = () => {
         setTimeout(() => setIsPaused(false), 3000);
     };
 
-    const handleGalleryKeyDown = (e) => {
-        if (e.key === 'ArrowLeft') { e.preventDefault(); goToNext(); }
-        else if (e.key === 'ArrowRight') { e.preventDefault(); goToPrevious(); }
-    };
-
     if (galleryImages.length === 0) return null;
 
     const currentSrc = galleryImages[currentIndex];
     const total = galleryImages.length;
 
     return (
-        <section className="bg-background-dark pt-[84px] pb-16 sm:pb-20 md:pb-24 border-t border-white/10" role="region" aria-label="גלריית תמונות">
+        <section className="bg-background-dark pt-[84px] pb-16 sm:pb-20 md:pb-24 border-t border-white/10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12 sm:mb-16">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/50 text-primary text-xs font-black tracking-[0.2em] uppercase backdrop-blur-sm mb-6">
@@ -357,14 +335,13 @@ const ImageGallery = () => {
                     </p>
                 </div>
 
-                <div className="relative max-w-6xl mx-auto" dir="ltr" tabIndex={0} onKeyDown={handleGalleryKeyDown} aria-label={`גלריית תמונות - תמונה ${currentIndex + 1} מתוך ${total}`}>
-                    <div className="sr-only" aria-live="polite">{`תמונה ${currentIndex + 1} מתוך ${total}`}</div>
+                <div className="relative max-w-6xl mx-auto" dir="ltr">
                     {/* Single visible image - one at a time for reliable display */}
                     <div className="relative w-full overflow-hidden bg-black border border-white/10 shadow-2xl" style={{ aspectRatio: '16/9' }}>
                         <img
                             key={currentIndex}
                             src={currentSrc}
-                            alt={`תמונה מאימון ${currentIndex + 1} מתוך ${total}`}
+                            alt={`Gallery image ${currentIndex + 1} of ${total}`}
                             className="absolute inset-0 w-full h-full object-cover"
                             loading="eager"
                             decoding="async"
@@ -442,7 +419,7 @@ const HomePage = () => {
     return (
         <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-dark text-white font-display overflow-x-hidden">
             <Navbar />
-            <main id="main-content">
+            <main>
 
             {/* Hero Section */}
             <div className="relative w-full bg-background-dark h-screen flex flex-col">
@@ -470,12 +447,10 @@ const HomePage = () => {
                             <form action="https://formspree.io/f/mbdakgkv" method="POST" className="flex flex-col lg:flex-row gap-2 sm:gap-3 w-full">
                                 <input type="hidden" name="_subject" value="[מחר מלחמה - Hero] בקשת יצירת קשר" />
                                 <div className="relative flex-1">
-                                    <label htmlFor="hero-name" className="sr-only">שם מלא</label>
-                                    <input name="name" className="w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary" placeholder="שם מלא" required type="text" id="hero-name" />
+                                    <input name="name" className="w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none" placeholder="שם מלא" required type="text" />
                                 </div>
                                 <div className="relative flex-1">
-                                    <label htmlFor="hero-phone" className="sr-only">טלפון נייד</label>
-                                    <input name="phone" className="w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary text-right" placeholder="טלפון נייד" required type="tel" inputMode="numeric" id="hero-phone" />
+                                    <input name="phone" className="w-full h-12 sm:h-14 px-4 sm:px-6 bg-white/5 text-white text-sm sm:text-base font-bold placeholder:text-gray-500 rounded-none border border-white/10 focus:border-primary focus:bg-black transition-all outline-none text-right" placeholder="טלפון נייד" required type="tel" inputMode="numeric" />
                                 </div>
                                 <button type="submit" className="flex-none h-12 sm:h-14 px-6 sm:px-10 bg-primary hover:bg-primary-hover active:scale-[0.98] transition-all rounded-none text-white text-base sm:text-xl font-black tracking-wider shadow-[0_0_30px_rgba(230,26,26,0.3)] flex items-center justify-center gap-2 sm:gap-3 uppercase min-h-[2.75rem]" aria-label="צרו איתי קשר">
                                     <span className="text-sm sm:text-lg">צרו איתי קשר</span>
@@ -520,7 +495,7 @@ const HomePage = () => {
                 </div>
 
             {/* Testimonials Section - Image gallery, 3 per page */}
-            <div className="bg-background-dark pt-[84px] pb-12 sm:pb-16 md:pb-20 lg:pb-32 bg-texture relative overflow-hidden" role="region" aria-label="עדויות בוגרים" onKeyDown={(e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); setTestimonialPage(p => Math.min(p + 1, testimonialTotalPages)); } else if (e.key === 'ArrowRight') { e.preventDefault(); setTestimonialPage(p => Math.max(p - 1, 0)); } }}>
+            <div className="bg-background-dark pt-[84px] pb-12 sm:pb-16 md:pb-20 lg:pb-32 bg-texture relative overflow-hidden">
                 <div className="absolute inset-0 bg-black/90"></div>
                 <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
                     <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 sm:mb-12 md:mb-16 gap-4 sm:gap-6">
@@ -540,7 +515,6 @@ const HomePage = () => {
                             </button>
                         </div>
                     </div>
-                    <div className="sr-only" aria-live="polite">{`עדויות: עמוד ${testimonialPage + 1}`}</div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
                         {Array.from({ length: testimonialPerPage }, (_, slot) => {
                             const idx = testimonialPage * testimonialPerPage + slot;
@@ -550,7 +524,7 @@ const HomePage = () => {
                             return (
                                 <div key={idx} className="group bg-surface-card border border-white/5 overflow-hidden relative hover:border-primary/30 transition-all">
                                     <div className="w-full overflow-hidden">
-                                        <img src={src} alt={`עדות בוגר מספר ${idx + 1}`} className="w-full h-auto block align-top" loading={testimonialPage === 0 && slot === 0 ? 'eager' : 'lazy'} />
+                                        <img src={src} alt="" className="w-full h-auto block align-top" loading={testimonialPage === 0 && slot === 0 ? 'eager' : 'lazy'} />
                                     </div>
                                 </div>
                             );
@@ -578,21 +552,21 @@ const HomePage = () => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {homeBlogArticles.map((article, i) => (
-                            <Link key={i} to={`/articles/${article.id}`} className="flex flex-col group cursor-pointer" aria-label={`קרא עוד על: ${article.title}`}>
+                            <article key={i} className="flex flex-col group cursor-pointer">
                                 <div className="relative h-64 border border-white/10 overflow-hidden mb-5">
-                                    <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 z-10 transition-opacity duration-300" aria-hidden="true"></div>
-                                    <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" style={{ backgroundImage: `url('${article.img}')` }} role="img" aria-label={article.title}></div>
+                                    <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 z-10 transition-opacity duration-300"></div>
+                                    <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" style={{ backgroundImage: `url('${article.img}')` }}></div>
                                     <div className="absolute top-0 right-0 bg-primary text-white text-xs font-black uppercase tracking-wider px-4 py-2 z-20">{article.category}</div>
                                 </div>
                                 <div className="flex flex-col gap-3 px-2">
                                     <span className="text-gray-500 text-xs font-mono uppercase tracking-wider">{article.date}</span>
                                     <h4 className="text-white text-xl font-black group-hover:text-primary transition-colors leading-tight uppercase">{article.title}</h4>
-                                    <span className="text-gray-400 group-hover:text-white text-xs font-bold mt-2 flex items-center gap-2 uppercase tracking-wider transition-colors">
+                                    <Link to="/articles" className="text-gray-400 group-hover:text-white text-xs font-bold mt-2 flex items-center gap-2 uppercase tracking-wider transition-colors">
                                         קרא עוד
-                                        <span className="w-8 h-[1px] bg-gray-500 group-hover:bg-white" aria-hidden="true"></span>
-                                    </span>
+                                        <span className="w-8 h-[1px] bg-gray-600 group-hover:bg-white"></span>
+                                    </Link>
                                 </div>
-                            </Link>
+                            </article>
                         ))}
                     </div>
                 </div>
@@ -673,7 +647,7 @@ const TeamPage = () => {
             </section>
 
             {/* Team Members Grid */}
-            <main id="main-content" className="flex-1 bg-background-dark pt-[84px] pb-12 sm:pb-16 md:pb-20 lg:pb-24 px-4 sm:px-6 relative">
+            <main className="flex-1 bg-background-dark pt-[84px] pb-12 sm:pb-16 md:pb-20 lg:pb-24 px-4 sm:px-6 relative">
                 <div className="tactical-grid absolute inset-0 pointer-events-none opacity-20"></div>
                 <div className="absolute top-20 left-0 w-[37.5rem] h-[37.5rem] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
                 <div className="max-w-[1400px] mx-auto relative z-10">
@@ -687,7 +661,7 @@ const TeamPage = () => {
                         {teamMembers.map((member, i) => (
                             <div key={i} className="group relative flex flex-col bg-card-dark border border-border-dark hover:border-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(255,42,42,0.2)]">
                                 <div className="relative h-96 overflow-hidden bg-gray-900 border-b border-border-dark group-hover:border-primary transition-colors clip-corner">
-                                    <div className="absolute inset-0 bg-cover bg-center filter-grayscale transition-all duration-500 group-hover:filter-none scale-100 group-hover:scale-105" style={{ backgroundImage: `url('${member.img}')` }} role="img" aria-label={`תמונה של ${member.name}`}></div>
+                                    <div className="absolute inset-0 bg-cover bg-center filter-grayscale transition-all duration-500 group-hover:filter-none scale-100 group-hover:scale-105" style={{ backgroundImage: `url('${member.img}')` }}></div>
                                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
                                     {member.role && (
                                         <div className="absolute top-4 left-4 border border-white/20 p-1.5 bg-black/60 backdrop-blur-sm">
@@ -779,7 +753,7 @@ const MethodPage = () => {
         <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden bg-background-dark text-white antialiased selection:bg-primary selection:text-white">
             <Navbar />
 
-            <main id="main-content" className="flex flex-col flex-1">
+            <main className="flex flex-col flex-1">
                 {/* Hero Section */}
                 <section className="relative flex h-screen flex-col items-center justify-start md:justify-center overflow-hidden bg-background-dark border-b border-white/10">
                     <div className="absolute inset-0 z-0">
@@ -971,7 +945,7 @@ const ArticlesPage = () => {
         <div className="relative flex min-h-screen w-full flex-col overflow-hidden bg-background-dark text-white font-body antialiased overflow-x-hidden selection:bg-primary selection:text-white">
             <Navbar />
             
-            <main id="main-content" className="flex-1 bg-background-dark relative">
+            <main className="flex-1 bg-background-dark relative">
                 {/* Hero Section */}
                 <section className="relative px-4 pt-[84px] pb-20 sm:px-6 lg:px-8 flex justify-center border-b border-border-dark bg-[#0a0a0a]">
                     <div className="absolute inset-0 bg-grid-pattern opacity-10" style={{ backgroundSize: '40px 40px' }}></div>
@@ -1036,7 +1010,7 @@ const ArticlesPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                             <div className="md:col-span-8 group relative bg-surface-light border border-border-dark hover:border-primary transition-all duration-300 shadow-2xl flex flex-col overflow-hidden">
                                 <div className="absolute top-0 right-0 z-20 bg-primary text-white text-xs font-black uppercase px-4 py-2 tracking-wider shadow-lg clip-path-badge">חם השבוע</div>
-                                <div className="aspect-[16/9] md:aspect-video w-full bg-cover bg-center transition-all duration-700 grayscale group-hover:grayscale-0 flex-shrink-0 relative" style={{ backgroundImage: `url('${featuredArticle.img}')` }} role="img" aria-label={featuredArticle.title}>
+                                <div className="aspect-[16/9] md:aspect-video w-full bg-cover bg-center transition-all duration-700 grayscale group-hover:grayscale-0 flex-shrink-0 relative" style={{ backgroundImage: `url('${featuredArticle.img}')` }}>
                                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90 group-hover:opacity-80 transition-opacity md:block hidden"></div>
                                 </div>
                                 <div className="relative w-full p-6 md:absolute md:bottom-0 md:left-0 md:p-10 z-10 md:bg-gradient-to-t md:from-black/90 md:via-black/50 md:to-transparent">
@@ -1046,7 +1020,7 @@ const ArticlesPage = () => {
                                     </div>
                                     <h3 className="font-display text-2xl sm:text-3xl md:text-5xl font-black text-white mb-4 uppercase leading-[0.9] group-hover:text-primary transition-colors whitespace-pre-line">{featuredArticle.title}</h3>
                                     <p className="text-gray-300 text-sm md:text-lg mb-6 md:mb-8 max-w-2xl border-r-4 border-primary pr-4 bg-black/30 p-2 backdrop-blur-sm line-clamp-3 md:line-clamp-none">{featuredArticle.desc}</p>
-                                    <Link to={`/articles/${featuredArticle.id}`} className="inline-flex items-center gap-3 text-sm font-bold text-white bg-white/10 hover:bg-primary border border-white/20 hover:border-primary px-6 py-3 uppercase tracking-wider transition-all duration-300" aria-label={`קרא את המאמר המלא: ${featuredArticle.title}`}>
+                                    <Link to={`/articles/${featuredArticle.id}`} className="inline-flex items-center gap-3 text-sm font-bold text-white bg-white/10 hover:bg-primary border border-white/20 hover:border-primary px-6 py-3 uppercase tracking-wider transition-all duration-300">
                                         קרא את המאמר המלא
                                         <span className="material-symbols-outlined text-lg rotate-180">arrow_back</span>
                                     </Link>
@@ -1057,7 +1031,7 @@ const ArticlesPage = () => {
                             <div className="md:col-span-4 flex flex-col gap-6">
                                 {sidebarArticles.map((article, i) => (
                                     <Link key={article.id} to={`/articles/${article.id}`} className="group relative flex flex-col h-full bg-surface-light border border-border-dark hover:border-accent transition-all duration-300">
-                                        <div className="h-48 w-full bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-500 relative" style={{ backgroundImage: `url('${article.img}')` }} role="img" aria-label={article.title}>
+                                        <div className="h-48 w-full bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-500 relative" style={{ backgroundImage: `url('${article.img}')` }}>
                                             <div className="absolute inset-0 bg-black/50 group-hover:bg-transparent transition-all"></div>
                                             <div className="absolute top-3 right-3 bg-black/80 px-2 py-1 text-[0.625rem] font-bold text-accent uppercase border border-accent/30">{article.category}</div>
                                         </div>
@@ -1067,7 +1041,7 @@ const ArticlesPage = () => {
                                                 <p className="text-sm text-gray-500 line-clamp-2">{article.desc}</p>
                                             </div>
                                             <div className="mt-4 flex justify-between items-center border-t border-gray-800 pt-3">
-                                                <span className="text-xs font-mono text-gray-500">{article.readTime || article.date}</span>
+                                                <span className="text-xs font-mono text-gray-600">{article.readTime || article.date}</span>
                                                 <span className="material-symbols-outlined text-accent text-sm rotate-180 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">arrow_right_alt</span>
                                             </div>
                                         </div>
@@ -1120,9 +1094,9 @@ const ArticlesPage = () => {
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                             {paginatedGridArticles.map((article) => (
-                                <Link key={article.id} to={`/articles/${article.id}`} className="group flex flex-col bg-surface-dark border border-border-dark hover:border-gray-500 transition-all duration-200 hover:-translate-y-1" aria-label={`קרא עוד על: ${article.title}`}>
+                                <Link key={article.id} to={`/articles/${article.id}`} className="group flex flex-col bg-surface-dark border border-border-dark hover:border-gray-500 transition-all duration-200 hover:-translate-y-1">
                                     <div className="relative h-52 sm:h-60 overflow-hidden border-b border-border-dark">
-                                        <div className="h-full w-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" style={{ backgroundImage: `url('${article.img}')` }} role="img" aria-label={article.title}></div>
+                                        <div className="h-full w-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" style={{ backgroundImage: `url('${article.img}')` }}></div>
                                         <div className={`absolute top-0 right-0 px-3 py-1 text-xs font-bold text-white shadow-md z-10 ${
                                             article.category === "כושר קרבי" || article.category === "אימונים" 
                                                 ? "bg-primary" 
@@ -1135,7 +1109,7 @@ const ArticlesPage = () => {
                                         <p className="text-sm text-gray-400 leading-relaxed line-clamp-3 mb-3 sm:mb-4">{article.desc}</p>
                                         <div className="mt-auto pt-3 sm:pt-4 border-t border-dashed border-gray-800 flex items-center justify-between">
                                             <span className="text-xs font-mono text-gray-500">{article.date}</span>
-                                            <span className="text-xs font-bold text-primary uppercase tracking-widest group-hover:underline" aria-hidden="true">קרא עוד</span>
+                                            <span className="text-xs font-bold text-primary uppercase tracking-widest group-hover:underline">קרא עוד</span>
                                         </div>
                                     </div>
                                 </Link>
@@ -1185,13 +1159,12 @@ const ArticlesPage = () => {
                         <h2 className="font-display text-4xl sm:text-6xl font-black text-white mb-6 uppercase tracking-tighter">הצטרף <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-red-500">לקהילה</span></h2>
                         <p className="text-gray-400 text-lg md:text-xl mb-12 max-w-xl mx-auto leading-relaxed">קבל את המאמרים החדשים ביותר, טיפים לגיבושים ועדכונים ישירות למייל שלך. בלי בולשיט.</p>
                         <form className="flex flex-col sm:flex-row gap-0 max-w-xl mx-auto border border-white/20 p-1 bg-surface-dark" onSubmit={(e) => e.preventDefault()}>
-                            <label htmlFor="newsletter-email" className="sr-only">כתובת אימייל</label>
-                            <input className="flex-1 bg-transparent px-6 py-4 text-white placeholder-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-lg font-medium" placeholder="הכנס את המייל שלך..." type="email" id="newsletter-email" />
+                            <input className="flex-1 bg-transparent px-6 py-4 text-white placeholder-gray-600 focus:outline-none text-lg font-medium" placeholder="הכנס את המייל שלך..." type="email" />
                             <button className="bg-primary hover:bg-white hover:text-black text-white font-black py-4 px-10 uppercase tracking-widest transition-colors whitespace-nowrap my-1 mx-1 sm:my-0 sm:mx-0">
                                 אני בפנים
                             </button>
                         </form>
-                        <p className="text-gray-500 text-xs mt-6 uppercase tracking-widest font-mono">מבטיחים לא להספים. רק תוכן איכותי.</p>
+                        <p className="text-gray-600 text-xs mt-6 uppercase tracking-widest font-mono">מבטיחים לא להספים. רק תוכן איכותי.</p>
                     </div>
                 </section>
             </main>
@@ -1214,7 +1187,7 @@ const ArticleDetailPage = () => {
         return (
             <div className="bg-background-dark text-white min-h-screen flex flex-col">
                 <Navbar />
-                <main id="main-content" className="flex-1 flex items-center justify-center px-4">
+                <main className="flex-1 flex items-center justify-center px-4">
                     <div className="text-center">
                         <h1 className="text-2xl font-black mb-4">מאמר לא נמצא</h1>
                         <Link to="/articles" className="text-primary font-bold hover:underline">חזרה לבלוג</Link>
@@ -1228,7 +1201,7 @@ const ArticleDetailPage = () => {
     return (
         <div className="bg-background-dark text-white font-body min-h-screen flex flex-col overflow-x-hidden selection:bg-primary selection:text-white">
             <Navbar />
-            <main id="main-content" className="flex-1">
+            <main className="flex-1">
                 <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
                     <Link to="/articles" className="inline-flex items-center gap-2 text-gray-400 hover:text-primary text-sm font-bold uppercase tracking-wider mb-8">
                         <span className="material-symbols-outlined text-lg rotate-180">arrow_back</span>
@@ -1244,7 +1217,7 @@ const ArticleDetailPage = () => {
                         <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight uppercase tracking-tighter whitespace-pre-line">{article.title}</h1>
                         <p className="text-gray-500 text-sm font-mono mt-4">{article.date}</p>
                     </header>
-                    <div className="relative w-full aspect-video bg-black border border-white/10 mb-12" style={{ backgroundImage: `url('${article.img}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} role="img" aria-label={article.title} />
+                    <div className="relative w-full aspect-video bg-black border border-white/10 mb-12" style={{ backgroundImage: `url('${article.img}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
                     <div className="prose prose-invert max-w-none">
                         {article.body ? (
                             <div className="article-body" dangerouslySetInnerHTML={{ __html: article.body }} />
@@ -1284,11 +1257,11 @@ const ContactPage = () => {
     return (
         <div className="bg-background-dark text-white font-display min-h-screen flex flex-col overflow-x-hidden selection:bg-accent selection:text-black">
             <Navbar />
-            <main id="main-content" className="flex-grow relative z-10">
+            <main className="flex-grow relative z-10">
                 <div className="relative w-full">
                     <div className="absolute inset-0 z-0 h-[40vh] lg:h-full w-full overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-b from-[#080808] via-[#080808]/90 to-[#080808] lg:bg-gradient-to-r lg:from-[#080808] lg:via-[#080808]/95 lg:to-transparent z-10"></div>
-                        <img loading="lazy" alt="" role="presentation" className="h-full w-full object-cover object-center grayscale contrast-125 brightness-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCL7Whoyd_df4TMczDa9-X3GpviE5Kbc0USVxdiLU-MAkgQ9eL37mZqMINILoa8gdPrJdN4wLxsktihZ65niH1aim4BA3YRC9SJ-tywrRn4CKZ3m2BOC1MBZtT76lJgErlmpWwE3mUj-2f-Zh4ycInVRT1z5t4tmI48Regn_AuPuYdqeDV9-2Us8MG0K3Rd09lx7ukQG9qfU3qdoXBFFuLSy1bjKQbAOONq5gwC2ypIceieSd_XE04WiAtcD7-pt7doovlKqpDHdzUR" />
+                        <img loading="lazy" alt="Soldiers silhouette training" className="h-full w-full object-cover object-center grayscale contrast-125 brightness-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCL7Whoyd_df4TMczDa9-X3GpviE5Kbc0USVxdiLU-MAkgQ9eL37mZqMINILoa8gdPrJdN4wLxsktihZ65niH1aim4BA3YRC9SJ-tywrRn4CKZ3m2BOC1MBZtT76lJgErlmpWwE3mUj-2f-Zh4ycInVRT1z5t4tmI48Regn_AuPuYdqeDV9-2Us8MG0K3Rd09lx7ukQG9qfU3qdoXBFFuLSy1bjKQbAOONq5gwC2ypIceieSd_XE04WiAtcD7-pt7doovlKqpDHdzUR" />
                     </div>
                     <div className="relative z-20 mx-auto max-w-7xl px-4 pt-[84px] pb-12 sm:px-6 lg:px-8 lg:pb-20 min-w-0">
                         <div className="grid grid-cols-1 gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-12">
@@ -1314,20 +1287,20 @@ const ContactPage = () => {
                                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                                         <div className="space-y-2 group/input">
                                             <label className="text-xs font-bold text-gray-500 uppercase tracking-widest group-focus-within/input:text-primary transition-colors" htmlFor="name">שם מלא</label>
-                                            <input name="name" className="w-full bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all placeholder-gray-500 rounded-none" id="name" placeholder="ישראל ישראלי" type="text" required />
+                                            <input name="name" className="w-full bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus:ring-0 transition-all placeholder-gray-700 rounded-none" id="name" placeholder="ישראל ישראלי" type="text" required />
                             </div>
                                         <div className="space-y-2 group/input">
                                             <label className="text-xs font-bold text-gray-500 uppercase tracking-widest group-focus-within/input:text-primary transition-colors" htmlFor="phone">טלפון נייד</label>
-                                            <input name="phone" className="w-full bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all placeholder-gray-500 rounded-none" id="phone" placeholder="05X-XXXXXXX" type="tel" required />
+                                            <input name="phone" className="w-full bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus:ring-0 transition-all placeholder-gray-700 rounded-none" id="phone" placeholder="05X-XXXXXXX" type="tel" required />
                         </div>
                             </div>
                                     <div className="space-y-2 group/input">
                                         <label className="text-xs font-bold text-gray-500 uppercase tracking-widest group-focus-within/input:text-primary transition-colors" htmlFor="email">דואר אלקטרוני</label>
-                                        <input name="email" className="w-full bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all placeholder-gray-500 rounded-none" id="email" placeholder="your@email.com" type="email" required />
+                                        <input name="email" className="w-full bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus:ring-0 transition-all placeholder-gray-700 rounded-none" id="email" placeholder="your@email.com" type="email" required />
                         </div>
                                     <div className="space-y-2 group/input">
                                         <label className="text-xs font-bold text-gray-500 uppercase tracking-widest group-focus-within/input:text-primary transition-colors" htmlFor="message">מטרה / יחידה מועדפת</label>
-                                        <textarea name="message" className="w-full resize-none bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all placeholder-gray-500 rounded-none h-32" id="message" placeholder="מטכ״ל, שייטת, שלדג..."></textarea>
+                                        <textarea name="message" className="w-full resize-none bg-black border border-white/10 px-4 py-4 text-white font-medium focus:border-accent focus:bg-white/5 focus:outline-none focus:ring-0 transition-all placeholder-gray-700 rounded-none h-32" id="message" placeholder="מטכ״ל, שייטת, שלדג..."></textarea>
                             </div>
                                     <button type="submit" className="relative w-full bg-white/5 border border-primary/50 py-5 font-black text-white hover:bg-primary transition-all duration-300 group overflow-hidden uppercase tracking-widest text-lg">
                                         <div className="absolute inset-0 w-1 bg-primary transition-all duration-300 group-hover:w-full opacity-20"></div>
@@ -1352,7 +1325,7 @@ const ContactPage = () => {
                                                 <div className="text-center sm:text-right min-w-0 w-full sm:w-auto">
                                                     <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">{contact.title}</p>
                                                     <p className="text-2xl font-black text-white dir-ltr tracking-tight hover:text-primary transition-colors cursor-pointer break-all sm:break-normal">{contact.value}</p>
-                                                    <p className="text-xs text-gray-500 mt-1">{contact.desc}</p>
+                                                    <p className="text-xs text-gray-600 mt-1">{contact.desc}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1419,7 +1392,7 @@ const FAQPage = () => {
                     </div>
                 </div>
             </div>
-            <main id="main-content" className="flex-1 pb-20 pt-[84px] relative">
+            <main className="flex-1 pb-20 pt-[84px] relative">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                         <div className="lg:col-span-8 flex flex-col gap-4 text-right">
@@ -1429,17 +1402,15 @@ const FAQPage = () => {
                                         className="flex w-full cursor-pointer items-center justify-between gap-4 p-6 hover:bg-white/5 select-none text-right"
                                         onClick={() => toggleItem(i)}
                                         aria-expanded={openIndex === i}
-                                        aria-controls={`faq-panel-${i}`}
-                                        id={`faq-button-${i}`}
                                     >
                                         <div className="flex items-center gap-4 flex-1">
                                             <div className={`text-primary font-mono text-sm font-bold ${openIndex === i ? 'opacity-100' : 'opacity-50'}`}>{String(i + 1).padStart(2, '0')}</div>
                                             <h3 className="text-lg font-bold text-white transition-colors font-display">{faq.q}</h3>
                                         </div>
-                                        <span className={`material-symbols-outlined text-gray-500 transition-transform duration-300 flex-shrink-0 ${openIndex === i ? 'rotate-180 text-primary' : ''}`} aria-hidden="true">expand_more</span>
+                                        <span className={`material-symbols-outlined text-gray-500 transition-transform duration-300 flex-shrink-0 ${openIndex === i ? 'rotate-180 text-primary' : ''}`}>expand_more</span>
                                     </button>
                                     {openIndex === i && (
-                                        <div id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-button-${i}`} className="px-6 pb-6 pr-12 border-t border-white/5 pt-4 text-right">
+                                        <div className="px-6 pb-6 pr-12 border-t border-white/5 pt-4 text-right">
                                             <p className="text-gray-300 leading-relaxed font-body text-right">{faq.a}</p>
                                         </div>
                                     )}
@@ -1478,7 +1449,7 @@ const TermsPage = () => {
     return (
         <div className="bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white">
             <Navbar />
-            <main id="main-content" className="flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6">
+            <main className="flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6">
                 <div className="max-w-3xl mx-auto">
                     <h1 className="font-display text-white text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-8 pt-8">תקנון ותנאי שימוש</h1>
                     <p className="text-gray-400 text-sm mb-10">עדכון אחרון: ינואר 2026</p>
@@ -1562,7 +1533,7 @@ const PrivacyPage = () => {
     return (
         <div className="bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white">
             <Navbar />
-            <main id="main-content" className="flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6">
+            <main className="flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6">
                 <div className="max-w-3xl mx-auto">
                     <h1 className="font-display text-white text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-8 pt-8">מדיניות פרטיות</h1>
                     <p className="text-gray-400 text-sm mb-10">עדכון אחרון: ינואר 2026</p>
@@ -1671,70 +1642,6 @@ const PrivacyPage = () => {
 };
 
 /**
- * AccessibilityPage Component
- * הצהרת נגישות בהתאם לתקן הישראלי ת"י 5568
- */
-const AccessibilityPage = () => {
-    React.useEffect(() => { window.scrollTo(0, 0); }, []);
-    return (
-        <div className="bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white">
-            <Navbar />
-            <main id="main-content" className="flex-1 pt-[84px] pb-16 sm:pb-20 px-4 sm:px-6">
-                <div className="max-w-3xl mx-auto">
-                    <h1 className="font-display text-white text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-8 pt-8">הצהרת נגישות</h1>
-                    <p className="text-gray-400 text-sm mb-10">עדכון אחרון: ינואר 2026</p>
-
-                    <div className="prose-dark space-y-8 text-gray-300 text-base leading-relaxed">
-                        <section>
-                            <h2 className="text-white text-xl font-bold mb-3">1. מחויבות לנגישות</h2>
-                            <p>"מחר מלחמה" מחויבת להנגיש את האתר לכלל האוכלוסייה, לרבות אנשים עם מוגבלויות. אנו שואפים לעמוד בדרישות תקן הנגישות הישראלי ת"י 5568 ובהנחיות WCAG 2.1 ברמה AA.</p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-white text-xl font-bold mb-3">2. אמצעי נגישות באתר</h2>
-                            <p>האתר כולל את אמצעי הנגישות הבאים:</p>
-                            <ul className="list-disc pr-5 space-y-2 mt-2">
-                                <li>תמיכה מלאה בניווט באמצעות מקלדת</li>
-                                <li>קישור "דלג לתוכן הראשי" לניווט מהיר</li>
-                                <li>תיאורי תמונות (alt text) עבור תמונות באתר</li>
-                                <li>מבנה כותרות היררכי (h1-h6) לניווט קל</li>
-                                <li>תמיכה בטכנולוגיות מסייעות וקוראי מסך</li>
-                                <li>ניגודיות צבעים בהתאם לדרישות WCAG AA</li>
-                                <li>תמיכה בהגדלת טקסט עד 200% ללא אובדן תוכן</li>
-                                <li>תמיכה בהעדפות תנועה מופחתת (prefers-reduced-motion)</li>
-                                <li>טפסים עם תוויות נגישות לקוראי מסך</li>
-                                <li>האתר בנוי בשפה העברית עם תמיכה מלאה בכיוון RTL</li>
-                            </ul>
-                        </section>
-
-                        <section>
-                            <h2 className="text-white text-xl font-bold mb-3">3. מגבלות ידועות</h2>
-                            <p>למרות מאמצינו להנגיש את האתר, ייתכנו רכיבים שטרם הונגשו באופן מלא. אנו עובדים באופן שוטף לשפר את הנגישות באתר.</p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-white text-xl font-bold mb-3">4. דיווח על בעיות נגישות</h2>
-                            <p>נתקלתם בבעיית נגישות באתר? נשמח לשמוע ולטפל בכך. ניתן לפנות אלינו:</p>
-                            <ul className="list-disc pr-5 space-y-1 mt-2">
-                                <li>דוא"ל: <a href={'mailto:' + SITE_CONFIG.contact.email} className="text-primary hover:underline">{SITE_CONFIG.contact.email}</a></li>
-                                <li>טלפון: <a href={'tel:' + SITE_CONFIG.contact.phone} className="text-primary hover:underline">{SITE_CONFIG.contact.phone}</a></li>
-                            </ul>
-                            <p className="mt-2">אנו מתחייבים לטפל בפניות נגישות תוך 5 ימי עסקים.</p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-white text-xl font-bold mb-3">5. תאריך סקירת נגישות אחרונה</h2>
-                            <p>סקירת הנגישות האחרונה של האתר בוצעה בינואר 2026.</p>
-                        </section>
-                    </div>
-                </div>
-            </main>
-            <Footer />
-        </div>
-    );
-};
-
-/**
  * NotFoundPage Component
  * Shown when the user navigates to an unknown hash route (e.g. /#/typo).
  */
@@ -1742,7 +1649,7 @@ const NotFoundPage = () => {
     return (
         <div className="bg-background-dark text-white font-body min-h-screen flex flex-col selection:bg-primary selection:text-white">
             <Navbar />
-            <main id="main-content" className="flex-1 flex flex-col items-center justify-center px-4 py-20 text-center">
+            <main className="flex-1 flex flex-col items-center justify-center px-4 py-20 text-center">
                 <h1 className="text-4xl sm:text-5xl font-black text-white mb-4 uppercase font-display">הדף לא נמצא</h1>
                 <p className="text-gray-400 text-base sm:text-lg mb-8 max-w-md">הדף שחיפשת לא קיים או הוזז.</p>
                 <Link to={typeof ROUTES !== 'undefined' ? ROUTES.HOME : '/'} className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3 uppercase tracking-wider transition-colors">
@@ -1771,23 +1678,9 @@ const NotFoundPage = () => {
  * 
  * Note: All routes use HashRouter, so URLs will be: /#/team, /#/method, etc.
  */
-const ScrollToTopAndFocus = () => {
-    const location = useLocation();
-    useEffect(() => {
-        window.scrollTo(0, 0);
-        const main = document.getElementById('main-content');
-        if (main) {
-            main.setAttribute('tabindex', '-1');
-            main.focus({ preventScroll: true });
-        }
-    }, [location.pathname]);
-    return null;
-};
-
 const App = () => {
     return (
         <HashRouter>
-            <ScrollToTopAndFocus />
             <Routes>
                 <Route path={ROUTES.HOME} element={<HomePage />} />
                 <Route path={ROUTES.TEAM} element={<TeamPage />} />
@@ -1798,7 +1691,6 @@ const App = () => {
                 <Route path={ROUTES.FAQ} element={<FAQPage />} />
                 <Route path={ROUTES.TERMS} element={<TermsPage />} />
                 <Route path={ROUTES.PRIVACY} element={<PrivacyPage />} />
-                <Route path={ROUTES.ACCESSIBILITY} element={<AccessibilityPage />} />
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </HashRouter>

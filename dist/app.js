@@ -2060,7 +2060,14 @@ const App = () => {
   })));
 };
 
-// Initialize React application
-// Creates root and renders the App component into the #root div
-const root = createRoot(document.getElementById('root'));
-root.render(/*#__PURE__*/React.createElement(App, null));
+// Initialize React application (defer mount to avoid router context race with extensions/back-forward cache)
+const rootEl = document.getElementById('root');
+const root = rootEl ? createRoot(rootEl) : null;
+function mount() {
+  if (root) root.render(/*#__PURE__*/React.createElement(App, null));
+}
+if (typeof requestAnimationFrame !== 'undefined') {
+  requestAnimationFrame(mount);
+} else {
+  setTimeout(mount, 0);
+}

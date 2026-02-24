@@ -14,8 +14,7 @@ const ROUTES = {
     CONTACT: '/contact',
     FAQ: '/faq',
     TERMS: '/terms',
-    PRIVACY: '/privacy',
-    ACCESSIBILITY: '/accessibility'
+    PRIVACY: '/privacy'
 };
 
 // Export for use in browser (global variable)

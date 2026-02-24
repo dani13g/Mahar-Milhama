@@ -1087,8 +1087,8 @@ const FEATURED_ARTICLE = ARTICLES[0];
 const SIDEBAR_ARTICLES = ARTICLES.slice(1, 3);
 const ALL_ARTICLES = ARTICLES.slice(3); // 6 articles in grid (כל המאמרים)
 
-// Home page blog preview: running, mental resilience, nutrition
-const HOME_BLOG_ARTICLES = ARTICLES.filter(a => ["15", "3", "2"].includes(a.id));
+// Home page blog preview: יום סיירות, חוסן מנטלי, תזונה
+const HOME_BLOG_ARTICLES = ARTICLES.filter(a => ["4", "3", "2"].includes(a.id));
 
 if (typeof window !== 'undefined') {
   window.ARTICLES = ARTICLES;
