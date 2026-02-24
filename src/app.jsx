@@ -61,6 +61,7 @@ if (typeof window !== 'undefined') {
  */
 const Navbar = () => {
     const location = useLocation();
+    const pathname = location && typeof location.pathname === 'string' ? location.pathname : '';
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const mobileMenuRef = useRef(null);
     const mobileToggleRef = useRef(null);
@@ -68,15 +69,15 @@ const Navbar = () => {
     // Use utility function for route checking (if available, fallback to inline)
     const isActive = (path) => {
         if (typeof window !== 'undefined' && window.RoutingUtils) {
-            return window.RoutingUtils.isActiveRoute(location.pathname, path);
+            return window.RoutingUtils.isActiveRoute(pathname, path);
         }
-        return location.pathname === path;
+        return pathname === path;
     };
 
     // Close mobile menu when route changes
     useEffect(() => {
         setIsMobileMenuOpen(false);
-    }, [location.pathname]);
+    }, [pathname]);
 
     // Close mobile menu when clicking outside
     useEffect(() => {
@@ -1771,26 +1772,23 @@ const NotFoundPage = () => {
  * 
  * Note: All routes use HashRouter, so URLs will be: /#/team, /#/method, etc.
  */
-const App = () => {
-    const RouteA11yHandler = () => {
-        const location = useLocation();
-        const [announcement, setAnnouncement] = useState('');
+const AppContent = () => {
+    const location = useLocation();
+    const [announcement, setAnnouncement] = useState('');
 
-        useEffect(() => {
-            window.scrollTo(0, 0);
-            const mainContent = document.getElementById('main-content');
-            if (mainContent) {
-                mainContent.focus();
-            }
-            setAnnouncement(document.title || `ניווט לעמוד ${location.pathname}`);
-        }, [location.pathname]);
-
-        return <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>;
-    };
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        const mainContent = document.getElementById('main-content');
+        if (mainContent) {
+            mainContent.focus();
+        }
+        const pathname = location && location.pathname;
+        setAnnouncement(document.title || (pathname ? `ניווט לעמוד ${pathname}` : ''));
+    }, [location]);
 
     return (
-        <HashRouter>
-            <RouteA11yHandler />
+        <React.Fragment>
+            <div className="sr-only" aria-live="polite" aria-atomic="true">{announcement}</div>
             <Routes>
                 <Route path={ROUTES.HOME} element={<HomePage />} />
                 <Route path={ROUTES.TEAM} element={<TeamPage />} />
@@ -1804,6 +1802,14 @@ const App = () => {
                 <Route path={ROUTES.PRIVACY} element={<PrivacyPage />} />
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
+        </React.Fragment>
+    );
+};
+
+const App = () => {
+    return (
+        <HashRouter>
+            <AppContent />
         </HashRouter>
     );
 };

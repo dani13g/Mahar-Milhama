@@ -112,6 +112,7 @@ if (typeof window !== 'undefined') {
  */
 const Navbar = () => {
   const location = useLocation();
+  const pathname = location && typeof location.pathname === 'string' ? location.pathname : '';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const mobileMenuRef = useRef(null);
   const mobileToggleRef = useRef(null);
@@ -119,15 +120,15 @@ const Navbar = () => {
   // Use utility function for route checking (if available, fallback to inline)
   const isActive = path => {
     if (typeof window !== 'undefined' && window.RoutingUtils) {
-      return window.RoutingUtils.isActiveRoute(location.pathname, path);
+      return window.RoutingUtils.isActiveRoute(pathname, path);
     }
-    return location.pathname === path;
+    return pathname === path;
   };
 
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
-  }, [location.pathname]);
+  }, [pathname]);
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -2017,25 +2018,23 @@ const NotFoundPage = () => {
  * 
  * Note: All routes use HashRouter, so URLs will be: /#/team, /#/method, etc.
  */
-const App = () => {
-  const RouteA11yHandler = () => {
-    const location = useLocation();
-    const [announcement, setAnnouncement] = useState('');
-    useEffect(() => {
-      window.scrollTo(0, 0);
-      const mainContent = document.getElementById('main-content');
-      if (mainContent) {
-        mainContent.focus();
-      }
-      setAnnouncement(document.title || `ניווט לעמוד ${location.pathname}`);
-    }, [location.pathname]);
-    return /*#__PURE__*/React.createElement("div", {
-      className: "sr-only",
-      "aria-live": "polite",
-      "aria-atomic": "true"
-    }, announcement);
-  };
-  return /*#__PURE__*/React.createElement(HashRouter, null, /*#__PURE__*/React.createElement(RouteA11yHandler, null), /*#__PURE__*/React.createElement(Routes, null, /*#__PURE__*/React.createElement(Route, {
+const AppContent = () => {
+  const location = useLocation();
+  const [announcement, setAnnouncement] = useState('');
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      mainContent.focus();
+    }
+    const pathname = location && location.pathname;
+    setAnnouncement(document.title || (pathname ? `ניווט לעמוד ${pathname}` : ''));
+  }, [location]);
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "sr-only",
+    "aria-live": "polite",
+    "aria-atomic": "true"
+  }, announcement), /*#__PURE__*/React.createElement(Routes, null, /*#__PURE__*/React.createElement(Route, {
     path: ROUTES.HOME,
     element: /*#__PURE__*/React.createElement(HomePage, null)
   }), /*#__PURE__*/React.createElement(Route, {
@@ -2069,6 +2068,9 @@ const App = () => {
     path: "*",
     element: /*#__PURE__*/React.createElement(NotFoundPage, null)
   })));
+};
+const App = () => {
+  return /*#__PURE__*/React.createElement(HashRouter, null, /*#__PURE__*/React.createElement(AppContent, null));
 };
 
 // Initialize React application
