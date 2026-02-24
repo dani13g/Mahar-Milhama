@@ -1,3 +1,4 @@
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 /**
  * ============================================================================
  * MAHAR MILHAMA - REACT APPLICATION
@@ -32,11 +33,24 @@ const {
   HashRouter,
   Routes,
   Route,
-  Link,
   useNavigate,
   useLocation,
   useParams
 } = ReactRouterDOM;
+
+/** Hash link for client-side routing without using React Router's Link (avoids useHref/context issues) */
+const HashLink = ({
+  to,
+  children,
+  className,
+  ...rest
+}) => {
+  const path = to === '/' || to == null ? '/' : String(to).startsWith('/') ? to : '/' + to;
+  return /*#__PURE__*/React.createElement("a", _extends({
+    href: '#' + path,
+    className: className
+  }, rest), children);
+};
 
 // Ensure critical globals exist so the app doesn't crash if a script failed to load
 // Do not redeclare ROUTES/IMAGE_URLS (they may already be declared by constants/*.js)
@@ -222,7 +236,7 @@ const Navbar = () => {
   }, /*#__PURE__*/React.createElement("span", {
     className: "material-symbols-outlined",
     "aria-hidden": "true"
-  }, isMobileMenuOpen ? 'close' : 'menu')), /*#__PURE__*/React.createElement(Link, {
+  }, isMobileMenuOpen ? 'close' : 'menu')), /*#__PURE__*/React.createElement(HashLink, {
     to: "/",
     className: "hidden md:flex items-center text-white flex-shrink-0",
     "aria-label": "\u05E2\u05D1\u05D5\u05E8 \u05DC\u05D3\u05E3 \u05D4\u05D1\u05D9\u05EA"
@@ -235,14 +249,14 @@ const Navbar = () => {
     className: "hidden md:flex flex-1 justify-center gap-8 items-center",
     role: "navigation",
     "aria-label": "\u05EA\u05E4\u05E8\u05D9\u05D8 \u05E0\u05D9\u05D5\u05D5\u05D8"
-  }, navLinks.map(link => /*#__PURE__*/React.createElement(Link, {
+  }, navLinks.map(link => /*#__PURE__*/React.createElement(HashLink, {
     key: link.path,
     className: `text-sm font-bold transition-colors ${isActive(link.path) ? 'text-primary' : 'text-gray-300 hover:text-white'}`,
     to: link.path,
     "aria-label": link.ariaLabel
   }, link.label))), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-4 flex-shrink-0"
-  }, /*#__PURE__*/React.createElement(Link, {
+  }, /*#__PURE__*/React.createElement(HashLink, {
     to: "/",
     className: "md:hidden flex items-center text-white flex-shrink-0",
     "aria-label": "\u05E2\u05D1\u05D5\u05E8 \u05DC\u05D3\u05E3 \u05D4\u05D1\u05D9\u05EA"
@@ -268,7 +282,7 @@ const Navbar = () => {
     "aria-label": "\u05EA\u05E4\u05E8\u05D9\u05D8 \u05E0\u05D9\u05D5\u05D5\u05D8 \u05E0\u05D9\u05D9\u05D3"
   }, /*#__PURE__*/React.createElement("div", {
     className: "px-6 py-4 bg-background-dark flex flex-col gap-4"
-  }, navLinks.map(link => /*#__PURE__*/React.createElement(Link, {
+  }, navLinks.map(link => /*#__PURE__*/React.createElement(HashLink, {
     key: link.path,
     className: `text-base font-bold py-2 transition-colors border-r-4 pr-4 ${isActive(link.path) ? 'text-primary border-primary' : 'text-gray-300 border-transparent hover:text-white hover:border-primary/50'}`,
     to: link.path,
@@ -337,16 +351,16 @@ const Footer = () => {
     className: "text-white font-black mb-6 uppercase tracking-wider"
   }, "\u05E0\u05D9\u05D5\u05D5\u05D8 \u05DE\u05D4\u05D9\u05E8"), /*#__PURE__*/React.createElement("ul", {
     className: "flex flex-col gap-3 text-sm font-bold"
-  }, /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement(Link, {
+  }, /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement(HashLink, {
     className: "hover:text-primary transition-colors hover:translate-x-1 inline-block duration-200",
     to: "/"
-  }, "\u05E2\u05DE\u05D5\u05D3 \u05D4\u05D1\u05D9\u05EA")), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement(Link, {
+  }, "\u05E2\u05DE\u05D5\u05D3 \u05D4\u05D1\u05D9\u05EA")), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement(HashLink, {
     className: "hover:text-primary transition-colors hover:translate-x-1 inline-block duration-200",
     to: "/team"
-  }, "\u05D4\u05E6\u05D5\u05D5\u05EA")), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement(Link, {
+  }, "\u05D4\u05E6\u05D5\u05D5\u05EA")), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement(HashLink, {
     className: "hover:text-primary transition-colors hover:translate-x-1 inline-block duration-200",
     to: "/method"
-  }, "\u05D4\u05E9\u05D9\u05D8\u05D4")), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement(Link, {
+  }, "\u05D4\u05E9\u05D9\u05D8\u05D4")), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement(HashLink, {
     className: "hover:text-primary transition-colors hover:translate-x-1 inline-block duration-200",
     to: "/articles"
   }, "\u05D1\u05DC\u05D5\u05D2 \u05DE\u05E7\u05E6\u05D5\u05E2\u05D9")))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", {
@@ -393,13 +407,13 @@ const Footer = () => {
     className: "border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono uppercase tracking-wider text-gray-600"
   }, /*#__PURE__*/React.createElement("div", null, "\xA9 2026 .\u05DE\u05D7\u05E8 \u05DE\u05DC\u05D7\u05DE\u05D4. \u05E0\u05D1\u05E0\u05D4 \u05D1\u05D3\u05DD, \u05D9\u05D6\u05E2 \u05D5\u05D3\u05DE\u05E2\u05D5\u05EA."), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-6"
-  }, /*#__PURE__*/React.createElement(Link, {
+  }, /*#__PURE__*/React.createElement(HashLink, {
     className: "hover:text-white transition-colors",
     to: ROUTES.TERMS
-  }, "\u05EA\u05E7\u05E0\u05D5\u05DF"), /*#__PURE__*/React.createElement(Link, {
+  }, "\u05EA\u05E7\u05E0\u05D5\u05DF"), /*#__PURE__*/React.createElement(HashLink, {
     className: "hover:text-white transition-colors",
     to: ROUTES.PRIVACY
-  }, "\u05E4\u05E8\u05D8\u05D9\u05D5\u05EA"), /*#__PURE__*/React.createElement(Link, {
+  }, "\u05E4\u05E8\u05D8\u05D9\u05D5\u05EA"), /*#__PURE__*/React.createElement(HashLink, {
     className: "hover:text-white transition-colors",
     to: ROUTES.ACCESSIBILITY
   }, "\u05D4\u05E6\u05D4\u05E8\u05EA \u05E0\u05D2\u05D9\u05E9\u05D5\u05EA")))));
@@ -761,7 +775,7 @@ const HomePage = () => {
     className: "w-8 h-[3px] bg-primary block"
   }), "\u05D1\u05DC\u05D5\u05D2 \u05DE\u05E7\u05E6\u05D5\u05E2\u05D9"), /*#__PURE__*/React.createElement("h3", {
     className: "text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase"
-  }, "\u05D9\u05D3\u05E2 \u05D6\u05D4 \u05DB\u05D5\u05D7")), /*#__PURE__*/React.createElement(Link, {
+  }, "\u05D9\u05D3\u05E2 \u05D6\u05D4 \u05DB\u05D5\u05D7")), /*#__PURE__*/React.createElement(HashLink, {
     to: "/articles",
     className: "hidden sm:flex items-center gap-2 text-white hover:text-primary font-black uppercase text-sm border-b-2 border-transparent hover:border-primary pb-1 transition-all"
   }, "\u05DB\u05DC \u05D4\u05DE\u05D0\u05DE\u05E8\u05D9\u05DD", /*#__PURE__*/React.createElement("span", {
@@ -770,7 +784,7 @@ const HomePage = () => {
     className: "grid grid-cols-1 md:grid-cols-3 gap-8"
   }, homeBlogArticles.map((article, i) => {
     const articleHref = article && article.id ? `/articles/${article.id}` : '/articles';
-    return /*#__PURE__*/React.createElement(Link, {
+    return /*#__PURE__*/React.createElement(HashLink, {
       key: article.id || i,
       to: articleHref,
       className: "flex flex-col group cursor-pointer"
@@ -876,7 +890,7 @@ const TeamPage = () => {
   }, /*#__PURE__*/React.createElement("span", null, "\u05E7\u05D1\u05E2 \u05D0\u05D9\u05DE\u05D5\u05DF \u05E0\u05D9\u05E1\u05D9\u05D5\u05DF"), /*#__PURE__*/React.createElement("span", {
     className: "material-symbols-outlined group-hover:-translate-x-1 transition-transform font-bold text-black",
     "aria-hidden": "true"
-  }, "arrow_back")), /*#__PURE__*/React.createElement(Link, {
+  }, "arrow_back")), /*#__PURE__*/React.createElement(HashLink, {
     to: ROUTES.METHOD,
     className: "group cursor-pointer inline-flex items-center justify-center gap-3 h-14 px-10 bg-transparent text-white hover:bg-white/5 transition-all text-lg font-bold tracking-wider uppercase border-2 border-zinc-700 hover:border-white",
     "aria-label": "\u05DC\u05DE\u05D3 \u05D0\u05D9\u05DA \u05D6\u05D4 \u05E2\u05D5\u05D1\u05D3"
@@ -977,7 +991,7 @@ const TeamPage = () => {
     className: "w-full sm:w-auto h-20 px-14 bg-primary hover:bg-white text-black font-black text-2xl shadow-[0_0_30px_rgba(255,42,42,0.4)] hover:shadow-[0_0_50px_rgba(255,255,255,0.6)] transition-all hover:-translate-y-1 flex items-center justify-center gap-4 uppercase"
   }, /*#__PURE__*/React.createElement("span", null, "\u05E9\u05E8\u05D9\u05D9\u05DF \u05DE\u05E7\u05D5\u05DD \u05E2\u05DB\u05E9\u05D9\u05D5"), /*#__PURE__*/React.createElement("span", {
     className: "material-symbols-outlined font-black"
-  }, "arrow_back")), /*#__PURE__*/React.createElement(Link, {
+  }, "arrow_back")), /*#__PURE__*/React.createElement(HashLink, {
     to: "/contact",
     className: "w-full sm:w-auto h-20 px-14 bg-transparent border-2 border-zinc-700 hover:border-white hover:bg-white/5 text-white font-bold text-xl transition-all uppercase tracking-wide flex items-center justify-center"
   }, "\u05E6\u05D5\u05E8 \u05E7\u05E9\u05E8 \u05DC\u05D4\u05EA\u05D9\u05D9\u05E2\u05E6\u05D5\u05EA")))), /*#__PURE__*/React.createElement(Footer, null));
@@ -1031,7 +1045,7 @@ const MethodPage = () => {
     className: "group flex min-w-[12.5rem] cursor-pointer items-center justify-center h-14 px-8 bg-primary text-white text-lg font-black tracking-wider transition-all hover:bg-white hover:text-black"
   }, "\u05D4\u05EA\u05D7\u05DC \u05DE\u05E1\u05E2", /*#__PURE__*/React.createElement("span", {
     className: "material-symbols-outlined mr-2 group-hover:translate-x-1 transition-transform"
-  }, "arrow_back")), /*#__PURE__*/React.createElement(Link, {
+  }, "arrow_back")), /*#__PURE__*/React.createElement(HashLink, {
     to: ROUTES.ARTICLES,
     className: "flex min-w-[12.5rem] cursor-pointer items-center justify-center h-14 px-8 bg-transparent border border-white/30 text-white text-lg font-bold tracking-wider hover:bg-white/5 hover:border-primary transition-all",
     "aria-label": "\u05E2\u05D1\u05D5\u05E8 \u05DC\u05D3\u05E3 \u05D4\u05DE\u05D0\u05DE\u05E8\u05D9\u05DD"
@@ -1175,7 +1189,7 @@ const MethodPage = () => {
     rel: "noopener noreferrer",
     className: "flex w-full sm:w-auto min-w-[15rem] cursor-pointer items-center justify-center h-16 px-8 bg-primary text-white text-xl font-black uppercase tracking-wider transition-all hover:bg-white hover:text-primary shadow-[0_0_30px_rgba(212,17,17,0.3)] hover:shadow-[0_0_50px_rgba(212,17,17,0.6)]",
     "aria-label": "\u05D4\u05D9\u05E8\u05E9\u05DD \u05DC\u05D0\u05D9\u05DE\u05D5\u05DF \u05E0\u05D9\u05E1\u05D9\u05D5\u05DF \u05D1-WhatsApp"
-  }, "\u05D4\u05D9\u05E8\u05E9\u05DD \u05DC\u05D0\u05D9\u05DE\u05D5\u05DF \u05E0\u05D9\u05E1\u05D9\u05D5\u05DF"), /*#__PURE__*/React.createElement(Link, {
+  }, "\u05D4\u05D9\u05E8\u05E9\u05DD \u05DC\u05D0\u05D9\u05DE\u05D5\u05DF \u05E0\u05D9\u05E1\u05D9\u05D5\u05DF"), /*#__PURE__*/React.createElement(HashLink, {
     to: "/contact",
     className: "flex w-full sm:w-auto min-w-[15rem] cursor-pointer items-center justify-center h-16 px-8 border border-white/20 hover:border-primary hover:bg-white/5 text-white text-xl font-bold uppercase tracking-wider transition-all"
   }, "\u05E6\u05D5\u05E8 \u05E7\u05E9\u05E8 \u05E2\u05DD \u05D4\u05DE\u05D3\u05E8\u05D9\u05DA")))))), /*#__PURE__*/React.createElement(Footer, null));
@@ -1305,7 +1319,7 @@ const ArticlesPage = () => {
     className: "font-display text-2xl sm:text-3xl md:text-5xl font-black text-white mb-4 uppercase leading-[0.9] group-hover:text-primary transition-colors whitespace-pre-line"
   }, featuredArticle.title), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-300 text-sm md:text-lg mb-6 md:mb-8 max-w-2xl border-r-4 border-primary pr-4 bg-black/30 p-2 backdrop-blur-sm line-clamp-3 md:line-clamp-none"
-  }, featuredArticle.desc), /*#__PURE__*/React.createElement(Link, {
+  }, featuredArticle.desc), /*#__PURE__*/React.createElement(HashLink, {
     to: `/articles/${featuredArticle.id}`,
     className: "inline-flex items-center gap-3 text-sm font-bold text-white bg-white/10 hover:bg-primary border border-white/20 hover:border-primary px-6 py-3 uppercase tracking-wider transition-all duration-300"
   }, "\u05E7\u05E8\u05D0 \u05D0\u05EA \u05D4\u05DE\u05D0\u05DE\u05E8 \u05D4\u05DE\u05DC\u05D0", /*#__PURE__*/React.createElement("span", {
@@ -1316,7 +1330,7 @@ const ArticlesPage = () => {
     className: "absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/30 group-hover:border-primary transition-colors hidden md:block"
   })), /*#__PURE__*/React.createElement("div", {
     className: "md:col-span-4 flex flex-col gap-6"
-  }, sidebarArticles.map((article, i) => /*#__PURE__*/React.createElement(Link, {
+  }, sidebarArticles.map((article, i) => /*#__PURE__*/React.createElement(HashLink, {
     key: article.id,
     to: `/articles/${article.id}`,
     className: "group relative flex flex-col h-full bg-surface-light border border-border-dark hover:border-accent transition-all duration-300"
@@ -1380,7 +1394,7 @@ const ArticlesPage = () => {
     className: "material-symbols-outlined text-xl rotate-180"
   }, "chevron_right"))))), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-  }, paginatedGridArticles.map(article => /*#__PURE__*/React.createElement(Link, {
+  }, paginatedGridArticles.map(article => /*#__PURE__*/React.createElement(HashLink, {
     key: article.id,
     to: `/articles/${article.id}`,
     className: "group flex flex-col bg-surface-dark border border-border-dark hover:border-gray-500 transition-all duration-200 hover:-translate-y-1"
@@ -1490,7 +1504,7 @@ const ArticleDetailPage = () => {
       className: "text-center"
     }, /*#__PURE__*/React.createElement("h1", {
       className: "text-2xl font-black mb-4"
-    }, "\u05DE\u05D0\u05DE\u05E8 \u05DC\u05D0 \u05E0\u05DE\u05E6\u05D0"), /*#__PURE__*/React.createElement(Link, {
+    }, "\u05DE\u05D0\u05DE\u05E8 \u05DC\u05D0 \u05E0\u05DE\u05E6\u05D0"), /*#__PURE__*/React.createElement(HashLink, {
       to: "/articles",
       className: "text-primary font-bold hover:underline"
     }, "\u05D7\u05D6\u05E8\u05D4 \u05DC\u05D1\u05DC\u05D5\u05D2"))), /*#__PURE__*/React.createElement(Footer, null));
@@ -1504,7 +1518,7 @@ const ArticleDetailPage = () => {
     className: "flex-1"
   }, /*#__PURE__*/React.createElement("article", {
     className: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20"
-  }, /*#__PURE__*/React.createElement(Link, {
+  }, /*#__PURE__*/React.createElement(HashLink, {
     to: "/articles",
     className: "inline-flex items-center gap-2 text-gray-400 hover:text-primary text-sm font-bold uppercase tracking-wider mb-8"
   }, /*#__PURE__*/React.createElement("span", {
@@ -1999,7 +2013,7 @@ const NotFoundPage = () => {
     className: "text-4xl sm:text-5xl font-black text-white mb-4 uppercase font-display"
   }, "\u05D4\u05D3\u05E3 \u05DC\u05D0 \u05E0\u05DE\u05E6\u05D0"), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-400 text-base sm:text-lg mb-8 max-w-md"
-  }, "\u05D4\u05D3\u05E3 \u05E9\u05D7\u05D9\u05E4\u05E9\u05EA \u05DC\u05D0 \u05E7\u05D9\u05D9\u05DD \u05D0\u05D5 \u05D4\u05D5\u05D6\u05D6."), /*#__PURE__*/React.createElement(Link, {
+  }, "\u05D4\u05D3\u05E3 \u05E9\u05D7\u05D9\u05E4\u05E9\u05EA \u05DC\u05D0 \u05E7\u05D9\u05D9\u05DD \u05D0\u05D5 \u05D4\u05D5\u05D6\u05D6."), /*#__PURE__*/React.createElement(HashLink, {
     to: typeof ROUTES !== 'undefined' ? ROUTES.HOME : '/',
     className: "inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3 uppercase tracking-wider transition-colors"
   }, "\u05D7\u05D6\u05E8\u05D4 \u05DC\u05D3\u05E3 \u05D4\u05D1\u05D9\u05EA", /*#__PURE__*/React.createElement("span", {

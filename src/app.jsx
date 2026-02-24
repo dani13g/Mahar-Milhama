@@ -22,7 +22,13 @@
 
 const { useState, useEffect, useRef } = React;
 const { createRoot } = ReactDOM;
-const { HashRouter, Routes, Route, Link, useNavigate, useLocation, useParams } = ReactRouterDOM;
+const { HashRouter, Routes, Route, useNavigate, useLocation, useParams } = ReactRouterDOM;
+
+/** Hash link for client-side routing without using React Router's Link (avoids useHref/context issues) */
+const HashLink = ({ to, children, className, ...rest }) => {
+    const path = to === '/' || to == null ? '/' : (String(to).startsWith('/') ? to : '/' + to);
+    return <a href={'#' + path} className={className} {...rest}>{children}</a>;
+};
 
 // Ensure critical globals exist so the app doesn't crash if a script failed to load
 // Do not redeclare ROUTES/IMAGE_URLS (they may already be declared by constants/*.js)
@@ -163,31 +169,31 @@ const Navbar = () => {
                             </button>
                             
                             {/* Logo - Hidden on mobile (shown on right), visible on desktop (left) */}
-                            <Link to="/" className="hidden md:flex items-center text-white flex-shrink-0" aria-label="עבור לדף הבית">
+                            <HashLink to="/" className="hidden md:flex items-center text-white flex-shrink-0" aria-label="עבור לדף הבית">
                                 <img src={IMAGE_URLS.logo} alt="מחר מלחמה - לוגו" className="h-10 w-auto" loading="eager" />
-                            </Link>
+                            </HashLink>
                         </div>
                         
                         {/* Desktop Navigation - Centered */}
                         <div className="hidden md:flex flex-1 justify-center gap-8 items-center" role="navigation" aria-label="תפריט ניווט">
                             {navLinks.map((link) => (
-                                <Link 
+                                <HashLink 
                                     key={link.path}
                                     className={`text-sm font-bold transition-colors ${isActive(link.path) ? 'text-primary' : 'text-gray-300 hover:text-white'}`} 
                                     to={link.path} 
                                     aria-label={link.ariaLabel}
                                 >
                                     {link.label}
-                                </Link>
+                                </HashLink>
                             ))}
                         </div>
                         
                         {/* Mobile: Logo on right | Desktop: "הצטרף עכשיו" button */}
                         <div className="flex items-center gap-4 flex-shrink-0">
                             {/* Mobile: Logo on right side */}
-                            <Link to="/" className="md:hidden flex items-center text-white flex-shrink-0" aria-label="עבור לדף הבית">
+                            <HashLink to="/" className="md:hidden flex items-center text-white flex-shrink-0" aria-label="עבור לדף הבית">
                                 <img src={IMAGE_URLS.logo} alt="מחר מלחמה - לוגו" className="h-10 w-auto" loading="eager" />
-                            </Link>
+                            </HashLink>
                             
                             {/* Desktop: "הצטרף עכשיו" button - Hidden on mobile */}
                             <a href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer" className="hidden md:flex group relative px-6 py-2 bg-transparent overflow-hidden rounded-none border border-white/30 hover:border-primary transition-all duration-300" aria-label="הצטרף עכשיו">
@@ -208,7 +214,7 @@ const Navbar = () => {
                     >
                         <div className="px-6 py-4 bg-background-dark flex flex-col gap-4">
                             {navLinks.map((link) => (
-                                <Link 
+                                <HashLink 
                                     key={link.path}
                                     className={`text-base font-bold py-2 transition-colors border-r-4 pr-4 ${
                                         isActive(link.path) 
@@ -220,7 +226,7 @@ const Navbar = () => {
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     {link.label}
-                                </Link>
+                                </HashLink>
                             ))}
                         </div>
                     </div>
@@ -266,10 +272,10 @@ const Footer = () => {
                     <div>
                         <h4 className="text-white font-black mb-6 uppercase tracking-wider">ניווט מהיר</h4>
                         <ul className="flex flex-col gap-3 text-sm font-bold">
-                            <li><Link className="hover:text-primary transition-colors hover:translate-x-1 inline-block duration-200" to="/">עמוד הבית</Link></li>
-                            <li><Link className="hover:text-primary transition-colors hover:translate-x-1 inline-block duration-200" to="/team">הצוות</Link></li>
-                            <li><Link className="hover:text-primary transition-colors hover:translate-x-1 inline-block duration-200" to="/method">השיטה</Link></li>
-                            <li><Link className="hover:text-primary transition-colors hover:translate-x-1 inline-block duration-200" to="/articles">בלוג מקצועי</Link></li>
+                            <li><HashLink className="hover:text-primary transition-colors hover:translate-x-1 inline-block duration-200" to="/">עמוד הבית</HashLink></li>
+                            <li><HashLink className="hover:text-primary transition-colors hover:translate-x-1 inline-block duration-200" to="/team">הצוות</HashLink></li>
+                            <li><HashLink className="hover:text-primary transition-colors hover:translate-x-1 inline-block duration-200" to="/method">השיטה</HashLink></li>
+                            <li><HashLink className="hover:text-primary transition-colors hover:translate-x-1 inline-block duration-200" to="/articles">בלוג מקצועי</HashLink></li>
                         </ul>
                     </div>
                     <div>
@@ -306,9 +312,9 @@ const Footer = () => {
                         © 2026 .מחר מלחמה. נבנה בדם, יזע ודמעות.
                     </div>
                     <div className="flex gap-6">
-                        <Link className="hover:text-white transition-colors" to={ROUTES.TERMS}>תקנון</Link>
-                        <Link className="hover:text-white transition-colors" to={ROUTES.PRIVACY}>פרטיות</Link>
-                        <Link className="hover:text-white transition-colors" to={ROUTES.ACCESSIBILITY}>הצהרת נגישות</Link>
+                        <HashLink className="hover:text-white transition-colors" to={ROUTES.TERMS}>תקנון</HashLink>
+                        <HashLink className="hover:text-white transition-colors" to={ROUTES.PRIVACY}>פרטיות</HashLink>
+                        <HashLink className="hover:text-white transition-colors" to={ROUTES.ACCESSIBILITY}>הצהרת נגישות</HashLink>
                     </div>
                 </div>
             </div>
@@ -612,16 +618,16 @@ const HomePage = () => {
                             </h2>
                             <h3 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase">ידע זה כוח</h3>
                         </div>
-                        <Link to="/articles" className="hidden sm:flex items-center gap-2 text-white hover:text-primary font-black uppercase text-sm border-b-2 border-transparent hover:border-primary pb-1 transition-all">
+                        <HashLink to="/articles" className="hidden sm:flex items-center gap-2 text-white hover:text-primary font-black uppercase text-sm border-b-2 border-transparent hover:border-primary pb-1 transition-all">
                             כל המאמרים
                             <span className="material-symbols-outlined font-bold">arrow_back</span>
-                        </Link>
+                        </HashLink>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {homeBlogArticles.map((article, i) => {
                             const articleHref = article && article.id ? `/articles/${article.id}` : '/articles';
                             return (
-                            <Link key={article.id || i} to={articleHref} className="flex flex-col group cursor-pointer">
+                            <HashLink key={article.id || i} to={articleHref} className="flex flex-col group cursor-pointer">
                                 <div className="relative h-64 border border-white/10 overflow-hidden mb-5">
                                     <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 z-10 transition-opacity duration-300"></div>
                                     <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" style={{ backgroundImage: `url('${article.img}')` }}></div>
@@ -635,7 +641,7 @@ const HomePage = () => {
                                         <span className="w-8 h-[1px] bg-gray-600 group-hover:bg-white"></span>
                                     </span>
                                 </div>
-                            </Link>
+                            </HashLink>
                         );
                         })}
                     </div>
@@ -709,9 +715,9 @@ const TeamPage = () => {
                             <span>קבע אימון ניסיון</span>
                             <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform font-bold text-black" aria-hidden="true">arrow_back</span>
                         </a>
-                        <Link to={ROUTES.METHOD} className="group cursor-pointer inline-flex items-center justify-center gap-3 h-14 px-10 bg-transparent text-white hover:bg-white/5 transition-all text-lg font-bold tracking-wider uppercase border-2 border-zinc-700 hover:border-white" aria-label="למד איך זה עובד">
+                        <HashLink to={ROUTES.METHOD} className="group cursor-pointer inline-flex items-center justify-center gap-3 h-14 px-10 bg-transparent text-white hover:bg-white/5 transition-all text-lg font-bold tracking-wider uppercase border-2 border-zinc-700 hover:border-white" aria-label="למד איך זה עובד">
                             <span>איך זה עובד?</span>
-                        </Link>
+                        </HashLink>
                     </div>
                 </div>
             </section>
@@ -796,9 +802,9 @@ const TeamPage = () => {
                             <span>שריין מקום עכשיו</span>
                             <span className="material-symbols-outlined font-black">arrow_back</span>
                         </button>
-                        <Link to="/contact" className="w-full sm:w-auto h-20 px-14 bg-transparent border-2 border-zinc-700 hover:border-white hover:bg-white/5 text-white font-bold text-xl transition-all uppercase tracking-wide flex items-center justify-center">
+                        <HashLink to="/contact" className="w-full sm:w-auto h-20 px-14 bg-transparent border-2 border-zinc-700 hover:border-white hover:bg-white/5 text-white font-bold text-xl transition-all uppercase tracking-wide flex items-center justify-center">
                             צור קשר להתייעצות
-                        </Link>
+                        </HashLink>
                     </div>
                 </div>
             </section>
@@ -846,9 +852,9 @@ const MethodPage = () => {
                                 התחל מסע
                                 <span className="material-symbols-outlined mr-2 group-hover:translate-x-1 transition-transform">arrow_back</span>
                             </a>
-                            <Link to={ROUTES.ARTICLES} className="flex min-w-[12.5rem] cursor-pointer items-center justify-center h-14 px-8 bg-transparent border border-white/30 text-white text-lg font-bold tracking-wider hover:bg-white/5 hover:border-primary transition-all" aria-label="עבור לדף המאמרים">
+                            <HashLink to={ROUTES.ARTICLES} className="flex min-w-[12.5rem] cursor-pointer items-center justify-center h-14 px-8 bg-transparent border border-white/30 text-white text-lg font-bold tracking-wider hover:bg-white/5 hover:border-primary transition-all" aria-label="עבור לדף המאמרים">
                                 למד עוד
-                            </Link>
+                            </HashLink>
                 </div>
                     </div>
             </section>
@@ -964,9 +970,9 @@ const MethodPage = () => {
                                 <a href={(typeof window !== 'undefined' && window.SITE_CONFIG && window.SITE_CONFIG.contact.whatsapp) || '#'} target="_blank" rel="noopener noreferrer" className="flex w-full sm:w-auto min-w-[15rem] cursor-pointer items-center justify-center h-16 px-8 bg-primary text-white text-xl font-black uppercase tracking-wider transition-all hover:bg-white hover:text-primary shadow-[0_0_30px_rgba(212,17,17,0.3)] hover:shadow-[0_0_50px_rgba(212,17,17,0.6)]" aria-label="הירשם לאימון ניסיון ב-WhatsApp">
                                     הירשם לאימון ניסיון
                                 </a>
-                                <Link to="/contact" className="flex w-full sm:w-auto min-w-[15rem] cursor-pointer items-center justify-center h-16 px-8 border border-white/20 hover:border-primary hover:bg-white/5 text-white text-xl font-bold uppercase tracking-wider transition-all">
+                                <HashLink to="/contact" className="flex w-full sm:w-auto min-w-[15rem] cursor-pointer items-center justify-center h-16 px-8 border border-white/20 hover:border-primary hover:bg-white/5 text-white text-xl font-bold uppercase tracking-wider transition-all">
                                     צור קשר עם המדריך
-                                </Link>
+                                </HashLink>
                         </div>
                     </div>
                 </div>
@@ -1090,17 +1096,17 @@ const ArticlesPage = () => {
                                     </div>
                                     <h3 className="font-display text-2xl sm:text-3xl md:text-5xl font-black text-white mb-4 uppercase leading-[0.9] group-hover:text-primary transition-colors whitespace-pre-line">{featuredArticle.title}</h3>
                                     <p className="text-gray-300 text-sm md:text-lg mb-6 md:mb-8 max-w-2xl border-r-4 border-primary pr-4 bg-black/30 p-2 backdrop-blur-sm line-clamp-3 md:line-clamp-none">{featuredArticle.desc}</p>
-                                    <Link to={`/articles/${featuredArticle.id}`} className="inline-flex items-center gap-3 text-sm font-bold text-white bg-white/10 hover:bg-primary border border-white/20 hover:border-primary px-6 py-3 uppercase tracking-wider transition-all duration-300">
+                                    <HashLink to={`/articles/${featuredArticle.id}`} className="inline-flex items-center gap-3 text-sm font-bold text-white bg-white/10 hover:bg-primary border border-white/20 hover:border-primary px-6 py-3 uppercase tracking-wider transition-all duration-300">
                                         קרא את המאמר המלא
                                         <span className="material-symbols-outlined text-lg rotate-180">arrow_back</span>
-                                    </Link>
+                                    </HashLink>
                                 </div>
                                 <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-white/30 group-hover:border-primary transition-colors hidden md:block"></div>
                                 <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/30 group-hover:border-primary transition-colors hidden md:block"></div>
                             </div>
                             <div className="md:col-span-4 flex flex-col gap-6">
                                 {sidebarArticles.map((article, i) => (
-                                    <Link key={article.id} to={`/articles/${article.id}`} className="group relative flex flex-col h-full bg-surface-light border border-border-dark hover:border-accent transition-all duration-300">
+                                    <HashLink key={article.id} to={`/articles/${article.id}`} className="group relative flex flex-col h-full bg-surface-light border border-border-dark hover:border-accent transition-all duration-300">
                                         <div className="h-48 w-full bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-500 relative" style={{ backgroundImage: `url('${article.img}')` }}>
                                             <div className="absolute inset-0 bg-black/50 group-hover:bg-transparent transition-all"></div>
                                             <div className="absolute top-3 right-3 bg-black/80 px-2 py-1 text-[0.625rem] font-bold text-accent uppercase border border-accent/30">{article.category}</div>
@@ -1115,7 +1121,7 @@ const ArticlesPage = () => {
                                                 <span className="material-symbols-outlined text-accent text-sm rotate-180 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">arrow_right_alt</span>
                                             </div>
                                         </div>
-                                    </Link>
+                                    </HashLink>
                                 ))}
                             </div>
                         </div>
@@ -1164,7 +1170,7 @@ const ArticlesPage = () => {
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                             {paginatedGridArticles.map((article) => (
-                                <Link key={article.id} to={`/articles/${article.id}`} className="group flex flex-col bg-surface-dark border border-border-dark hover:border-gray-500 transition-all duration-200 hover:-translate-y-1">
+                                <HashLink key={article.id} to={`/articles/${article.id}`} className="group flex flex-col bg-surface-dark border border-border-dark hover:border-gray-500 transition-all duration-200 hover:-translate-y-1">
                                     <div className="relative h-52 sm:h-60 overflow-hidden border-b border-border-dark">
                                         <div className="h-full w-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" style={{ backgroundImage: `url('${article.img}')` }}></div>
                                         <div className={`absolute top-0 right-0 px-3 py-1 text-xs font-bold text-white shadow-md z-10 ${
@@ -1182,7 +1188,7 @@ const ArticlesPage = () => {
                                             <span className="text-xs font-bold text-primary uppercase tracking-widest group-hover:underline">קרא עוד</span>
                                         </div>
                                     </div>
-                                </Link>
+                                </HashLink>
                             ))}
                         </div>
                         {totalPages > 1 && (
@@ -1261,7 +1267,7 @@ const ArticleDetailPage = () => {
                 <main id="main-content" role="main" tabIndex="-1" className="flex-1 flex items-center justify-center px-4">
                     <div className="text-center">
                         <h1 className="text-2xl font-black mb-4">מאמר לא נמצא</h1>
-                        <Link to="/articles" className="text-primary font-bold hover:underline">חזרה לבלוג</Link>
+                        <HashLink to="/articles" className="text-primary font-bold hover:underline">חזרה לבלוג</HashLink>
                     </div>
                 </main>
                 <Footer />
@@ -1274,10 +1280,10 @@ const ArticleDetailPage = () => {
             <Navbar />
             <main id="main-content" role="main" tabIndex="-1" className="flex-1">
                 <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-                    <Link to="/articles" className="inline-flex items-center gap-2 text-gray-400 hover:text-primary text-sm font-bold uppercase tracking-wider mb-8">
+                    <HashLink to="/articles" className="inline-flex items-center gap-2 text-gray-400 hover:text-primary text-sm font-bold uppercase tracking-wider mb-8">
                         <span className="material-symbols-outlined text-lg rotate-180">arrow_back</span>
                         חזרה לבלוג
-                    </Link>
+                    </HashLink>
                     <header className="mb-10">
                         <div className="flex flex-wrap gap-2 mb-4">
                             <span className="bg-primary/20 text-primary text-xs font-black uppercase px-3 py-1 border border-primary/50">{article.category}</span>
@@ -1751,10 +1757,10 @@ const NotFoundPage = () => {
             <main id="main-content" role="main" tabIndex="-1" className="flex-1 flex flex-col items-center justify-center px-4 py-20 text-center">
                 <h1 className="text-4xl sm:text-5xl font-black text-white mb-4 uppercase font-display">הדף לא נמצא</h1>
                 <p className="text-gray-400 text-base sm:text-lg mb-8 max-w-md">הדף שחיפשת לא קיים או הוזז.</p>
-                <Link to={typeof ROUTES !== 'undefined' ? ROUTES.HOME : '/'} className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3 uppercase tracking-wider transition-colors">
+                <HashLink to={typeof ROUTES !== 'undefined' ? ROUTES.HOME : '/'} className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3 uppercase tracking-wider transition-colors">
                     חזרה לדף הבית
                     <span className="material-symbols-outlined text-xl rotate-180">arrow_back</span>
-                </Link>
+                </HashLink>
             </main>
             <Footer />
         </div>
