@@ -108,11 +108,6 @@ if (typeof window !== 'undefined') {
   }
 }
 
-// Use window globals so app works when loaded via script tags (no module scope)
-const ROUTES = typeof window !== 'undefined' ? window.ROUTES : {};
-const IMAGE_URLS = typeof window !== 'undefined' ? window.IMAGE_URLS : {};
-const SITE_CONFIG = typeof window !== 'undefined' ? window.SITE_CONFIG : {};
-
 // Constants and data are loaded via script tags in <head>
 // Available globals: IMAGE_URLS, ROUTES, SITE_CONFIG, TEAM_MEMBERS, FAQS, TESTIMONIALS, FEATURES, METHOD_PILLARS, etc.
 // See constants/index.js and data/*.js files for structure
